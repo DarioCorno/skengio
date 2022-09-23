@@ -10,6 +10,7 @@
 
 namespace SKEngio {
 
+    //a simple class to load and compile shaders
     class ShaderLoader
     {
     public:
