@@ -1,0 +1,54 @@
+#pragma once
+
+#include "window.h"
+
+#include "../glm/glm.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
+#include "../glm/gtc/type_ptr.hpp"
+
+#include "layerstack.h"
+#include "event.h"
+#include "GUIManager.h"
+
+namespace SKEngio {
+
+    class Renderer {
+        public:
+
+            Renderer(WindowManager* winMan);
+
+            virtual ~Renderer();
+
+            void Render();
+
+            bool InitGL();
+
+            void InitGUI();
+
+            void Draw();
+
+            void OnEvent(Event* e);
+
+            LayerStack* GetLayerStack();
+
+        private:
+
+            void HandleResize(int width, int height);
+            void setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+
+            //just a reference (shared with Application)
+            WindowManager* winMan;
+
+            //the gui manager
+            GUIManager* guiMan;
+
+        	glm::mat4x4 mProjMatrix, mModelViewMatrix;
+
+            LayerStack* layerStack;
+
+            float fovAngle = 45.0f;
+            float nearPlane = 0.01f;
+            float farPlane = 100.0f;
+
+    };
+}
