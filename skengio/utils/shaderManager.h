@@ -76,6 +76,7 @@ namespace SKEngio {
             glDeleteProgram(programID);                   
         }
 
+        //should I remove that stuff?
         // activate the shader
         // ------------------------------------------------------------------------
         void use() 
