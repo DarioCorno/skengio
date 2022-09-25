@@ -19,9 +19,9 @@ class EffectOne : public SKEngio::Layer {
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
         float vertices[3 * 3] = {
-            -0.5f,  -0.25f, 0.0f,
-            0.0f, -0.25f, 0.0f,
-            -0.25f, 0.25f, 0.0f
+            0.0f, -0.25f, 0.5f,         //bottom right
+            -0.25f, 0.25f, 0.5f,         //top
+            -0.5f,  -0.25f, 0.5f       //bottom left
         };
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);

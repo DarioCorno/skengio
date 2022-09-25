@@ -7,6 +7,8 @@ class EffectTwo : public SKEngio::Layer {
 
     unsigned int VBO, VAO;
     unsigned int vertexShader, fragmentShader, shaderProgram;
+    glm::mat4 transform = glm::mat4(1.0f);
+    unsigned int transformUniform;
 
     void OnAttach() {
         std::cout << "Layer attached, creating buffers " << this->GetId() << std::endl;
@@ -16,9 +18,11 @@ class EffectTwo : public SKEngio::Layer {
             "layout (location = 0) in vec3 aPos;\n"
             "layout (location = 1) in vec3 aColor;\n"
             "out vec3 ourColor;\n"
+            "uniform mat4 transform;\n"
             "void main()\n"
             "{\n"
-            "   gl_Position = vec4(aPos, 1.0);\n"
+            "   gl_Position = transform * vec4(aPos, 1.0f);\n"
+            "   //gl_Position = vec4(aPos, 1.0);\n"
             "   ourColor = aColor;\n"
             "}\0";
 
@@ -74,10 +78,9 @@ class EffectTwo : public SKEngio::Layer {
         // ------------------------------------------------------------------
         float vertices[] = {
             // positions         // colors
-            0.5f, -0.25f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-            0.0f, -0.25f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-            0.25f, 0.25f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-
+            0.2f, -0.1f, 0.0f,  1.0f, 1.0f, 0.0f,  // bottom right
+            0.1f, 0.1f, 0.0f,  1.0f, 0.0f, 1.0f,   // top 
+            0.0f, -0.1f, 0.0f,  0.0f, 1.0f, 1.0f  // bottom left
         };
 
         glGenVertexArrays(1, &VAO);
@@ -102,6 +105,8 @@ class EffectTwo : public SKEngio::Layer {
         // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
         glUseProgram(shaderProgram);
 
+        transformUniform = glGetUniformLocation(shaderProgram, "transform");
+
     }
 
     void OnDetach() {
@@ -119,7 +124,11 @@ class EffectTwo : public SKEngio::Layer {
     }
 
     void OnUpdate(float t) {
-
+        glUseProgram(shaderProgram);        
+        transform = glm::mat4(1.0f);
+        transform = glm::rotate(transform, (float)(t * 80.0f), glm::vec3(0.0f, 1.0f, 0.0f));        
+        transform = glm::translate(transform, glm::vec3(-0.1f, 0.0f, 0.0f));
+        glUniformMatrix4fv(transformUniform, 1, GL_FALSE, glm::value_ptr(transform));        
     }
 
     void OnDraw(float t) {
