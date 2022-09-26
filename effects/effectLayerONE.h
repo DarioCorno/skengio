@@ -6,11 +6,14 @@ class EffectOne : public SKEngio::Layer {
     public:
 
     unsigned int vertexArray, vertexBuffer, indexBuffer;
-    unsigned int vertexShader, fragmentShader, shaderProgram;
     float fxparam = 1.0f;
+    SKEngio::ShaderProgram* shaderProgram;
+    bool useLoader = true;
+    int vertexColorLocation = 0;
+
 
     void OnAttach() {
-        std::cout << "Layer attached, creating buffers " << this->GetId() << std::endl;
+        std::cout << "Layer " << this->GetId() << " attached. BEGIN creating buffers " << std::endl;
 
         glGenVertexArrays(1, &vertexArray);
         glBindVertexArray(vertexArray);
@@ -34,70 +37,26 @@ class EffectOne : public SKEngio::Layer {
         unsigned int indices[3] = { 0, 1, 2 };
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-        //create the vertex shader
-        //shader source
-        const char *vertexShaderSource = "#version 330 core\n"
-            "layout (location = 0) in vec3 aPos;\n"
-            "out vec4 vertexColor;\n"  //colro sent from vertex shader to fragment shader
-            "void main()\n"
-            "{\n"
-            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                "vertexColor = gl_Position;\n"
-            "}\0";        
+        std::cout << "BEGIN loading shaders." << std::endl;
 
-        //create a shader
-        vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        shaderProgram = new SKEngio::ShaderProgram();
+        shaderProgram->LoadShader("./effects/vShaderONE.txt", SKEngio::ShaderProgram::VERTEX);
+        shaderProgram->LoadShader("./effects/fShaderONE.txt", SKEngio::ShaderProgram::FRAGMENT);
+        shaderProgram->CreateProgram();
 
-        //set the shader source
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);        
-        glCompileShader(vertexShader);        
+        std::cout << "END loading shaders." << std::endl;
 
-        //check if shader was compiled correctly
-        int  success;
-        char infoLog[512];
-        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);        
-        if(!success)
-        {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }        
-
-        const char *fragmentShaderSource = "#version 330 core\n"
-            "out vec4 FragColor;\n"
-            "in vec4 vertexColor;"   //color received from vertex shader
-            "uniform vec4 ourColor;\n"  //variable that we will update form C code
-            "void main()\n"
-            "{\n"
-            "    FragColor = ourColor;\n"  //vertexColor; //vec4(1.0f, 0.5f, 0.2f, 1.0f);
-            "}\0;";
-        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-        glCompileShader(fragmentShader);      
-        if (!success)
-        {
-            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
-
-
-        //create the shaderProgram (vertex + fragment)
-        shaderProgram = glCreateProgram();          
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);        
-
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if(!success) {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-        }        
+        //retrieve the address of the shader variable "ourColor"
+        vertexColorLocation = glGetUniformLocation(shaderProgram->programID , "ourColor");
 
 
     }
 
     void OnDetach() {
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader); 
+        //glDeleteShader(vertexShader);
+        //glDeleteShader(fragmentShader); 
+
+        delete shaderProgram;
 
         glDeleteVertexArrays(1, &vertexArray);
 
@@ -115,30 +74,33 @@ class EffectOne : public SKEngio::Layer {
 
         ImGui::SliderFloat("float", &fxparam, 0.1f, 20.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 
+        ImGui::Text("ShaderProg ID %i", shaderProgram->programID);
+
         ImGui::End();                    
     }
 
     void OnUpdate(float t) {
 
-        glUseProgram(shaderProgram);        
+        //glUseProgram(shaderProgram);        
+
         float greenValue = sin(t * fxparam) / 2.0f + 0.5f;
-        //retrieve the address of the shader variable "ourColor"
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
+        //OpenGL 4.1 specs
+        //shaderProgram->Use();
+
         //set the value of shader variable ourColor
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        //OpenGL4.1 specs
+        //glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+        //OpenGL 4.5 Specs
+        glProgramUniform4f( shaderProgram->programID, vertexColorLocation, 0.0f, greenValue, 0.0f, 0.0f );
 
     }
 
     void OnDraw(float t) {
 
-        glUseProgram(shaderProgram);        
 
-        /* float timeValue = glfwGetTime();
-        float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        //retrieve the address of the shader variable "ourColor"
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        //set the value of shader variable ourColor
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); */
+        shaderProgram->Use();
 
         glBindVertexArray(vertexArray);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);

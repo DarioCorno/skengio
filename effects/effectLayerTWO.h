@@ -8,7 +8,7 @@ class EffectTwo : public SKEngio::Layer {
     unsigned int VBO, VAO;
     unsigned int vertexShader, fragmentShader, shaderProgram;
     glm::mat4 transform = glm::mat4(1.0f);
-    unsigned int transformUniform;
+    unsigned int transformUniformLocation;
 
     void OnAttach() {
         std::cout << "Layer attached, creating buffers " << this->GetId() << std::endl;
@@ -104,8 +104,9 @@ class EffectTwo : public SKEngio::Layer {
 
         // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
         glUseProgram(shaderProgram);
+        std::cout << "Layer TWO Program " << shaderProgram << std::endl;
 
-        transformUniform = glGetUniformLocation(shaderProgram, "transform");
+        transformUniformLocation = glGetUniformLocation(shaderProgram, "transform");
 
     }
 
@@ -124,14 +125,18 @@ class EffectTwo : public SKEngio::Layer {
     }
 
     void OnUpdate(float t) {
-        glUseProgram(shaderProgram);        
+        //OpenGL 4.1 specs (4.5 specs doesn't need to use the program before setting uniforms)
+        //glUseProgram(shaderProgram);        
         transform = glm::mat4(1.0f);
         transform = glm::rotate(transform, (float)(t * 80.0f), glm::vec3(0.0f, 1.0f, 0.0f));        
         transform = glm::translate(transform, glm::vec3(-0.1f, 0.0f, 0.0f));
-        glUniformMatrix4fv(transformUniform, 1, GL_FALSE, glm::value_ptr(transform));        
+        //glUniformMatrix4fv(transformUniformLocation, 1, GL_FALSE, glm::value_ptr(transform));        
+        glProgramUniformMatrix4fv(shaderProgram, transformUniformLocation, 1, GL_FALSE, glm::value_ptr(transform));
     }
 
     void OnDraw(float t) {
+        glDisable(GL_CULL_FACE);
+
         glUseProgram(shaderProgram);        
 
         glBindVertexArray(VAO);

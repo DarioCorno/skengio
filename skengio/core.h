@@ -27,4 +27,5 @@ using namespace std;
 #include "layer.h"
 #include "layerstack.h"
 #include "GUIManager.h"
+#include "./utils/shaderProgram.h"
 

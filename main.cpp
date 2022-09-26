@@ -23,11 +23,12 @@ int main(void)
     }
     SKEngio::LayerStack* ls = rend->GetLayerStack();
 
-    //add some triangle layers
+    //add a triangle layer  (example of using ImGUI to set variables and shaderProgram class)
     EffectOne* mylayerOne = new EffectOne();
     mylayerOne->SetId(0);
     ls->PushLayer( mylayerOne );
 
+    //add another cool triangle (example of defining a shader by code + transform matrix)
     EffectTwo* mylayerTwo = new EffectTwo();
     mylayerTwo->SetId(1);
     ls->PushLayer( mylayerTwo );
