@@ -19,13 +19,12 @@
 
 using namespace std;
 
-
 #include "application.h"
 #include "window.h"
 #include "renderer.h"
-//#include "GLSLProgram.h"
 #include "layer.h"
 #include "layerstack.h"
 #include "GUIManager.h"
 #include "./utils/shaderProgram.h"
+#include "./utils/textureLoader.h"
 

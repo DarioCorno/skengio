@@ -39,41 +39,41 @@ namespace SKEngio {
 
         void LoadShader(std::string strFileName, SHADERTYPE typeShader) {
 
-            GLuint hShader = 0;
+            GLuint handleShader = 0;
             GLint status;
 
             //Create shader object
             switch (typeShader)
             {
-                case VERTEX : { hShader = glCreateShader(GL_VERTEX_SHADER); break; }
-                case FRAGMENT : { hShader = glCreateShader(GL_FRAGMENT_SHADER); break; }
-                case GEOMETRY : { hShader = glCreateShader(GL_GEOMETRY_SHADER); break; }
-                case TESSELATION : { hShader = 0; std::cerr<<" TESSELLATION Shaders not implemented yet." << std::endl; }
+                case VERTEX : { handleShader = glCreateShader(GL_VERTEX_SHADER); break; }
+                case FRAGMENT : { handleShader = glCreateShader(GL_FRAGMENT_SHADER); break; }
+                case GEOMETRY : { handleShader = glCreateShader(GL_GEOMETRY_SHADER); break; }
+                case TESSELATION : { handleShader = 0; std::cerr<<" TESSELLATION Shaders not implemented yet." << std::endl; }
             }
 
-            if(LoadShaderFile(strFileName, hShader))
+            if(LoadShaderFile(strFileName, handleShader))
             {
                 //now compile the shader
-                glCompileShader(hShader);
-                glGetShaderiv(hShader, GL_COMPILE_STATUS, &status);
+                glCompileShader(handleShader);
+                glGetShaderiv(handleShader, GL_COMPILE_STATUS, &status);
                 if(status == GL_FALSE)
                 {
                     char infoLog[1024];
-                    glGetShaderInfoLog(hShader, 1024, NULL, infoLog);
+                    glGetShaderInfoLog(handleShader, 1024, NULL, infoLog);
                     std::cout << "The shader at " << strFileName.c_str() << " failed to compile with the following errors:" << std::endl 
                     << infoLog << endl;
-                    glDeleteShader(hShader);
+                    glDeleteShader(handleShader);
                 }
                 else	//here, everything is OK
                 {
                     std::cout << "The shader at " << strFileName.c_str() << " was compiled without errors." << std::endl;
-                    shaders[typeShader] = hShader;
+                    shaders[typeShader] = handleShader;
                 }
             }
             else
             {
                 std::cerr<< "ERROR! Something wrong loading the shader located in " << strFileName.c_str() << "." << std::endl;
-                glDeleteShader(hShader);
+                glDeleteShader(handleShader);
             }
         }
 

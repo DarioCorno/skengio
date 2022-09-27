@@ -2,6 +2,7 @@
 #include "skengio/core.h"
 #include "effects/effectLayerONE.h"
 #include "effects/effectLayerTWO.h"
+#include "effects/effectLayerTHREE.h"
 
 static void errorCB(int error, const char* description) {
     std::cout << "ERROR: " << description << std::endl;
@@ -32,6 +33,12 @@ int main(void)
     EffectTwo* mylayerTwo = new EffectTwo();
     mylayerTwo->SetId(1);
     ls->PushLayer( mylayerTwo );
+
+    //add another cool triangle (example of loading a shader + texture loading)
+    EffectThree* mylayerThree = new EffectThree();
+    mylayerThree->SetId(1);
+    ls->PushLayer( mylayerThree );
+
 
     app->Run();
 

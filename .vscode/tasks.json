@@ -11,6 +11,7 @@
                 "imgui/imgui_widgets.cpp",
                 "imgui/imgui_impl_opengl3.cpp",
                 "imgui/imgui_impl_glfw.cpp",
+                "skengio/utils/textureLoader.cpp",
                 "skengio/GUIManager.cpp",
                 "skengio/event.cpp",
                 "skengio/layer.cpp",
