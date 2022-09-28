@@ -8,6 +8,9 @@
 
 #include "core.h"
 
+#include "scene.h"
+#include "scenestack.h"
+
 //#include "layerstack.h"
 //#include "event.h"
 //#include "GUIManager.h"
@@ -34,8 +37,7 @@ namespace SKEngio {
 
             LayerStack* GetLayerStack();
 
-            void addCamera(Camera* newCamera);
-            void setActiveCamera(unsigned int camID);
+            void AddScene(Scene* newScene);
 
         private:
 
@@ -50,13 +52,11 @@ namespace SKEngio {
 
         	glm::mat4x4 mProjMatrix, mModelViewMatrix;
 
-            LayerStack* layerStack;
-
             //float fovAngle = 45.0f;
             //float nearPlane = 0.01f;
             //float farPlane = 100.0f;
 
-            std::vector<Camera*> cameraList;
-            Camera* activeCamera;
+            SceneStack* sceneStack;
+
     };
 }

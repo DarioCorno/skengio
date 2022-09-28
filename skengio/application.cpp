@@ -46,10 +46,8 @@ namespace SKEngio {
 
         glfwSetErrorCallback( errorCB );
 
-        std::cout << "GLFW Initializing" << std::endl;
-
         if (!glfwInit()) {
-            std::cout << "ERROR GLFW Cannot initialize GLFW." << std::endl;
+            SK_LOG("ERROR GLFW Cannot initialize GLFW.");
             exit(EXIT_FAILURE);
         }
 
@@ -143,6 +141,8 @@ namespace SKEngio {
     }
 
     void Application::Run() {
+
+        SK_LOG("Starting rendering loop.");
 
         glfwMakeContextCurrent(winMan->window);
 

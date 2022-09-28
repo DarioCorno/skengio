@@ -13,8 +13,8 @@ namespace SKEngio {
         //keeps a reference to winManager
         this->winMan = winMan;
         
-        //initializes the layers manager
-        layerStack = new LayerStack();
+
+        sceneStack = new SceneStack();
 
         //initializes the opengl stuff
         this->InitGL();
@@ -24,28 +24,18 @@ namespace SKEngio {
     }
 
     Renderer::~Renderer() {
-        layerStack->Destroy();
+        //TODO: destroy all scenes
+        sceneStack->Destroy();
 
         guiMan->Destroy();
     }
 
     void Renderer::HandleResize(int width, int height) {
         
+        for(Scene* scene : sceneStack->scenes) {
+            scene->handleResize(width, height);
+        }
 
-        activeCamera->handleResize(width, height);
-
-        /* 
-		if(height == 0) height = 1;
-		float ratio = width / float(height);
-		glViewport(0, 0, width, height);
-
-		mProjMatrix = glm::perspective(fovAngle, ratio, nearPlane, farPlane);    
-		
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        //setPerspective(fovAngle, ratio, nearPlane, farPlane);
-        glMatrixMode(GL_MODELVIEW);            
-        */
     }
 
     void Renderer::OnEvent(Event* e) {
@@ -55,8 +45,10 @@ namespace SKEngio {
             HandleResize(e->width, e->height);
         }
 
-        //pass the event to layerStack
-        layerStack->OnEvent(e);
+        //pass the event each scene
+        for(Scene* scene : sceneStack->scenes) {
+            scene->OnEvent(e);
+        }
 
         //forward to GUI
         guiMan->OnEvent(e);
@@ -82,14 +74,14 @@ namespace SKEngio {
 		glewExperimental = GL_TRUE;
 		if(glewInit() != GLEW_OK) 
 		{
-			std::cout << "GLEW Error - glew Init failed :(" << std::endl;
+			SK_LOG("GLEW Error - glew Init failed :(");
 			return false;
 		}
 
-		std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-        std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-        std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-        std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;     
+		SK_LOG("OpenGL version: " << glGetString(GL_VERSION) );
+        SK_LOG("GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) );
+        SK_LOG("Vendor: " << glGetString(GL_VENDOR) );
+        SK_LOG("Renderer: " << glGetString(GL_RENDERER) );     
 
         return true;   
     }
@@ -106,16 +98,14 @@ namespace SKEngio {
         //begin the gui rendering
         guiMan->DrawBegin();
         guiMan->Draw();
-        for(Layer* layer : layerStack->layers) {
-            layer->OnDrawGUI(timeValue);
+        for(Scene* scene : sceneStack->scenes) {            
+            scene->OnDrawGUI(timeValue);
         }
         guiMan->DrawEnd(winMan->window);
 
-        //update and render all layers
-        for(Layer* layer : layerStack->layers) {
-            layer->setCamera( activeCamera );
-            layer->OnUpdate(timeValue);
-            layer->OnDraw(0.0f);
+        //update and render all scenes
+        for(Scene* scene : sceneStack->scenes) {
+            scene->UpdateAndDraw(timeValue);
         }
 
         //end the gui rendering
@@ -125,20 +115,8 @@ namespace SKEngio {
         glfwSwapBuffers(winMan->window);
     }
 
-    LayerStack* Renderer::GetLayerStack() {
-        return layerStack;
+    void Renderer::AddScene(Scene* newScene) {
+        sceneStack->AddScene(newScene);
     }
 
-    void Renderer::addCamera(Camera* newCamera) {
-        cameraList.push_back(newCamera);
-    }
-
-    void Renderer::setActiveCamera(unsigned int camID) {
-        for(Camera* cam : cameraList) {
-            if (cam->id == camID) {
-                activeCamera = cam;
-                break;
-            }
-        }   
-    }
 }

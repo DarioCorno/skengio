@@ -3,6 +3,8 @@
 
 #include "../core.h"
 
+#include "../logger.h"
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -33,7 +35,7 @@ namespace SKEngio {
         }
 
         ~ShaderProgram() {
-            std::cout << "Unloading Shader Program (ID: " << programID << ")" <<  std::endl;
+            SK_LOG("Unloading Shader Program (ID: " << programID << ")" );
             glDeleteProgram(programID);                   
         }
 
@@ -48,7 +50,7 @@ namespace SKEngio {
                 case VERTEX : { handleShader = glCreateShader(GL_VERTEX_SHADER); break; }
                 case FRAGMENT : { handleShader = glCreateShader(GL_FRAGMENT_SHADER); break; }
                 case GEOMETRY : { handleShader = glCreateShader(GL_GEOMETRY_SHADER); break; }
-                case TESSELATION : { handleShader = 0; std::cerr<<" TESSELLATION Shaders not implemented yet." << std::endl; }
+                case TESSELATION : { handleShader = 0; SK_LOG("WARNING!" << " TESSELLATION Shaders not implemented yet."); }
             }
 
             if(LoadShaderFile(strFileName, handleShader))
@@ -60,19 +62,19 @@ namespace SKEngio {
                 {
                     char infoLog[1024];
                     glGetShaderInfoLog(handleShader, 1024, NULL, infoLog);
-                    std::cout << "The shader at " << strFileName.c_str() << " failed to compile with the following errors:" << std::endl 
-                    << infoLog << endl;
+                    SK_LOG("ERROR! The shader at " << strFileName.c_str() << " failed to compile with the following errors:"); 
+                    SK_LOG(infoLog);
                     glDeleteShader(handleShader);
                 }
                 else	//here, everything is OK
                 {
-                    std::cout << "The shader at " << strFileName.c_str() << " was compiled without errors." << std::endl;
+                    SK_LOG("The shader at " << strFileName.c_str() << " was compiled without errors.");
                     shaders[typeShader] = handleShader;
                 }
             }
             else
             {
-                std::cerr<< "ERROR! Something wrong loading the shader located in " << strFileName.c_str() << "." << std::endl;
+                SK_LOG("ERROR! Something wrong loading the shader located in " << strFileName.c_str() << ".");
                 glDeleteShader(handleShader);
             }
         }
@@ -82,10 +84,10 @@ namespace SKEngio {
             std::ifstream shaderSource(strFilename.c_str());
             if (!shaderSource.is_open())
             {
-                std::cerr<< " File not found " << strFilename.c_str()<< endl;
+                SK_LOG( "ERROR! File not found " << strFilename.c_str() );
                 char tmp[256];
                 getcwd(tmp, 256);
-                std::cout << "Current working directory: " << tmp << std::endl;                
+                SK_LOG("Current working directory: " << tmp);                
                 return false;
             }
             // now read in the data
@@ -142,7 +144,6 @@ namespace SKEngio {
 
             GLint infologLength = 0;
             glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infologLength);
-            //std::cerr<<"Link Log Length "<<infologLength<<"\n";
 
             if(infologLength > 1)
             {
@@ -151,16 +152,17 @@ namespace SKEngio {
 
                 glGetProgramInfoLog(programID, infologLength, &charsWritten, infoLog);
 
-                std::cerr << infoLog << std::endl;
+                std::cout << infoLog << std::endl;
+
                 delete [] infoLog;
                 glGetProgramiv(programID, GL_LINK_STATUS, &infologLength);
                 if(infologLength == GL_FALSE)
                 {
-                    std::cerr << "Program link failed, exiting." << std::endl;
+                    SK_LOG("ERROR! Program " << programID << "link failed, exiting.");
                     exit(EXIT_FAILURE);
                 }
             } else {
-                std::cout << "Shader program linked correctly " << programID << std::endl;
+                SK_LOG("Shader program linked correctly " << programID);
             }
         }
     };

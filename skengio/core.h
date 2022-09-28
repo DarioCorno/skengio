@@ -21,6 +21,7 @@ using namespace std;
 
 #include "event.h"
 #include "window.h"
+#include "scene.h"
 #include "layer.h"
 #include "camera.h"
 #include "layerstack.h"
