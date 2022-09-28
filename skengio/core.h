@@ -19,12 +19,14 @@
 
 using namespace std;
 
-#include "application.h"
+#include "event.h"
 #include "window.h"
-#include "renderer.h"
 #include "layer.h"
+#include "camera.h"
 #include "layerstack.h"
 #include "GUIManager.h"
+#include "renderer.h"
 #include "./utils/shaderProgram.h"
 #include "./utils/textureLoader.h"
+#include "application.h"
 

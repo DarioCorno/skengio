@@ -11,6 +11,10 @@ class EffectOne : public SKEngio::Layer {
     bool useLoader = true;
     int vertexColorLocation = 0;
 
+    int projMatrixLocation = 0;
+    int viewMatrixLocation = 0;
+    int modelMatrixLocation = 0;
+
 
     void OnAttach() {
         std::cout << "Layer " << this->GetId() << " attached. BEGIN creating buffers " << std::endl;
@@ -21,10 +25,11 @@ class EffectOne : public SKEngio::Layer {
         glGenBuffers(1, &vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
-        float vertices[3 * 3] = {
-            0.0f, -0.25f, 0.5f,         //bottom right
-            -0.25f, 0.25f, 0.5f,         //top
-            -0.5f,  -0.25f, 0.5f       //bottom left
+        float vertices[] = {
+            // positions        
+            0.5f,  -0.5f, 0.0f,  
+            -0.5f, -0.5f, 0.0f,  
+            0.0f, 0.5f, 0.0f, 
         };
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -47,8 +52,11 @@ class EffectOne : public SKEngio::Layer {
         std::cout << "END loading shaders." << std::endl;
 
         //retrieve the address of the shader variable "ourColor"
-        vertexColorLocation = glGetUniformLocation(shaderProgram->programID , "ourColor");
+        vertexColorLocation = glGetUniformLocation(shaderProgram->programID , "vertexColor");
 
+        projMatrixLocation = glGetUniformLocation(shaderProgram->programID, "projMatrix" );
+        viewMatrixLocation = glGetUniformLocation(shaderProgram->programID, "viewMatrix" );
+        modelMatrixLocation = glGetUniformLocation(shaderProgram->programID, "modelMatrix" );
 
     }
 
@@ -74,7 +82,9 @@ class EffectOne : public SKEngio::Layer {
 
         ImGui::SliderFloat("float", &fxparam, 0.1f, 20.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 
-        ImGui::Text("ShaderProg ID %i", shaderProgram->programID);
+        ImGui::Text("ShaderProg ID: %i", shaderProgram->programID);
+
+        ImGui::Text("Camera     ID: 1");
 
         ImGui::End();                    
     }
@@ -89,12 +99,25 @@ class EffectOne : public SKEngio::Layer {
         //shaderProgram->Use();
 
         //set the value of shader variable ourColor
-        //OpenGL4.1 specs
+        //OpenGL4.1 specs (needs to activate program)
         //glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
-        //OpenGL 4.5 Specs
+        //OpenGL 4.5 Specs (doesn't need to activate program, just pass the program id)
         glProgramUniform4f( shaderProgram->programID, vertexColorLocation, 0.0f, greenValue, 0.0f, 0.0f );
 
+        //model matrix, identity
+        glm::mat4 model = glm::mat4(1.0f); 
+        model = glm::rotate( model, (t * 10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        //move camera position and target, camera was set from renderer activeCamera
+        activeCamera->setPosition( sin(t), 0.0f, -4.0f );
+        activeCamera->setTarget( sin(t), 0.0f, 0.0f );
+
+        //set the shader uniform matrices
+        glProgramUniformMatrix4fv( shaderProgram->programID, projMatrixLocation, 1, GL_FALSE, glm::value_ptr( activeCamera->getProjMatrix() ) );
+        glm::mat4 viewMat = activeCamera->getViewMatrix();
+        glProgramUniformMatrix4fv( shaderProgram->programID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat) );
+        glProgramUniformMatrix4fv( shaderProgram->programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model) );
     }
 
     void OnDraw(float t) {

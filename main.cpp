@@ -22,9 +22,16 @@ int main(void)
     if(!rend) {
         std::cout << "Cannot retrieve renderer" << std::endl;
     }
+
+    //camera1, willbe used by layerONE
+    unsigned int camID = 1;
+    SKEngio::Camera* cam = new SKEngio::Camera(winSpecs.width, winSpecs.height, 45.0f, camID);
+    rend->addCamera(cam);
+    rend->setActiveCamera(camID);
+
     SKEngio::LayerStack* ls = rend->GetLayerStack();
 
-    //add a triangle layer  (example of using ImGUI to set variables and shaderProgram class)
+    //add a triangle layer  (example of using ImGUI to set variables, shaderProgram class and renderer activeCamera)
     EffectOne* mylayerOne = new EffectOne();
     mylayerOne->SetId(0);
     ls->PushLayer( mylayerOne );
@@ -35,9 +42,9 @@ int main(void)
     ls->PushLayer( mylayerTwo );
 
     //add another cool triangle (example of loading a shader + texture loading)
-    EffectThree* mylayerThree = new EffectThree();
-    mylayerThree->SetId(1);
-    ls->PushLayer( mylayerThree );
+    //EffectThree* mylayerThree = new EffectThree();
+    //mylayerThree->SetId(1);
+    //ls->PushLayer( mylayerThree );
 
 
     app->Run();

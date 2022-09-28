@@ -1,5 +1,7 @@
 #include "layer.h"
 
+#include "defines.h"
+
 namespace SKEngio {
 
     Layer::Layer() {
@@ -41,4 +43,5 @@ namespace SKEngio {
     unsigned int Layer::GetId() {
         return id;
     }
+
 }

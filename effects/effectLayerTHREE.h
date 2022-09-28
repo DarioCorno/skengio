@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../skengio/core.h"
+#include "../skengio/utils/geometries/sphere.h"
 
 class EffectThree : public SKEngio::Layer {
     public:
@@ -10,9 +11,12 @@ class EffectThree : public SKEngio::Layer {
     SKEngio::ShaderProgram* shaderProgram;
     SKEngio::TextureLoader* texture;
 
+    SKEngio::Sphere* sphere;
+
     void OnAttach() {
         std::cout << "Layer " << this->GetId() << " attached. BEGIN creating buffers " << std::endl;
 
+        /*
         glGenVertexArrays(1, &vertexArray);
         glBindVertexArray(vertexArray);
 
@@ -54,6 +58,20 @@ class EffectThree : public SKEngio::Layer {
         // texture coord attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
+        */
+
+        sphere = new SKEngio::Sphere(1.0f, 12, 8, true);
+        GLuint vboID;
+        GLuint iboID;
+        glGenBuffers(1, &vboID);
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, sphere->getInterleavedVertexSize(), sphere->getInterleavedVertices(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glGenBuffers(1, &iboID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphere->getIndexSize(), sphere->getIndices(), GL_STATIC_DRAW);        
+
+
 
         std::cout << "BEGIN loading shaders." << std::endl;
 
@@ -75,6 +93,7 @@ class EffectThree : public SKEngio::Layer {
 
         delete shaderProgram;
         delete texture;
+        delete sphere;
 
         glDeleteVertexArrays(1, &vertexArray);
 
@@ -94,8 +113,10 @@ class EffectThree : public SKEngio::Layer {
         texture->bind();
         shaderProgram->Use();
 
-        glBindVertexArray(vertexArray);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        sphere->draw();
+
+        //glBindVertexArray(vertexArray);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
 
     

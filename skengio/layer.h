@@ -1,10 +1,13 @@
 #pragma once
 
 #include "event.h"
+#include "camera.h"
 
 namespace SKEngio {
     class Layer {
         public:
+        
+        Camera* activeCamera;
         
         Layer();
 
@@ -21,10 +24,12 @@ namespace SKEngio {
         virtual void OnDrawGUI(float time);
         virtual void OnEvent(Event* e);
 
+        void setCamera(Camera* newCam) { activeCamera = newCam; };
 		//virtual void OnEvent(Event& event) {}        
 
         private:
 
         unsigned int id;
+
     };
 }

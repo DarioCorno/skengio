@@ -3,10 +3,9 @@
 #include <GLFW/glfw3.h>
 
 #include "core.h"
-#include "renderer.h"
-#include "GUIManager.h"
 
 #include <vector>
+#include <algorithm>
 
 namespace SKEngio {
 
@@ -30,31 +29,23 @@ namespace SKEngio {
         guiMan->Destroy();
     }
 
-    void Renderer::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
-            GLdouble xmin, xmax, ymin, ymax;
-
-            ymax = zNear * tan( fovY * M_PI / 360.0 );
-            ymin = -ymax;
-            xmin = ymin * 1.0f; //aspect;
-            xmax = ymax * 1.0f; //aspect;
-
-            std::cout << xmin << " - " << xmax << " - " << ymin << " - " << ymax << std::endl;
-            glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
-
-    }
-
     void Renderer::HandleResize(int width, int height) {
         
+
+        activeCamera->handleResize(width, height);
+
+        /* 
 		if(height == 0) height = 1;
 		float ratio = width / float(height);
 		glViewport(0, 0, width, height);
-        //this will be passed to shaders, we aren't using shaders right now
+
 		mProjMatrix = glm::perspective(fovAngle, ratio, nearPlane, farPlane);    
 		
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         //setPerspective(fovAngle, ratio, nearPlane, farPlane);
         glMatrixMode(GL_MODELVIEW);            
+        */
     }
 
     void Renderer::OnEvent(Event* e) {
@@ -86,7 +77,7 @@ namespace SKEngio {
         glfwSwapInterval(1);
 
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
 
 		glewExperimental = GL_TRUE;
 		if(glewInit() != GLEW_OK) 
@@ -122,6 +113,7 @@ namespace SKEngio {
 
         //update and render all layers
         for(Layer* layer : layerStack->layers) {
+            layer->setCamera( activeCamera );
             layer->OnUpdate(timeValue);
             layer->OnDraw(0.0f);
         }
@@ -135,5 +127,18 @@ namespace SKEngio {
 
     LayerStack* Renderer::GetLayerStack() {
         return layerStack;
+    }
+
+    void Renderer::addCamera(Camera* newCamera) {
+        cameraList.push_back(newCamera);
+    }
+
+    void Renderer::setActiveCamera(unsigned int camID) {
+        for(Camera* cam : cameraList) {
+            if (cam->id == camID) {
+                activeCamera = cam;
+                break;
+            }
+        }   
     }
 }

@@ -1,8 +1,8 @@
 #version 330 core
 out vec4 FragColor;
-in vec4 vertexColor;   //color received from vertex shader
-uniform vec4 ourColor;  //variable that we will update form C code
+uniform vec4 vertexColor;  //variable that we will update form C code
+
 void main()
 {
-    FragColor = ourColor;  //vertexColor
+    FragColor = vertexColor;  
 }

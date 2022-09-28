@@ -5,9 +5,11 @@
 
 using namespace std;
 
-#include "window.h"
-#include "application.h"
-#include "renderer.h"
+#include "core.h"
+
+//#include "window.h"
+//#include "application.h"
+//#include "renderer.h"
 
 namespace SKEngio {
 

@@ -1,14 +1,17 @@
 #pragma once
 
-#include "window.h"
+#include <vector>
 
 #include "../glm/glm.hpp"
 #include "../glm/gtc/matrix_transform.hpp"
 #include "../glm/gtc/type_ptr.hpp"
 
-#include "layerstack.h"
-#include "event.h"
-#include "GUIManager.h"
+#include "core.h"
+
+//#include "layerstack.h"
+//#include "event.h"
+//#include "GUIManager.h"
+//#include "camera.h"
 
 namespace SKEngio {
 
@@ -31,6 +34,9 @@ namespace SKEngio {
 
             LayerStack* GetLayerStack();
 
+            void addCamera(Camera* newCamera);
+            void setActiveCamera(unsigned int camID);
+
         private:
 
             void HandleResize(int width, int height);
@@ -46,9 +52,11 @@ namespace SKEngio {
 
             LayerStack* layerStack;
 
-            float fovAngle = 45.0f;
-            float nearPlane = 0.01f;
-            float farPlane = 100.0f;
+            //float fovAngle = 45.0f;
+            //float nearPlane = 0.01f;
+            //float farPlane = 100.0f;
 
+            std::vector<Camera*> cameraList;
+            Camera* activeCamera;
     };
 }
