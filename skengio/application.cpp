@@ -71,6 +71,12 @@ namespace SKEngio {
         std::cout << "Destroying Application" << std::endl;
         delete renderer;
         delete winMan;
+
+        std::cout << "-- LOG RECAP --" << std::endl;
+        Logger* log = SKEngio::Logger::getInstance();
+        for(std::string str : log->buffer) {
+            std::cout << str << std::endl;
+        }        
     }
 
     void Application::HandleKeyboardEvent(int key, int scancode, int action, int mods) {
@@ -151,7 +157,7 @@ namespace SKEngio {
             this->renderer->Draw();
 
             glfwPollEvents();	//or glfwWaitEvents()
-        }        
+        }                
     }
 
 

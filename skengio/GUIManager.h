@@ -6,6 +6,8 @@
 #include "../imgui/imgui_impl_opengl3.h"
 
 #include "event.h"
+#include "defines.h"
+#include "logger.h"
 
 namespace SKEngio {
 
@@ -28,6 +30,7 @@ namespace SKEngio {
         void OnEvent(Event* e);
 
         private:
+        int winWidth, winHeight;
         const char* glsl_version = "#version 130";
     };
 }

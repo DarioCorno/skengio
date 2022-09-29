@@ -19,7 +19,7 @@ namespace SKEngio {
             exit(EXIT_FAILURE);
         }
 
-        std::cout << "GLFW Initializing window (" << this->width << "x" << this->height << ")" << std::endl;
+        SK_LOG("GLFW Initializing window (" << this->width << "x" << this->height << ")");
 
     }
 
