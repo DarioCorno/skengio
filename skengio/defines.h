@@ -2,9 +2,17 @@
 
 #define SKENGIO_DEFINES
 
+//UNIFORM NAMES DEFINES
 #define PROJ_MATRIX_UNIFORM_NAME "projMatrix"
 #define VIEW_MATRIX_UNIFORM_NAME "viewMatrix"
 #define MODEL_MATRIX_UNIFORM_NAME "modelMatrix"
+
+//LIGHT UNIFORM DEFINES
+
+#define LIGHT_POSITION_UNIFORM_NAME "lightPosition"
+#define LIGHT_AMBIENT_UNIFORM_NAME "lightAmbient"
+#define LIGHT_DIFFUSE_UNIFORM_NAME "lightDiffuse"
+#define LIGHT_SPECULAR_UNIFORM_NAME "lightSpecular"
 
 #define SCENE_DEFAULT_START 0.0f
 #define SCENE_DEFAULT_END 60.0f

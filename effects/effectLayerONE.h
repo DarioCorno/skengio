@@ -51,12 +51,12 @@ class EffectOne : public SKEngio::Layer {
 
         std::cout << "END loading shaders." << std::endl;
 
-        //retrieve the address of the shader variable "ourColor"
+        //retrieve the address of the shader uniforms
         vertexColorLocation = glGetUniformLocation(shaderProgram->programID , "vertexColor");
 
-        projMatrixLocation = glGetUniformLocation(shaderProgram->programID, "projMatrix" );
-        viewMatrixLocation = glGetUniformLocation(shaderProgram->programID, "viewMatrix" );
-        modelMatrixLocation = glGetUniformLocation(shaderProgram->programID, "modelMatrix" );
+        projMatrixLocation = glGetUniformLocation(shaderProgram->programID, PROJ_MATRIX_UNIFORM_NAME );
+        viewMatrixLocation = glGetUniformLocation(shaderProgram->programID, VIEW_MATRIX_UNIFORM_NAME );
+        modelMatrixLocation = glGetUniformLocation(shaderProgram->programID, MODEL_MATRIX_UNIFORM_NAME );
 
     }
 

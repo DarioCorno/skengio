@@ -43,8 +43,7 @@ namespace SKEngio {
 
         std::vector<Camera*> cameraList;
         Camera* activeCamera;
-
-
+        
 
     };
 

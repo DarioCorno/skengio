@@ -16,6 +16,7 @@
                 "skengio/utils/geometries/sphere.cpp",
                 "skengio/GUIManager.cpp",
                 "skengio/event.cpp",
+                "skengio/light.cpp",
                 "skengio/scene.cpp",
                 "skengio/scenestack.cpp",
                 "skengio/layer.cpp",

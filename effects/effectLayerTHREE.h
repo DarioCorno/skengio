@@ -13,52 +13,20 @@ class EffectThree : public SKEngio::Layer {
 
     SKEngio::Sphere* sphere;
 
+    SKEngio::Light* light;
+
+    //light uniforms location
+    int uniformPositionLocation;
+    int uniformAmbientLocation;
+    int uniformDiffuseLocation;
+    int uniformSpecularLocation;
+
+    int projMatrixLocation = 0;
+    int viewMatrixLocation = 0;
+    int modelMatrixLocation = 0;    
+
     void OnAttach() {
         std::cout << "Layer " << this->GetId() << " attached. BEGIN creating buffers " << std::endl;
-
-        /*
-        glGenVertexArrays(1, &vertexArray);
-        glBindVertexArray(vertexArray);
-
-        glGenBuffers(1, &vertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
-        float vertices[] = {
-            // positions            // colors                 // texture coords
-            0.3f,  1.0f, 0.0f,      1.0f, 1.0f, 1.0f,       1.0f, 0.0f,   // top right
-            0.3f, 0.5f, 0.0f,       1.0f, 1.0f, 1.0f,       1.0f, 1.0f,   // bottom right
-            -0.3f, 0.5f, 0.0f,      1.0f, 1.0f, 1.0f,       0.0f, 1.0f,   // bottom left
-            -0.3f,  1.0f, 0.0f,     1.0f, 1.0f, 1.0f,       0.0f, 0.0f    // top left 
-        };
-
-        unsigned int indices[] = {  
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };
-
-        unsigned int VBO, EBO;
-        glGenVertexArrays(1, &vertexArray);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
-
-        glBindVertexArray(vertexArray);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-        // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-        // color attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-        // texture coord attribute
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        */
 
         sphere = new SKEngio::Sphere(1.0f, 12, 8, true);
         GLuint vboID;
@@ -71,7 +39,7 @@ class EffectThree : public SKEngio::Layer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphere->getIndexSize(), sphere->getIndices(), GL_STATIC_DRAW);        
 
-
+        light = new SKEngio::Light();
 
         std::cout << "BEGIN loading shaders." << std::endl;
 
@@ -84,6 +52,15 @@ class EffectThree : public SKEngio::Layer {
 
         texture = new SKEngio::TextureLoader();
         texture->Load("./resources/textures/amiga.jpg", false);
+
+        uniformPositionLocation  = glGetUniformLocation(shaderProgram->programID , LIGHT_POSITION_UNIFORM_NAME);
+        uniformAmbientLocation   = glGetUniformLocation(shaderProgram->programID , LIGHT_AMBIENT_UNIFORM_NAME);
+        uniformDiffuseLocation   = glGetUniformLocation(shaderProgram->programID , LIGHT_DIFFUSE_UNIFORM_NAME);
+        uniformSpecularLocation  = glGetUniformLocation(shaderProgram->programID , LIGHT_SPECULAR_UNIFORM_NAME);  
+
+        projMatrixLocation = glGetUniformLocation(shaderProgram->programID, PROJ_MATRIX_UNIFORM_NAME );
+        viewMatrixLocation = glGetUniformLocation(shaderProgram->programID, VIEW_MATRIX_UNIFORM_NAME );
+        modelMatrixLocation = glGetUniformLocation(shaderProgram->programID, MODEL_MATRIX_UNIFORM_NAME );            
 
     }
 
@@ -105,15 +82,35 @@ class EffectThree : public SKEngio::Layer {
     }
 
     void OnUpdate(float t) {
+        glProgramUniform4fv(shaderProgram->programID, uniformPositionLocation, 1, glm::value_ptr( light->lightPosition ) );
+        glProgramUniform4fv(shaderProgram->programID, uniformAmbientLocation, 1, glm::value_ptr( light->lightAmbientColor ) );
+        glProgramUniform4fv(shaderProgram->programID, uniformDiffuseLocation, 1, glm::value_ptr( light->lightDiffuseColor ) );
+        glProgramUniform4fv(shaderProgram->programID, uniformSpecularLocation, 1, glm::value_ptr( light->lightSpecularColor ) );
 
+
+        //model matrix, identity
+        glm::mat4 model = glm::mat4(1.0f); 
+        model = glm::rotate( model, (t * 10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        //move camera position and target, camera was set from renderer activeCamera
+        activeCamera->setPosition( sin(t), 0.0f, -4.0f );
+        activeCamera->setTarget( sin(t), 0.0f, 0.0f );
+
+        //set the shader uniform matrices
+        glProgramUniformMatrix4fv( shaderProgram->programID, projMatrixLocation, 1, GL_FALSE, glm::value_ptr( activeCamera->getProjMatrix() ) );
+        glm::mat4 viewMat = activeCamera->getViewMatrix();
+        glProgramUniformMatrix4fv( shaderProgram->programID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat) );
+        glProgramUniformMatrix4fv( shaderProgram->programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model) );
+        sphere->draw();
     }
 
     void OnDraw(float t) {
 
+        shaderProgram->Use();
+
         texture->bind();
         shaderProgram->Use();
 
-        sphere->draw();
+
 
         //glBindVertexArray(vertexArray);
         //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

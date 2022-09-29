@@ -1,20 +1,22 @@
 // GLSL version
 #version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoord;
+
 // uniforms
-uniform mat4 matrixModelView;
-uniform mat4 matrixNormal;
-uniform mat4 matrixModelViewProjection;
-// vertex attribs (input)
-attribute vec3 vertexPosition;
-attribute vec3 vertexNormal;
-attribute vec2 vertexTexCoord;
+uniform mat4 viewMatrix; //matrixModelView;
+uniform mat4 modelMatrix;
+uniform mat4 projMatrix;
+
 // varyings (output)
 varying vec3 esVertex, esNormal;
 varying vec2 texCoord0;
+
 void main()
 {
-    esVertex = vec3(matrixModelView * vec4(vertexPosition, 1.0));
-    esNormal = vec3(matrixNormal * vec4(vertexNormal, 1.0));
-    texCoord0 = vertexTexCoord;
-    gl_Position = matrixModelViewProjection * vec4(vertexPosition, 1.0);
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
+    esVertex = gl_Position;
+    esNormal = aNormal;
+    texCoord0 = aTexCoord;
 }
