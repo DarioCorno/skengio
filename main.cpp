@@ -2,7 +2,7 @@
 #include "skengio/core.h"
 #include "effects/effectLayerONE.h"
 #include "effects/effectLayerTWO.h"
-#include "effects/effectLayerTHREE.h"
+//#include "effects/effectLayerTHREE.h"
 
 static void errorCB(int error, const char* description) {
     std::cout << "ERROR: " << description << std::endl;

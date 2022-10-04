@@ -21,7 +21,9 @@ using namespace std;
 
 #include "event.h"
 #include "window.h"
+#include "./utils/geometries/mesh.h"
 #include "light.h"
+#include "material.h"
 #include "scene.h"
 #include "layer.h"
 #include "camera.h"

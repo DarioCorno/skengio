@@ -9,6 +9,7 @@ class EffectTwo : public SKEngio::Layer {
     unsigned int vertexShader, fragmentShader, shaderProgram;
     glm::mat4 transform = glm::mat4(1.0f);
     unsigned int transformUniformLocation;
+    SKEngio::Mesh* mesh;
 
     void OnAttach() {
         std::cout << "Layer attached, creating buffers " << this->GetId() << std::endl;
@@ -16,22 +17,23 @@ class EffectTwo : public SKEngio::Layer {
 
         const char *vertexShaderSource ="#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
-            "layout (location = 1) in vec3 aColor;\n"
-            "out vec3 ourColor;\n"
+            "layout (location = 1) in vec4 aColor;\n"
+            "layout (location = 2) in vec3 aNormal;\n"
+            "layout (location = 3) in vec2 aText;\n"
+            "out vec4 ourColor;\n"
             "uniform mat4 transform;\n"
             "void main()\n"
             "{\n"
             "   gl_Position = transform * vec4(aPos, 1.0f);\n"
-            "   //gl_Position = vec4(aPos, 1.0);\n"
             "   ourColor = aColor;\n"
             "}\0";
 
         const char *fragmentShaderSource = "#version 330 core\n"
             "out vec4 FragColor;\n"
-            "in vec3 ourColor;\n"
+            "in vec4 ourColor;\n"
             "void main()\n"
             "{\n"
-            "   FragColor = vec4(ourColor, 1.0f);\n"
+            "   FragColor = ourColor;\n"
             "}\n\0";
 
         // build and compile our shader program
@@ -74,6 +76,7 @@ class EffectTwo : public SKEngio::Layer {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
+        /* ORIGINAL CODE
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
         float vertices[] = {
@@ -105,6 +108,30 @@ class EffectTwo : public SKEngio::Layer {
         // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
         glUseProgram(shaderProgram);
         std::cout << "Layer TWO Program " << shaderProgram << std::endl;
+        */
+
+        mesh = new SKEngio::Mesh(true);
+        mesh->addVertex(0.3f, -0.1f, 0.0f);
+        mesh->addVertex(0.1f, 0.2f, 0.0f);
+        mesh->addVertex(0.1f, -0.1f, 0.0f);
+
+        mesh->addColor(0.0f, 1.0f, 1.0f, 1.0f);
+        mesh->addColor(1.0f, 0.0f, 1.0f, 1.0f);
+        mesh->addColor(1.0f, 1.0f, 0.0f, 1.0f);
+
+        mesh->addTexCoord(0.0f , 0.0f);
+        mesh->addTexCoord(0.0f , 1.0f);
+        mesh->addTexCoord(1.0f , 0.0f);
+
+        mesh->addNormal(0.0f, 1.0f, 0.0f);
+        mesh->addNormal(1.0f, 1.0f, 0.0f);
+        mesh->addNormal(0.0f, 1.0f, 0.0f);
+
+        mesh->addTriIndices(0, 1, 2);
+
+        mesh->buildInterleavedArray();
+
+        mesh->createGLBuffers();
 
         transformUniformLocation = glGetUniformLocation(shaderProgram, "transform");
 
@@ -116,6 +143,8 @@ class EffectTwo : public SKEngio::Layer {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader); 
         glDeleteProgram(shaderProgram);        
+
+        delete mesh;        
 
         std::cout << "Destroy Layer " << this->GetId() << std::endl;
     }
@@ -139,8 +168,11 @@ class EffectTwo : public SKEngio::Layer {
 
         glUseProgram(shaderProgram);        
 
+        /*
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        */
+       mesh->draw();
     }
 
     

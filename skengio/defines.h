@@ -14,6 +14,14 @@
 #define LIGHT_DIFFUSE_UNIFORM_NAME "lightDiffuse"
 #define LIGHT_SPECULAR_UNIFORM_NAME "lightSpecular"
 
+
+//MATERIAL UNIFORM DEFINES
+
+#define MATERIAL_AMBIENT_UNIFORM_NAME "materialAmbient"
+#define MATERIAL_DIFFUSE_UNIFORM_NAME "materialDiffuse"
+#define MATERIAL_SPECULAR_UNIFORM_NAME "materialSpecular"
+#define MATERIAL_SHININESS_UNIFORM_NAME "materialShininess"
+
 #define SCENE_DEFAULT_START 0.0f
 #define SCENE_DEFAULT_END 60.0f
 

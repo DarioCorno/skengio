@@ -10,13 +10,13 @@ uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
 
 // varyings (output)
-varying vec3 esVertex, esNormal;
-varying vec2 texCoord0;
+out vec3 esVertex, esNormal;
+out vec2 texCoord0;
 
 void main()
 {
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
-    esVertex = gl_Position;
+    esVertex = vec3(modelMatrix * viewMatrix * vec4(aPos, 1.0));;
     esNormal = aNormal;
     texCoord0 = aTexCoord;
 }

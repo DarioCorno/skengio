@@ -128,7 +128,8 @@ namespace SKEngio {
         // ------------------------------------------------------------------------
         void Use() 
         { 
-            glUseProgram(programID); 
+            if(programID > 0)
+                glUseProgram(programID); 
         }
 
         void Disable() {

@@ -12,8 +12,9 @@ uniform float materialShininess;        // material specular shininess
 uniform sampler2D map0;                 // texture map #1
 uniform bool textureUsed;               // flag for texture
 // varyings
-varying vec3 esVertex, esNormal;
-varying vec2 texCoord0;
+in vec3 esVertex, esNormal;
+in vec2 texCoord0;
+out vec4 FragColor;
 void main()
 {
     vec3 normal = normalize(esNormal);
@@ -38,5 +39,5 @@ void main()
     color += pow(dotNH, materialShininess) * lightSpecular.rgb * materialSpecular.rgb; // add specular
 
     // set frag color
-    gl_FragColor = vec4(color, materialDiffuse.a);
+    FragColor = vec4(color, materialDiffuse.a);
 }
