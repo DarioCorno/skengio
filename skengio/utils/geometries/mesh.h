@@ -10,8 +10,6 @@ namespace SKEngio {
     class Mesh {
         public:
 
-        bool useColor = true;
-
         std::vector<float> vertexes;
         std::vector<float> colors;
         std::vector<float> normals;
@@ -31,7 +29,7 @@ namespace SKEngio {
         //without color component
         //int interleavedStride = sizeof(float) * 8;                  // # of bytes to hop to the next vertex (should be 32 bytes)        
 
-        Mesh(bool _useColor);
+        Mesh();
 
         ~Mesh();
 

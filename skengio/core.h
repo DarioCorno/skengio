@@ -22,6 +22,7 @@ using namespace std;
 #include "event.h"
 #include "window.h"
 #include "./utils/geometries/mesh.h"
+#include "./utils/geometries/sphere.h"
 #include "light.h"
 #include "material.h"
 #include "scene.h"

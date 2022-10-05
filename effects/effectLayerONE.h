@@ -122,7 +122,8 @@ class EffectOne : public SKEngio::Layer {
 
     void OnDraw(float t) {
 
-
+        glDisable(GL_BLEND);
+        
         shaderProgram->Use();
 
         glBindVertexArray(vertexArray);

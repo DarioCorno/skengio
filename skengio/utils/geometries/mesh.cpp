@@ -4,10 +4,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+
 namespace SKEngio {
 
-    Mesh::Mesh(bool _useColor) {
-        useColor = _useColor;
+    Mesh::Mesh() {
     }
 
     Mesh::~Mesh() {
@@ -98,8 +99,9 @@ namespace SKEngio {
         // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
         glBindVertexArray(VAO);       
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        unsigned int vertexCount = interleavedVertices.size();
         //type of buffer, size in bytes of the whole buffer, buffer pointer, draw type
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * interleavedVertices.size(), interleavedVertices.data() , GL_STATIC_DRAW);        
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount, interleavedVertices.data() , GL_STATIC_DRAW);        
 
         unsigned int stride = getInterleavedStride();
 
@@ -129,8 +131,8 @@ namespace SKEngio {
 
     void Mesh::draw() {
         glBindVertexArray(VAO);       
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        //glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0 );
     }
 

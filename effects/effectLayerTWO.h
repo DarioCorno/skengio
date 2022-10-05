@@ -6,10 +6,12 @@ class EffectTwo : public SKEngio::Layer {
     public:
 
     unsigned int VBO, VAO;
-    unsigned int vertexShader, fragmentShader, shaderProgram;
-    glm::mat4 transform = glm::mat4(1.0f);
-    unsigned int transformUniformLocation;
-    SKEngio::Mesh* mesh;
+    unsigned int vertexShader, fragmentShader, shaderProgramID;
+    glm::mat4 model = glm::mat4(1.0f);  //model matrix
+    unsigned int projMatrixLocation;
+    unsigned int viewMatrixLocation;
+    unsigned int modelMatrixLocation;
+    SKEngio::Sphere* mesh;
 
     void OnAttach() {
         std::cout << "Layer attached, creating buffers " << this->GetId() << std::endl;
@@ -21,10 +23,12 @@ class EffectTwo : public SKEngio::Layer {
             "layout (location = 2) in vec3 aNormal;\n"
             "layout (location = 3) in vec2 aText;\n"
             "out vec4 ourColor;\n"
-            "uniform mat4 transform;\n"
+            "uniform mat4 projMatrix;\n"
+            "uniform mat4 viewMatrix;\n"
+            "uniform mat4 modelMatrix;\n"
             "void main()\n"
             "{\n"
-            "   gl_Position = transform * vec4(aPos, 1.0f);\n"
+            "   gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0f);\n"
             "   ourColor = aColor;\n"
             "}\0";
 
@@ -63,14 +67,14 @@ class EffectTwo : public SKEngio::Layer {
             std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
         }
         // link shaders
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
+        shaderProgramID = glCreateProgram();
+        glAttachShader(shaderProgramID, vertexShader);
+        glAttachShader(shaderProgramID, fragmentShader);
+        glLinkProgram(shaderProgramID);
         // check for linking errors
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+        glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+            glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
             std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
         }
         glDeleteShader(vertexShader);
@@ -106,34 +110,50 @@ class EffectTwo : public SKEngio::Layer {
         // glBindVertexArray(0);
 
         // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
-        glUseProgram(shaderProgram);
-        std::cout << "Layer TWO Program " << shaderProgram << std::endl;
+        glUseProgram(shaderProgramID);
+        std::cout << "Layer TWO Program " << shaderProgramID << std::endl;
         */
 
-        mesh = new SKEngio::Mesh(true);
+       /*
+        mesh = new SKEngio::Mesh();
         mesh->addVertex(0.3f, -0.1f, 0.0f);
+        mesh->addVertex(0.3f, 0.2f, 0.0f);
         mesh->addVertex(0.1f, 0.2f, 0.0f);
         mesh->addVertex(0.1f, -0.1f, 0.0f);
 
         mesh->addColor(0.0f, 1.0f, 1.0f, 1.0f);
+        mesh->addColor(1.0f, 1.0f, 0.0f, 1.0f);
         mesh->addColor(1.0f, 0.0f, 1.0f, 1.0f);
         mesh->addColor(1.0f, 1.0f, 0.0f, 1.0f);
 
         mesh->addTexCoord(0.0f , 0.0f);
+        mesh->addTexCoord(1.0f , 0.0f);
         mesh->addTexCoord(0.0f , 1.0f);
         mesh->addTexCoord(1.0f , 0.0f);
 
+        mesh->addNormal(0.0f, 1.0f, 0.0f);
         mesh->addNormal(0.0f, 1.0f, 0.0f);
         mesh->addNormal(1.0f, 1.0f, 0.0f);
         mesh->addNormal(0.0f, 1.0f, 0.0f);
 
         mesh->addTriIndices(0, 1, 2);
+        mesh->addTriIndices(0, 2, 3);
 
         mesh->buildInterleavedArray();
 
         mesh->createGLBuffers();
+        */
 
-        transformUniformLocation = glGetUniformLocation(shaderProgram, "transform");
+        mesh = new SKEngio::Sphere();
+        mesh->Generate(1.0f, 12, 12);
+        mesh->buildInterleavedArray();
+        mesh->createGLBuffers();
+
+        std::cout << "Layer TWO Program " << shaderProgramID << std::endl;
+        glUseProgram(shaderProgramID);
+        projMatrixLocation = glGetUniformLocation(shaderProgramID, PROJ_MATRIX_UNIFORM_NAME );
+        viewMatrixLocation = glGetUniformLocation(shaderProgramID, VIEW_MATRIX_UNIFORM_NAME );
+        modelMatrixLocation = glGetUniformLocation(shaderProgramID, MODEL_MATRIX_UNIFORM_NAME );
 
     }
 
@@ -142,7 +162,7 @@ class EffectTwo : public SKEngio::Layer {
         glDeleteBuffers(1, &VBO);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader); 
-        glDeleteProgram(shaderProgram);        
+        glDeleteProgram(shaderProgramID);        
 
         delete mesh;        
 
@@ -155,18 +175,31 @@ class EffectTwo : public SKEngio::Layer {
 
     void OnUpdate(float t) {
         //OpenGL 4.1 specs (4.5 specs doesn't need to use the program before setting uniforms)
-        //glUseProgram(shaderProgram);        
-        transform = glm::mat4(1.0f);
-        transform = glm::rotate(transform, (float)(t * 80.0f), glm::vec3(0.0f, 1.0f, 0.0f));        
-        transform = glm::translate(transform, glm::vec3(-0.1f, 0.0f, 0.0f));
+        //glUseProgram(shaderProgramID);        
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
+        model = glm::rotate(model, (float)(t * 80.0f), glm::vec3(0.0f, 1.0f, 0.0f));        
         //glUniformMatrix4fv(transformUniformLocation, 1, GL_FALSE, glm::value_ptr(transform));        
-        glProgramUniformMatrix4fv(shaderProgram, transformUniformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+
+        
+        //move camera position and target, camera was set from renderer activeCamera
+        activeCamera->setPosition( 0.0f, 0.0f, -4.0f );
+        activeCamera->setTarget( 0.0f, 0.0f, 0.0f );
+
+        //set the shader uniform matrices
+        glProgramUniformMatrix4fv( shaderProgramID, projMatrixLocation, 1, GL_FALSE, glm::value_ptr( activeCamera->getProjMatrix() ) );
+        glm::mat4 viewMat = activeCamera->getViewMatrix();
+        glProgramUniformMatrix4fv( shaderProgramID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat) );
+        glProgramUniformMatrix4fv( shaderProgramID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model) );
     }
 
     void OnDraw(float t) {
         glDisable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_ONE, GL_ONE);
 
-        glUseProgram(shaderProgram);        
+        glUseProgram(shaderProgramID);        
 
         /*
         glBindVertexArray(VAO);
