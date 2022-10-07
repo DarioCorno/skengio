@@ -11,7 +11,10 @@
 
 namespace SKEngio {
     Light::Light() {
-
+        lightPosition = glm::vec3(4.0f, 4.0f, -4.0f );
+        lightAmbientColor = glm::vec3( 0.5f, 0.2f, 0.8f );
+        lightDiffuseColor = glm::vec3( 1.0f, 0.7f, 0.9f );
+        lightSpecularColor = glm::vec3(1.0f, 1.0f, 1.0f );
     }
 
     Light::~Light() {
@@ -19,19 +22,35 @@ namespace SKEngio {
     }
 
     void Light::SetPosition(float x, float y, float z) {
-        lightPosition = glm::vec4( x, y, z, 1.0f) ;
+        lightPosition = glm::vec3( x, y, z ) ;
     }
 
-    void Light::SetAmbient(float r, float g, float b, float a) {
-        lightAmbientColor = glm::vec4( r, g, b, a);
+    void Light::SetAmbient(float r, float g, float b ) {
+        lightAmbientColor = glm::vec3( r, g, b );
     }
     
-    void Light::SetDiffuse(float r, float g, float b, float a) {
-        lightDiffuseColor = glm::vec4( r, g, b, a);
+    void Light::SetDiffuse(float r, float g, float b ) {
+        lightDiffuseColor = glm::vec3( r, g, b );
     }
 
-    void Light::SetSpecular(float r, float g, float b, float a) {
-        lightSpecularColor = glm::vec4( r, g, b, a);
+    void Light::SetSpecular(float r, float g, float b ) {
+        lightSpecularColor = glm::vec3( r, g, b );
     }
+
+    glm::vec3 Light::GetPosition() {
+        return lightPosition;
+    };
+
+    glm::vec3 Light::GetAmbient() {
+        return lightAmbientColor;
+    };
+
+    glm::vec3 Light::GetDiffuse() {
+        return lightDiffuseColor;
+    };
+
+    glm::vec3 Light::GetSpecular() {
+        return lightSpecularColor;
+    };
 
 }

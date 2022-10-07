@@ -27,7 +27,7 @@ namespace SKEngio {
 
         // getters/setters
         float getRadius() const                 { return radius; }
-        void Generate(float radius, int sectorCount, int stackCount);
+        void Generate(float _radius, int _subdivisions);
 
     protected:
 

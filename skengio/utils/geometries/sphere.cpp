@@ -35,9 +35,10 @@ namespace SKEngio {
     ///////////////////////////////////////////////////////////////////////////////
     // setters
     ///////////////////////////////////////////////////////////////////////////////
-    void Sphere::Generate(float radius, int sectors, int stacks)
+    void Sphere::Generate(float _radius, int _subdivision)
     {
-        this->radius = radius;
+        radius = _radius;
+        subdivision = _subdivision;
 
         buildVerticesSmooth();
     }
