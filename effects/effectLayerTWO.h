@@ -89,6 +89,11 @@ class EffectTwo : public SKEngio::Layer {
         glProgramUniformMatrix4fv( shaderProgram->programID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat) );
         glProgramUniformMatrix4fv( shaderProgram->programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model) );
 
+        float y = std::sin(t * 2.0f) * 4.0f;
+        float z = std::cos(t * 2.0f) * 4.0f;
+        float x = 2.0f;
+        light->SetPosition(x,y,z);
+
         glProgramUniform3fv( shaderProgram->programID, uniformPositionLocation, 1, glm::value_ptr(light->GetPosition() ));
         glProgramUniform3fv( shaderProgram->programID, uniformDiffuseLocation, 1, glm::value_ptr(light->GetDiffuse() ));
         glProgramUniform3fv( shaderProgram->programID, uniformAmbientLocation, 1, glm::value_ptr(light->GetAmbient() ));
@@ -98,6 +103,8 @@ class EffectTwo : public SKEngio::Layer {
     void OnDraw(float t) {
         glDisable(GL_CULL_FACE);
         glDisable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+        
         //glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
         //glBlendFunc(GL_ONE, GL_ONE);
 
