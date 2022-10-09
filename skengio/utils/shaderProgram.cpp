@@ -65,10 +65,10 @@ namespace SKEngio {
         std::ifstream shaderSource(strPathFilename.c_str());
         if (!shaderSource.is_open())
         {
-            SK_LOG( "ERROR! File not found " << strPathFilename.c_str() );
+            SK_LOG_ERR( "ERROR! File not found " << strPathFilename.c_str() );
             char tmp[256];
             getcwd(tmp, 256);
-            SK_LOG("Current working directory: " << tmp);                
+            SK_LOG_ERR("Current working directory: " << tmp);                
             return "";
         }
         // now read in the data
@@ -77,7 +77,7 @@ namespace SKEngio {
 
 		if (!file.is_open())
 		{
-			SK_LOG("ERROR: could not open the shader at: " << strPathFilename);
+			SK_LOG_ERR("ERROR: could not open the shader at: " << strPathFilename);
 
 			return fullSourceCode;
 		}        
@@ -160,13 +160,13 @@ namespace SKEngio {
 
             glGetProgramInfoLog(programID, infologLength, &charsWritten, infoLog);
 
-            std::cout << infoLog << std::endl;
+            SK_LOG_ERR(infoLog);
 
             delete [] infoLog;
             glGetProgramiv(programID, GL_LINK_STATUS, &infologLength);
             if(infologLength == GL_FALSE)
             {
-                SK_LOG("ERROR! Program " << programID << "link failed, exiting.");
+                SK_LOG_ERR("ERROR! Program " << programID << "link failed, exiting.");
                 exit(EXIT_FAILURE);
             }
         } else {

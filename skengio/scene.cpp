@@ -32,17 +32,26 @@ namespace SKEngio {
     }
 
     void Scene::OnDrawGUI(float timeValue) {
+        if(!enabled) return;
+
         for(Layer* layer : layerStack->layers) {
-            layer->OnDrawGUI(timeValue);
+            if(layer->enabled) {
+                layer->OnDrawGUI(timeValue);
+            }
         }
     }
 
     void Scene::UpdateAndDraw(float timeValue) {
+        
+        if(!enabled) return;
+
         //update and render all scenes
         for(Layer* layer : layerStack->layers) {
-            layer->setCamera( activeCamera );
-            layer->OnUpdate(timeValue);
-            layer->OnDraw(0.0f);
+            if(layer->enabled) {
+                layer->setCamera( activeCamera );
+                layer->OnUpdate(timeValue);
+                layer->OnDraw(0.0f);
+            }
         }        
     }
 

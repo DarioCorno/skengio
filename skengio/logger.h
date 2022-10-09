@@ -10,8 +10,15 @@
 
 using namespace std;
 
+#define LOG_ERROR 1
+#define LOG_INFO 0
 
 namespace SKEngio {
+
+    struct LogEntry {
+        std::string entry;
+        unsigned int type;
+    };
 
     class Logger
     {
@@ -31,12 +38,12 @@ namespace SKEngio {
 
 
         public:
-            void log(std::string a);
+            void log(std::string a, unsigned int type);
 
             /* Static access method. */
             static Logger* getInstance();
 
-            std::list<std::string> buffer;
+            std::list<LogEntry> buffer;
 
             /*
             void out(std::stringstream s) {
@@ -56,14 +63,20 @@ namespace SKEngio {
 }
 
 #ifndef SK_LOG
-//#define SK_LOG(...)    Logger::getInstance()->out( __VA_ARGS__)
 
 #define SK_LOG(Log) { std::ostringstream _os; \
   _os << Log << std::flush;  \
-  Logger::getInstance()->log( _os.str() ); \
+  SKEngio::Logger::getInstance()->log( _os.str(), LOG_INFO ); \
   }
+
 #endif
 
+#ifndef SK_LOG_ERR
 
+#define SK_LOG_ERR(Log) { std::ostringstream _os; \
+  _os << Log << std::flush;  \
+  SKEngio::Logger::getInstance()->log( _os.str(), LOG_ERROR ); \
+  }
+#endif
 
 #endif

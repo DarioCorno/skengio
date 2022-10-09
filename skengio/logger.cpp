@@ -23,9 +23,12 @@ namespace SKEngio {
     Logger::Logger()
     {}
 
-    void Logger::log(std::string a) {
+    void Logger::log(std::string a, unsigned int type) {
         std::cout << a << std::endl;
-        buffer.push_back(a);
+        LogEntry entry;
+        entry.entry = a;
+        entry.type = type;
+        buffer.push_back( entry );
     }            
 
 

@@ -8,13 +8,17 @@
 #include "event.h"
 #include "defines.h"
 #include "logger.h"
+#include "scene.h"
+#include "renderer.h"
 
 namespace SKEngio {
+
+    class Renderer;
 
     class GUIManager {
         public:
 
-        GUIManager();
+        GUIManager(Renderer* parentR);
 
         ~GUIManager();
 
@@ -29,8 +33,12 @@ namespace SKEngio {
 
         void OnEvent(Event* e);
 
+        void ToggleLog();
+
         private:
+        Renderer* parentRenderer;
         int winWidth, winHeight;
         const char* glsl_version = "#version 130";
+        bool logVisible = true;
     };
 }

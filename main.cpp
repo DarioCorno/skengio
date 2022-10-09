@@ -1,8 +1,13 @@
 
 #include "skengio/core.h"
+#include "skengio/logger.h"
 #include "effects/effectLayerONE.h"
 #include "effects/effectLayerTWO.h"
 //#include "effects/effectLayerTHREE.h"
+
+#include <iostream>
+#include <sstream>
+#include <string>
 
 static void errorCB(int error, const char* description) {
     std::cout << "ERROR: " << description << std::endl;
@@ -20,11 +25,12 @@ int main(void)
 
     SKEngio::Renderer* rend = app->GetRenderer();
     if(!rend) {
-        std::cout << "Cannot retrieve renderer" << std::endl;
+        SK_LOG("Cannot retrieve renderer");
     }
 
 
     SKEngio::Scene* scene = new SKEngio::Scene(1);
+    scene->SetName("Scena 01");
     rend->AddScene(scene);
 
     //camera1, willbe used by scenes -> layerONE

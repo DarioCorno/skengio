@@ -13,6 +13,8 @@ using namespace std;
 
 namespace SKEngio {
 
+    class Renderer;
+    
     class Application {
         public:
 
@@ -29,11 +31,11 @@ namespace SKEngio {
         void HandleMouseScrollEvent(double xOffset, double yOffset);
 
         GLFWwindow* GetWindow();
-        Renderer* GetRenderer();
+        SKEngio::Renderer* GetRenderer();
 
         private:
 
         WindowManager* winMan;
-        Renderer* renderer;
+        SKEngio::Renderer* renderer;
     };
 }

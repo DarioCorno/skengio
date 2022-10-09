@@ -17,7 +17,6 @@ class EffectOne : public SKEngio::Layer {
 
 
     void OnAttach() {
-        std::cout << "Layer " << this->GetId() << " attached. BEGIN creating buffers " << std::endl;
 
         glGenVertexArrays(1, &vertexArray);
         glBindVertexArray(vertexArray);
@@ -42,14 +41,10 @@ class EffectOne : public SKEngio::Layer {
         unsigned int indices[3] = { 0, 1, 2 };
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-        std::cout << "BEGIN loading shaders." << std::endl;
-
         shaderProgram = new SKEngio::ShaderProgram();
         shaderProgram->LoadShader("./effects/", "vShaderONE.txt", SKEngio::ShaderProgram::VERTEX);
         shaderProgram->LoadShader("./effects/", "fShaderONE.txt", SKEngio::ShaderProgram::FRAGMENT);
         shaderProgram->CreateProgram();
-
-        std::cout << "END loading shaders." << std::endl;
 
         //retrieve the address of the shader uniforms
         vertexColorLocation = glGetUniformLocation(shaderProgram->programID , "vertexColor");
@@ -68,7 +63,7 @@ class EffectOne : public SKEngio::Layer {
 
         glDeleteVertexArrays(1, &vertexArray);
 
-        std::cout << "Destroy Layer " << this->GetId() << std::endl;
+        //SK_LOG("Destroy Layer " << this->GetId());
     }
 
     void OnDrawGUI(float t) {

@@ -1,3 +1,6 @@
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "GUIManager.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"
@@ -7,7 +10,8 @@
 
 namespace SKEngio {
 
-    GUIManager::GUIManager() {
+    GUIManager::GUIManager(Renderer* parentR) {
+        parentRenderer = parentR;
     }
 
     GUIManager::~GUIManager() {        
@@ -69,7 +73,7 @@ namespace SKEngio {
                 ImGui::End();                    
             }
 
-            if(GUI_SHOW_LOG) {
+            if(logVisible) {
                 Logger* log = SKEngio::Logger::getInstance();
                 ImGui::SetNextWindowPos(ImVec2(0, winHeight - 150), 1 );
                 ImGui::SetNextWindowSize(ImVec2(winWidth, 150), 1 );
@@ -77,8 +81,12 @@ namespace SKEngio {
                 ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
                 ImGui::Begin("Application Log", NULL, log_window_flags);
 
-                for(std::string str : log->buffer) {
-                    ImGui::Text( "%s" , str.c_str() );
+                for(LogEntry le : log->buffer) {
+                    if(le.type == LOG_INFO) {
+                        ImGui::Text( "%s" , le.entry.c_str() );
+                    } else {
+                        ImGui::TextColored( ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s" , le.entry.c_str() );
+                    }
                 }
                 
                 if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
@@ -86,6 +94,31 @@ namespace SKEngio {
 
                 ImGui::End();
             }
+
+            //scenes checkboxes
+            ImGui::SetNextWindowPos(ImVec2(winWidth - 200, 0), 1 );
+            ImGui::SetNextWindowSize(ImVec2(200, winHeight - ((logVisible) ? 150 : 0)), 1 );
+            ImGui::SetNextWindowBgAlpha(0.2f);
+            ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            ImGui::Begin("Settings", NULL, log_window_flags);
+            ImGui::Text("Scenes");
+            ImGui::Separator();
+            for(Scene* scn : parentRenderer->GetSceneStack()->scenes) {
+                if ( ImGui::TreeNode( scn->dispName.c_str()) )
+                {
+                    for(Layer* lyr : scn->GetLayerStack()->layers ) {
+                        std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
+                        ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
+                    }
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::Separator();
+            ImGui::Checkbox( "Show Log", &logVisible );
+            
+            ImGui::End();
+
+
     }
 
     void GUIManager::DrawEnd(GLFWwindow* window) {
@@ -122,7 +155,6 @@ namespace SKEngio {
             case EVENT_TYPE_MOUSESCROLL:
                 break;
             case EVENT_TYPE_RESIZE:
-                SK_LOG( "GUI Resize " << e->width << " " << e->height);
                 winWidth = e->width;
                 winHeight = e->height;
                 break;

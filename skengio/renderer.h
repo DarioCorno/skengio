@@ -18,6 +18,8 @@
 
 namespace SKEngio {
 
+    class GUIManager;
+    
     class Renderer {
         public:
 
@@ -35,7 +37,7 @@ namespace SKEngio {
 
             void OnEvent(Event* e);
 
-            LayerStack* GetLayerStack();
+            SceneStack* GetSceneStack();
 
             void AddScene(Scene* newScene);
 

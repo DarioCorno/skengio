@@ -31,7 +31,7 @@ namespace SKEngio {
     bool TextureLoader::Load(std::string strFileName, bool freeData) {
         data = stbi_load(strFileName.c_str(), &width, &height, &numChannels, 0);
         if(data == NULL) {
-            std::cout << "TEXTURE ERROR! Cannot load " << strFileName.c_str() << std::endl;
+            SK_LOG_ERR("TEXTURE ERROR! Cannot load " << strFileName.c_str() );
             return false;
         }
 

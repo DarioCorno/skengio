@@ -9,6 +9,8 @@
 
 namespace SKEngio {
 
+    class GUIManager;
+    
     Renderer::Renderer(WindowManager* winMan) {
         //keeps a reference to winManager
         this->winMan = winMan;
@@ -56,7 +58,7 @@ namespace SKEngio {
 
 
     void Renderer::InitGUI() {
-        guiMan = new GUIManager();
+        guiMan = new SKEngio::GUIManager( this );
         guiMan->InitGUI(winMan->window);
     }
 
@@ -117,6 +119,10 @@ namespace SKEngio {
 
     void Renderer::AddScene(Scene* newScene) {
         sceneStack->AddScene(newScene);
+    }
+
+    SceneStack* Renderer::GetSceneStack() {
+        return sceneStack;
     }
 
 }

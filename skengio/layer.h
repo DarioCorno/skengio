@@ -27,6 +27,8 @@ namespace SKEngio {
         void setCamera(Camera* newCam) { activeCamera = newCam; };
 		//virtual void OnEvent(Event& event) {}        
 
+        bool enabled = true;
+        
         private:
 
         unsigned int id;

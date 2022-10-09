@@ -6,7 +6,9 @@ in vec2 texCoord;
 in vec3 Normal;
 in vec3 FragPos;  
 
+//sample of including external shaders source
 #include singleLightUniforms.txt
+
 uniform sampler2D ourTexture;
 
 void main()
