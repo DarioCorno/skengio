@@ -25,6 +25,7 @@ namespace SKEngio  {
         void SetDiffuse(float r, float g, float b);
         void SetSpecular(float r, float g, float b);
 
+
         glm::vec3 GetPosition();
         glm::vec3 GetAmbient();
         glm::vec3 GetDiffuse();

@@ -12,6 +12,7 @@
                 "imgui/imgui_impl_opengl3.cpp",
                 "imgui/imgui_impl_glfw.cpp",
                 "skengio/logger.cpp",
+                "skengio/utils/shaderProgram.cpp",
                 "skengio/utils/textureLoader.cpp",
                 "skengio/utils/geometries/sphere.cpp",
                 "skengio/GUIManager.cpp",

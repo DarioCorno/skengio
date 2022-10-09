@@ -6,9 +6,7 @@ in vec2 texCoord;
 in vec3 Normal;
 in vec3 FragPos;  
 
-uniform vec3 lightPosition; 
-uniform vec3 lightDiffuse;
-uniform vec3 lightAmbient;
+#include singleLightUniforms.txt
 uniform sampler2D ourTexture;
 
 void main()

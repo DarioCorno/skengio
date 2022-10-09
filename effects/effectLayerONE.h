@@ -45,8 +45,8 @@ class EffectOne : public SKEngio::Layer {
         std::cout << "BEGIN loading shaders." << std::endl;
 
         shaderProgram = new SKEngio::ShaderProgram();
-        shaderProgram->LoadShader("./effects/vShaderONE.txt", SKEngio::ShaderProgram::VERTEX);
-        shaderProgram->LoadShader("./effects/fShaderONE.txt", SKEngio::ShaderProgram::FRAGMENT);
+        shaderProgram->LoadShader("./effects/", "vShaderONE.txt", SKEngio::ShaderProgram::VERTEX);
+        shaderProgram->LoadShader("./effects/", "fShaderONE.txt", SKEngio::ShaderProgram::FRAGMENT);
         shaderProgram->CreateProgram();
 
         std::cout << "END loading shaders." << std::endl;
@@ -124,7 +124,7 @@ class EffectOne : public SKEngio::Layer {
 
         glDisable(GL_BLEND);
         
-        shaderProgram->Use();
+        shaderProgram->bind();
 
         glBindVertexArray(vertexArray);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);

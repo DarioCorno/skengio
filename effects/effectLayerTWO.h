@@ -27,8 +27,8 @@ class EffectTwo : public SKEngio::Layer {
         std::cout << "Layer attached, creating buffers " << this->GetId() << std::endl;
 
         shaderProgram = new SKEngio::ShaderProgram();
-        shaderProgram->LoadShader("./effects/vShaderTWO.txt", SKEngio::ShaderProgram::VERTEX);
-        shaderProgram->LoadShader("./effects/fShaderTWO.txt", SKEngio::ShaderProgram::FRAGMENT);
+        shaderProgram->LoadShader("./effects/","vShaderTWO.txt", SKEngio::ShaderProgram::VERTEX);
+        shaderProgram->LoadShader("./effects/","fShaderTWO.txt", SKEngio::ShaderProgram::FRAGMENT);
         shaderProgram->CreateProgram();
 
         texture = new SKEngio::TextureLoader();
@@ -104,13 +104,13 @@ class EffectTwo : public SKEngio::Layer {
         glDisable(GL_CULL_FACE);
         glDisable(GL_BLEND);
         glEnable(GL_TEXTURE_2D);
-        
+
         //glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
         //glBlendFunc(GL_ONE, GL_ONE);
 
         texture->bind();
 
-        glUseProgram(shaderProgram->programID);        
+        shaderProgram->bind();   
 
         mesh->draw();
     }
