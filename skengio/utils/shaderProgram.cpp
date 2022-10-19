@@ -27,6 +27,8 @@ namespace SKEngio {
         uniformMaterialReflectivityLocation = -1;
         uniformMaterialTexOpacityLocation = -1;
 
+        textureDepthLocation = -1;
+
         isBind = false;
     }
 
@@ -148,7 +150,7 @@ namespace SKEngio {
         getMatricesUniformsLocation();
         getLightUniformsLocation();
         getMaterialUniformsLocation();
-        getTexturesUniform();
+        getTexturesUniforms();
 
         //delete the shaders
         glDeleteShader(shaders[VERTEX]);
@@ -222,9 +224,19 @@ namespace SKEngio {
         }
     }
 
-    void ShaderProgram::getTexturesUniform() {
+    void ShaderProgram::SetDepthTexture(int textureID) {
+        if (!isBind)
+            bind();
+
+        if (textureDepthLocation != -1) {
+            glProgramUniform1i(programID, textureDepthLocation, textureID);
+        }
+    }
+
+    void ShaderProgram::getTexturesUniforms() {
         textureDiffuseLocation = glGetUniformLocation(programID, TEXTURE_DIFFUSE_UNIFORM_NAME);
         textureCubeLocation = glGetUniformLocation(programID, TEXTURE_CUBEMAP_UNIFORM_NAME);
+        textureDepthLocation = glGetUniformLocation(programID, TEXTURE_DEPTH_UNIFORM_NAME);
     }
 
 

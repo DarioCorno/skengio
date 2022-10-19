@@ -11,6 +11,7 @@ namespace SKEngio {
 	class SKYBox {
         public:
 		    SKYBox(std::vector<std::string> facesFiles) {
+
                 float skyboxVertices[] = {
                     // positions          
                     -1.0f,  1.0f, -1.0f,

@@ -36,7 +36,7 @@ namespace SKEngio {
         delete camera;
         delete fboShader;
         delete depthDebugShader;
-        delete Depth_Texture;
+        delete ShadowMap_Texture;
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -126,25 +126,27 @@ namespace SKEngio {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
         GenerateFrameBO(winMan->width, winMan->height);
-        //GenerateShadowMapsBuffers();
+        GenerateDepthMapBuffers(winMan->width, winMan->height);
+        GenerateShadowMapsBuffers();
 
         return true;   
     }
 
-    void Renderer::GenerateShadowMapsBuffers() {
-        if (Depth_FBO != -1)
-            glDeleteFramebuffers(1, &Depth_FBO);
+    void Renderer::GenerateDepthMapBuffers(int width, int height) {
+        if (DepthMap_FBO != -1)
+            glDeleteFramebuffers(1, &DepthMap_FBO);
 
-        glGenFramebuffers(1, &Depth_FBO);        
+        glGenFramebuffers(1, &DepthMap_FBO);
 
-        if (Depth_Texture != NULL)
-            glDeleteTextures(1, &Depth_Texture->textureID);
+        if (DepthMap_Texture != NULL)
+            glDeleteTextures(1, &DepthMap_Texture->textureID);
 
 
-        Depth_Texture = TextureManager::getInstance()->CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
+        DepthMap_Texture = TextureManager::getInstance()->CreateShadowMapTexture(width, height);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, Depth_FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, Depth_Texture->textureID, 0);
+        //thell the FBO where to write
+        glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthMap_Texture->textureID, 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -154,6 +156,38 @@ namespace SKEngio {
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
         depthDebugShader->CreateProgram();
+
+        depthDebugShader->SetDepthTexture(DepthMap_Texture->textureUnit);
+
+    }
+
+
+    void Renderer::GenerateShadowMapsBuffers() {
+        if (ShadowMap_FBO != -1)
+            glDeleteFramebuffers(1, &ShadowMap_FBO);
+
+        glGenFramebuffers(1, &ShadowMap_FBO);
+
+        if (ShadowMap_Texture != NULL)
+            glDeleteTextures(1, &ShadowMap_Texture->textureID);
+
+
+        ShadowMap_Texture = TextureManager::getInstance()->CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
+
+        //thell the FBO where to write
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        //shader for debugging depth
+        shadowDebugShader = new ShaderProgram();
+        shadowDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
+        shadowDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
+        shadowDebugShader->CreateProgram();
+
+        shadowDebugShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
 
     }
 
@@ -229,17 +263,17 @@ namespace SKEngio {
         RenderPass curPass = renderParams->pass;
         renderParams->pass = RenderPass::ShadowDepth;
 
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, Depth_FBO);
+        //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        Depth_Texture->bind();
+        DepthMap_Texture->bind();
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
             scene->UpdateAndDraw(renderParams);
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        Depth_Texture->unbind();
+        DepthMap_Texture->unbind();
         renderParams->pass = curPass;
     }
 
@@ -276,14 +310,14 @@ namespace SKEngio {
             glDisable(GL_CULL_FACE);
             glEnable(GL_TEXTURE_2D);
             depthDebugShader->bind();
-            Depth_Texture->bind();
+            DepthMap_Texture->bind();
 
             glBindVertexArray(quad_VAO); // VAO of the quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             depthDebugShader->unbind();
-            Depth_Texture->unbind();
+            DepthMap_Texture->unbind();
 
         }
         else 

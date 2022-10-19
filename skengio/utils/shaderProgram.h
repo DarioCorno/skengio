@@ -48,6 +48,7 @@ namespace SKEngio {
 
             void SetDiffTexture(int textureID);
             void SetCubeTexture(int textureID);
+            void SetDepthTexture(int textureID);
 
             void bind();
 
@@ -61,7 +62,7 @@ namespace SKEngio {
 
             void getMatricesUniformsLocation();
             void getLightUniformsLocation();
-            void getTexturesUniform();
+            void getTexturesUniforms();
             void getMaterialUniformsLocation();
 
 
@@ -94,6 +95,7 @@ namespace SKEngio {
             //textures location
             int textureDiffuseLocation = -1;
             int textureCubeLocation = -1;
+            int textureDepthLocation = -1;
 
     };
 

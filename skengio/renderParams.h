@@ -16,7 +16,7 @@ namespace SKEngio {
         RenderParams() {
             pass = RenderPass::Final;
             useShadows = false;
-            drawUI = true;
+            drawUI = false;
         }
 
         ~RenderParams() {

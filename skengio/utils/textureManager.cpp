@@ -104,6 +104,7 @@ namespace SKEngio {
 
         return texture;
     }
+
     SKEngio::Texture* TextureManager::CreateFrameBufferTexture(unsigned int width, unsigned int height) {
         Texture* texture = new Texture();
         texture->textureUnit = textureCount++;
