@@ -1,28 +1,25 @@
 #pragma once
 
-#ifndef _SK_GUIMANAGER_
-#define _SK_GUIMANAGER_
+#ifndef SK_GUIMANAGER_
+#define SK_GUIMANAGER_
 
+#define GLEW_STATIC
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 #include "event.h"
-#include "defines.h"
-#include "logger.h"
-#include "scene.h"
-#include "renderer.h"
-#include "renderParams.h"
 
 namespace SKEngio {
-
     class Renderer;
 
     class GUIManager {
         public:
+            explicit GUIManager(Renderer* parentR);
 
-            GUIManager(Renderer* parentR);
+            GUIManager(const GUIManager&) = delete;
+            GUIManager(GUIManager&&) = delete;
+            GUIManager& operator=(const GUIManager&) = delete;
+            GUIManager& operator=(GUIManager&&) = delete;
 
             ~GUIManager();
 

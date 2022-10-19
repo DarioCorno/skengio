@@ -9,6 +9,7 @@
 
 #include "GUIManager.h"
 #include "skengio/utils/textureManager.h"
+#include "utils/shaderProgram.h"
 
 namespace SKEngio {
 
@@ -19,24 +20,15 @@ namespace SKEngio {
         this->winMan = winMan;
         
         //create the render params object with defaults
-        renderParams = new RenderParams();
+        renderParams = std::make_unique<RenderParams>();
 
-        sceneStack = new SceneStack();
+        sceneStack = std::make_unique<SceneStack>();
 
         //initializes the opengl stuff
         this->InitGL();
 
         //initialize the GUI system
         this->InitGUI();
-    }
-
-    Renderer::~Renderer() {
-        delete sceneStack;
-        delete guiMan;
-        delete camera;
-        delete fboShader;
-        delete depthDebugShader;
-        delete ShadowMap_Texture;
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -53,11 +45,11 @@ namespace SKEngio {
     void Renderer::OnEvent(Event* e) {
 
         //handle event by renderer
-        if(e->type == EVENT_TYPE_RESIZE) {
+        if(e->type == EventType::Resize) {
             HandleResize(e->width, e->height);
         }
 
-        if (e->type == EVENT_TYPE_KEYPRESS) {
+        if (e->type == EventType::KeyPress) {
             if (e->key == GLFW_KEY_U) {
                 renderParams->drawUI = !renderParams->drawUI;
             }
@@ -74,7 +66,7 @@ namespace SKEngio {
 
 
     void Renderer::InitGUI() {
-        guiMan = new SKEngio::GUIManager( this );
+        guiMan = std::make_unique<GUIManager>( this );
         guiMan->InitGUI(winMan->window);
     }
 
@@ -121,7 +113,7 @@ namespace SKEngio {
         glBindBuffer(GL_ARRAY_BUFFER, quad_VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)nullptr);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
@@ -133,16 +125,13 @@ namespace SKEngio {
     }
 
     void Renderer::GenerateDepthMapBuffers(int width, int height) {
-        if (DepthMap_FBO != -1)
-            glDeleteFramebuffers(1, &DepthMap_FBO);
-
         glGenFramebuffers(1, &DepthMap_FBO);
 
-        if (DepthMap_Texture != NULL)
+        if (DepthMap_Texture != nullptr)
             glDeleteTextures(1, &DepthMap_Texture->textureID);
 
 
-        DepthMap_Texture = TextureManager::getInstance()->CreateShadowMapTexture(width, height);
+        DepthMap_Texture = TextureManager::getInstance().CreateShadowMapTexture(width, height);
 
         //thell the FBO where to write
         glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
@@ -152,7 +141,7 @@ namespace SKEngio {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         //shader for debugging depth
-        depthDebugShader = new ShaderProgram();
+        depthDebugShader = std::make_unique<ShaderProgram>();
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
         depthDebugShader->CreateProgram();
@@ -163,16 +152,13 @@ namespace SKEngio {
 
 
     void Renderer::GenerateShadowMapsBuffers() {
-        if (ShadowMap_FBO != -1)
-            glDeleteFramebuffers(1, &ShadowMap_FBO);
-
         glGenFramebuffers(1, &ShadowMap_FBO);
 
-        if (ShadowMap_Texture != NULL)
+        if (ShadowMap_Texture != nullptr)
             glDeleteTextures(1, &ShadowMap_Texture->textureID);
 
 
-        ShadowMap_Texture = TextureManager::getInstance()->CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
+        ShadowMap_Texture = TextureManager::getInstance().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
 
         //thell the FBO where to write
         glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
@@ -182,7 +168,7 @@ namespace SKEngio {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         //shader for debugging depth
-        shadowDebugShader = new ShaderProgram();
+        shadowDebugShader = std::make_unique<ShaderProgram>();
         shadowDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
         shadowDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
         shadowDebugShader->CreateProgram();
@@ -192,11 +178,11 @@ namespace SKEngio {
     }
 
     void Renderer::GenerateFrameBO(unsigned int width, unsigned int height) {
-        if(Post_FBOtexture != NULL)
+        if(Post_FBOtexture != nullptr)
             glDeleteTextures(1, &Post_FBOtexture->textureID);
 
 
-        Post_FBOtexture = TextureManager::getInstance()->CreateFrameBufferTexture(winMan->width, winMan->height);
+        Post_FBOtexture = TextureManager::getInstance().CreateFrameBufferTexture(winMan->width, winMan->height);
 
         //create the texture for framebuffer
         //glGenTextures(1, &Post_FBOtexture);
@@ -207,9 +193,6 @@ namespace SKEngio {
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        if (Post_FBO != -1)
-            glDeleteFramebuffers(1, &Post_FBO);
-
         //frame buffer object for fx
         glGenFramebuffers(1, &Post_FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
@@ -219,9 +202,6 @@ namespace SKEngio {
             SK_LOG_ERR( "ERROR Creating Post Frame Buffer Object");
         }
 
-        if (Post_RBO != -1)
-            glDeleteRenderbuffers(1, &Post_RBO);
-
         // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
         glGenRenderbuffers(1, &Post_RBO);
         glBindRenderbuffer(GL_RENDERBUFFER, Post_RBO);
@@ -229,23 +209,23 @@ namespace SKEngio {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, Post_RBO); // now actually attach it
 
         //shader for FBO
-        fboShader = new ShaderProgram();
+        fboShader = std::make_unique<ShaderProgram>();
         fboShader->LoadShader("./shaders/", "fboshader.vert", SKEngio::ShaderProgram::VERTEX);
         fboShader->LoadShader("./shaders/", "fboshader.frag", SKEngio::ShaderProgram::FRAGMENT);
         fboShader->CreateProgram();
 
     }
 
-    void Renderer::_DrawUI() {
+    void Renderer::DrawUI() {
         guiMan->DrawBegin();
         guiMan->Draw();
         for (Scene* scene : sceneStack->scenes) {
-            scene->OnDrawGUI(renderParams);
+            scene->OnDrawGUI(renderParams.get());
         }
         guiMan->DrawEnd(winMan->window);
     }
 
-    void Renderer::_ShadowMapPass() {
+    void Renderer::ShadowMapPass() {
 
         /*
         glm::mat4 lightProjection, lightView;
@@ -270,7 +250,7 @@ namespace SKEngio {
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
-            scene->UpdateAndDraw(renderParams);
+            scene->UpdateAndDraw(renderParams.get());
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         DepthMap_Texture->unbind();
@@ -285,7 +265,7 @@ namespace SKEngio {
         renderParams->time = glfwGetTime();
 
         if(renderParams->useShadows)
-            _ShadowMapPass();
+            ShadowMapPass();
 
         //enable the frame buffer object
         glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
@@ -325,7 +305,7 @@ namespace SKEngio {
 
             //update and render all scenes
             for (Scene* scene : sceneStack->scenes) {
-                scene->UpdateAndDraw(renderParams);
+                scene->UpdateAndDraw(renderParams.get());
             }
 
             //disable the frame buffer
@@ -333,7 +313,7 @@ namespace SKEngio {
 
             //begin the gui rendering
             if (renderParams->drawUI) 
-                _DrawUI();
+                DrawUI();
 
             //---BEGIN rendering frame buffer quad
             //frame buffer quads settings
@@ -365,21 +345,20 @@ namespace SKEngio {
         glfwSwapBuffers(winMan->window);
     }
 
-    Camera* Renderer::NewCamera(float fov, std::string camID) {
-        camera = new Camera(winMan->width, winMan->height, fov, camID);
-        return camera;
+    void Renderer::NewCamera(float fov, std::string camID) {
+        camera = std::make_unique<Camera>(winMan->width, winMan->height, fov, std::move(camID));
     }
 
     void Renderer::AddScene(Scene* newScene) {
-        if (camera == NULL) {
+        if (camera == nullptr) {
             SK_LOG_ERR("ERROR! Adding scene to Renderer before adding a camera");
         }
-        newScene->setActiveCamera(camera);
+        newScene->setActiveCamera(camera.get());
         sceneStack->AddScene(newScene);
     }
 
     SceneStack* Renderer::GetSceneStack() {
-        return sceneStack;
+        return sceneStack.get();
     }
 
 }

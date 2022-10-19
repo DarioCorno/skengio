@@ -202,7 +202,6 @@
     <ClInclude Include="skengio\application.h" />
     <ClInclude Include="skengio\AudioSource.h" />
     <ClInclude Include="skengio\camera.h" />
-    <ClInclude Include="skengio\core.h" />
     <ClInclude Include="skengio\defines.h" />
     <ClInclude Include="skengio\event.h" />
     <ClInclude Include="skengio\GUIManager.h" />

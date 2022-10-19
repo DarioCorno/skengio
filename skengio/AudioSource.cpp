@@ -3,14 +3,14 @@
 namespace SKEngio {
 	AudioSource::AudioSource() {
 		type = AudioType::Stream;
-		BASS_Init(-1, 44100, 0, NULL, NULL);
+		BASS_Init(-1, 44100, 0, nullptr, nullptr);
 	}
 
 	AudioSource::~AudioSource() {
 		BASS_StreamFree(stream);
 	}
 
-	void AudioSource::loadStream(std::string fileName, AudioType _type) {
+	void AudioSource::loadStream(const std::string& fileName, AudioType _type) {
 		type = _type;
 		stream = BASS_StreamCreateFile(FALSE, fileName.c_str(), 0, 0, BASS_SAMPLE_FLOAT);
 	}

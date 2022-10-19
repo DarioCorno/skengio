@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _SK_SCENESTACK_
-#define _SK_SCENESTACK_
+#ifndef SK_SCENESTACK_
+#define SK_SCENESTACK_
 
 #include <vector>
 
@@ -11,19 +11,14 @@
 namespace SKEngio {
 
     class SceneStack {
-        public:
-
-        SceneStack();
+    public:
 
         virtual ~SceneStack();
 
         void AddScene(Scene* scene);
 
-        void PopScene(Scene* scene);
-
         void OnEvent(Event* e);
-
-
+        
 		std::vector<Scene*>::iterator begin() { return scenes.begin(); }
 		std::vector<Scene*>::iterator end() { return scenes.end(); }
 		std::vector<Scene*>::reverse_iterator rbegin() { return scenes.rbegin(); }
@@ -36,9 +31,7 @@ namespace SKEngio {
 
         std::vector<Scene*> scenes;
 
-        private:
-
-        unsigned int sceneInsertIndex = 0;
+    private:
     };
 
 }

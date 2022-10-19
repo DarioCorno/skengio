@@ -7,9 +7,6 @@
 #include <iostream>
 
 namespace SKEngio {
-    Mesh::Mesh() {
-    }
-
     Mesh::~Mesh() {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
@@ -62,11 +59,10 @@ namespace SKEngio {
 
     void Mesh::buildInterleavedArray() {
         std::size_t count = vertexes.size();
-        unsigned int vi = 0;
         unsigned int ci = 0;
         unsigned int ni = 0;
         unsigned int ti = 0;
-        for (vi = 0; vi < count; vi += 3)
+        for (unsigned int vi = 0; vi < count; vi += 3)
         {
             interleavedVertices.push_back(vertexes[vi]);
             interleavedVertices.push_back(vertexes[vi + 1]);
@@ -107,7 +103,7 @@ namespace SKEngio {
         //set the vertexes attributes data (let OLG know where the vertex data is)
         // position attribute index 0 in shader, 3 floats, , , how many bytes to jump for the next element, where the value starts in the current element
         //position in shader = 0, made of 3 elements, type float, no normalize, 12 floats to next block, starts at 0 of the block
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)nullptr);
         glEnableVertexAttribArray(0);
 
         // color attribute (same as above, but starts 3 float from the beginning of the block)
@@ -132,7 +128,7 @@ namespace SKEngio {
         glBindVertexArray(VAO);
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         //glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)nullptr);
     }
 
 }

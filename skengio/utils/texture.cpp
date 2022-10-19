@@ -7,16 +7,8 @@
 
 namespace SKEngio {
 
-    Texture::Texture() {
-        textureID = 0;
-        data = NULL;
-        loaded = false;
-        isCubemap = false;
-    }
-
-
     Texture::~Texture() {
-        TextureManager::getInstance()->FreeData(data);
+        TextureManager::getInstance().FreeData(data);
     }
 
     void Texture::bind() {

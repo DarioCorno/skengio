@@ -4,11 +4,6 @@
 #include "../logger.h"
 
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <filesystem>
-#include <fstream>
 
 #include <skengio/material.h>
 
@@ -18,9 +13,6 @@
 #include "skengio/light.h"
 
 namespace SKEngio {
-
-    class Material;
-
     //a simple class to load and compile shaders
     class ShaderProgram
     {
@@ -28,23 +20,29 @@ namespace SKEngio {
         
             enum SHADERTYPE {VERTEX = 0, FRAGMENT, GEOMETRY, TESSELATION};
 
-            unsigned int shaders[4];    //shaders IDs for every shader type
+            unsigned int shaders[4]{};    //shaders IDs for every shader type
             unsigned int programID = 0;
 
-            ShaderProgram();
+            ShaderProgram() = default;
+
+            // prevent copying object
+            ShaderProgram(const ShaderProgram&) = delete;
+            ShaderProgram(ShaderProgram&&) = delete;
+            ShaderProgram& operator=(const ShaderProgram&) = delete;
+            ShaderProgram& operator=(ShaderProgram&&) = delete;
 
             ~ShaderProgram();
 
-            void LoadShader(std::string strPath, std::string strFileName, SHADERTYPE typeShader);
+            void LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader);
 
             void CreateProgram();
 
             void SetCameraUniforms(Camera* camera);
-            void SetModelUniforms(glm::mat4 modelMatrix);
+            void SetModelUniforms(const glm::mat4& modelMatrix);
             void SetLightUniforms(Light* light);
             void SetMaterialUniforms(Material* mat);
 
-            void SetViewMatrix(glm::mat4 viewMatrix);
+            void SetViewMatrix(const glm::mat4& viewMatrix);
 
             void SetDiffTexture(int textureID);
             void SetCubeTexture(int textureID);
@@ -58,7 +56,7 @@ namespace SKEngio {
 
             std::string includeIndentifier = "#include ";
 
-            std::string LoadShaderFile(std::string strPath, std::string strFilename, GLuint iShaderHandle);      
+            std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle);      
 
             void getMatricesUniformsLocation();
             void getLightUniformsLocation();
@@ -69,7 +67,7 @@ namespace SKEngio {
             // utility function for checking shader compilation/linking errors.
             void checkLinkingErrors();
 
-            bool isBind;
+            bool isBind = false;
 
             //UNIFORMS LOCATIONS
             //default proj + view + model matrices 
@@ -90,7 +88,6 @@ namespace SKEngio {
             int uniformMaterialSpecularLocation = -1;
             int uniformMaterialShininessLocation = -1;
             int uniformMaterialReflectivityLocation = -1;
-            int uniformMaterialTexOpacityLocation = -1;
 
             //textures location
             int textureDiffuseLocation = -1;

@@ -1,13 +1,11 @@
 #pragma once
 
-#ifndef _SK_TEXTURE_
-#define _SK_TEXTURE_
+#ifndef SK_TEXTURE_
+#define SK_TEXTURE_
 
 #include <GLEW/glew.h>
 
-#include <string>
 #include <iostream>
-#include <vector>
 
 namespace SKEngio {
 
@@ -17,13 +15,19 @@ namespace SKEngio {
             int width;
             int height;
             int numChannels;
-            unsigned int textureID;
+            unsigned int textureID = 0;
             unsigned int textureUnit;
-            unsigned char* data = NULL;
+            unsigned char* data = nullptr;
             bool loaded = false;
             bool isCubemap = false;
 
-            Texture();
+            Texture() = default;
+
+            // prevent copying object
+            Texture(const Texture&) = delete;
+            Texture(Texture&&) = delete;
+            Texture& operator=(const Texture&) = delete;
+            Texture& operator=(Texture&&) = delete;
 
             ~Texture();
 

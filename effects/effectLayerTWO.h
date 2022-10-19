@@ -9,7 +9,7 @@
 #include <skengio/utils/textureManager.h>
 #include <skengio/renderparams.h>
 
-class EffectTwo : public SKEngio::Layer {
+class EffectTwo final : public SKEngio::Layer {
     public:
 
         glm::mat4 model = glm::mat4(1.0f);  //model matrix
@@ -20,7 +20,7 @@ class EffectTwo : public SKEngio::Layer {
         SKEngio::SKYBox* sky;
         SKEngio::Light* light;
 
-        void OnAttach() {
+        void OnAttach() override {
             SK_LOG("Attaching layer " << this->GetId() );
 
             //moved here for debug
@@ -46,7 +46,7 @@ class EffectTwo : public SKEngio::Layer {
             plane->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
             plane->shader->CreateProgram();
 
-            plane->material->diffuseTexture = SKEngio::TextureManager::getInstance()->Load("./resources/textures/checker.jpg", false);
+            plane->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/checker.jpg", false);
             //plane is still, we can set his model matrix now
             plane->translate(0.0f, -2.0f, 0.0f);
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
@@ -63,7 +63,7 @@ class EffectTwo : public SKEngio::Layer {
             torus->shader->LoadShader("./shaders/","basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
             torus->shader->CreateProgram();
 
-            torus->material->diffuseTexture = SKEngio::TextureManager::getInstance()->Load("./resources/textures/metal.jpg", false);
+            torus->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/metal.jpg", false);
             //create a light with deafult colors
             light = new SKEngio::Light();
 
@@ -73,7 +73,7 @@ class EffectTwo : public SKEngio::Layer {
 
         }
 
-        void OnDetach() {
+        void OnDetach() override {
             delete torus;
             delete plane;
             delete light;
@@ -82,7 +82,7 @@ class EffectTwo : public SKEngio::Layer {
             SK_LOG("Destroying Layer " << this->GetId() );
         }
 
-        void OnDrawGUI(SKEngio::RenderParams* rp) {
+        void OnDrawGUI(SKEngio::RenderParams* rp) override {
             ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
             ImGui::SetNextWindowBgAlpha(0.5f);
             ImGui::Begin("Effect TWO");                
@@ -99,7 +99,7 @@ class EffectTwo : public SKEngio::Layer {
             ImGui::End();
         }
 
-        void OnUpdate(SKEngio::RenderParams* rp) {
+        void OnUpdate(SKEngio::RenderParams* rp) override {
 
             float t = rp->time;
 
@@ -125,7 +125,7 @@ class EffectTwo : public SKEngio::Layer {
 
         }
 
-        void OnDraw(SKEngio::RenderParams* rp) {
+        void OnDraw(SKEngio::RenderParams* rp) override {
 
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);

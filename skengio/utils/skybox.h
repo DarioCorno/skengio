@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _SK_SKYBOX_
-#define _SK_SKYBOX_
+#ifndef SK_SKYBOX_
+#define SK_SKYBOX_
 
 #define GLEW_STATIC
 #include <GLEW/glew.h>
@@ -10,7 +10,7 @@
 namespace SKEngio {
 	class SKYBox {
         public:
-		    SKYBox(std::vector<std::string> facesFiles) {
+		    SKYBox(const std::vector<std::string>& facesFiles) {
 
                 float skyboxVertices[] = {
                     // positions          
@@ -63,9 +63,9 @@ namespace SKEngio {
                 glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
                 glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
 
-                shader = new ShaderProgram();
+                shader = std::make_unique<ShaderProgram>();
                 shader->LoadShader("./shaders/", "skybox.vert", SKEngio::ShaderProgram::VERTEX);
                 shader->LoadShader("./shaders/", "skybox.frag", SKEngio::ShaderProgram::FRAGMENT);
                 shader->CreateProgram();
@@ -75,11 +75,15 @@ namespace SKEngio {
                 shader->SetCubeTexture(cubemapTexture->textureUnit);
 		    }
 
+            // prevent copying object
+            SKYBox(const SKYBox&) = delete;
+            SKYBox(SKYBox&&) = delete;
+            SKYBox& operator=(const SKYBox&) = delete;
+            SKYBox& operator=(SKYBox&&) = delete;
+
             ~SKYBox() {
                 glDeleteVertexArrays(1, &skyboxVAO);
                 glDeleteBuffers(1, &skyboxVBO);
-                delete cubemapTexture;
-                delete shader;
             }
 
             void render(Camera* camera) {
@@ -111,15 +115,15 @@ namespace SKEngio {
 
             }
 
-            ShaderProgram* shader;
+            std::unique_ptr<ShaderProgram> shader;
             unsigned int skyboxVAO, skyboxVBO;
-            Texture* cubemapTexture;
+            std::unique_ptr<Texture> cubemapTexture;
 
             private:
 
-                bool loadTextures(std::vector<std::string> facesFiles) {
-                    cubemapTexture = SKEngio::TextureManager::getInstance()->LoadCubemap(facesFiles);
-                    return cubemapTexture;
+                bool loadTextures(const std::vector<std::string>& facesFiles) {
+                    cubemapTexture = TextureManager::getInstance().LoadCubemap(facesFiles);
+                    return cubemapTexture != nullptr;
                 }
 
 	};

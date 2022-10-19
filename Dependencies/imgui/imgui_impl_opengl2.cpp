@@ -68,7 +68,7 @@ struct ImGui_ImplOpenGL2_Data
 // It is STRONGLY preferred that you use docking branch with multi-viewports (== single Dear ImGui context + multiple windows) instead of multiple Dear ImGui contexts.
 static ImGui_ImplOpenGL2_Data* ImGui_ImplOpenGL2_GetBackendData()
 {
-    return ImGui::GetCurrentContext() ? (ImGui_ImplOpenGL2_Data*)ImGui::GetIO().BackendRendererUserData : NULL;
+    return ImGui::GetCurrentContext() ? (ImGui_ImplOpenGL2_Data*)ImGui::GetIO().BackendRendererUserData : nullptr;
 }
 
 // Functions
@@ -92,8 +92,8 @@ void    ImGui_ImplOpenGL2_Shutdown()
     ImGuiIO& io = ImGui::GetIO();
 
     ImGui_ImplOpenGL2_DestroyDeviceObjects();
-    io.BackendRendererName = NULL;
-    io.BackendRendererUserData = NULL;
+    io.BackendRendererName = nullptr;
+    io.BackendRendererUserData = nullptr;
     IM_DELETE(bd);
 }
 
@@ -270,7 +270,7 @@ void ImGui_ImplOpenGL2_DestroyFontsTexture()
     if (bd->FontTexture)
     {
         glDeleteTextures(1, &bd->FontTexture);
-        io.Fonts->SetTexID(0);
+        io.Fonts->SetTexID(nullptr);
         bd->FontTexture = 0;
     }
 }

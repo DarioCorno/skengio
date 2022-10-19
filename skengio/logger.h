@@ -3,7 +3,6 @@
 
 #define SKENGIO_LOGGER
 
-#include <iostream>
 #include <sstream>
 #include <list>
 #include <string>
@@ -21,25 +20,17 @@ namespace SKEngio {
     class Logger
     {
         private:
-
-            /* Here will be the instance stored. */
-            static Logger* instance;
-
-            /* Private constructor to prevent instancing. */
-            Logger();
-
+        public:
             // prevent copying object
             Logger(const Logger&) = delete;
             Logger(Logger&&) = delete;
             Logger& operator=(const Logger&) = delete;
             Logger& operator=(Logger&&) = delete;
 
-
-        public:
             void log(std::string a, unsigned int type);
 
             /* Static access method. */
-            static Logger* getInstance();
+            static Logger& getInstance();
 
             std::list<LogEntry> buffer;
 
@@ -64,7 +55,7 @@ namespace SKEngio {
 
 #define SK_LOG(Log) { std::ostringstream _os; \
   _os << Log << std::flush;  \
-  SKEngio::Logger::getInstance()->log( _os.str(), LOG_INFO ); \
+  SKEngio::Logger::getInstance().log( _os.str(), LOG_INFO ); \
   }
 
 #endif
@@ -73,7 +64,7 @@ namespace SKEngio {
 
 #define SK_LOG_ERR(Log) { std::ostringstream _os; \
   _os << Log << std::flush;  \
-  SKEngio::Logger::getInstance()->log( _os.str(), LOG_ERROR ); \
+  SKEngio::Logger::getInstance().log( _os.str(), LOG_ERROR ); \
   }
 #endif
 

@@ -1,20 +1,6 @@
-#include <iostream>
-#include <iomanip>
-#include <cmath>
 #include "plane.h"
-#include "../../defines.h"
-
 
 namespace SKEngio {
-
-	Plane::Plane() {
-
-	}
-
-	Plane::~Plane() {
-
-	}
-
 	void Plane::Generate(float width, float height, unsigned int widthSegments, unsigned int heightSegments) {
 		float width_half = width / 2.0f;
 		float height_half = height / 2.0f;
@@ -28,11 +14,11 @@ namespace SKEngio {
 		float segment_width = width / (float)gridX;
 		float segment_height = height / (float)gridY;
 
-		for (int iy = 0; iy < gridY1; iy++) {
+		for (unsigned int iy = 0; iy < gridY1; iy++) {
 
 			float y = iy * segment_height - height_half;
 
-			for (int ix = 0; ix < gridX1; ix++) {
+			for (unsigned int ix = 0; ix < gridX1; ix++) {
 
 				float x = ix * segment_width - width_half;
 
@@ -45,9 +31,9 @@ namespace SKEngio {
 
 		}
 
-		for (int iy = 0; iy < gridY; iy++) {
+		for (unsigned int iy = 0; iy < gridY; iy++) {
 
-			for (int ix = 0; ix < gridX; ix++) {
+			for (unsigned int ix = 0; ix < gridX; ix++) {
 
 				unsigned int a = ix + gridX1 * iy;
 				unsigned int b = ix + gridX1 * (iy + 1);

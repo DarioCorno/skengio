@@ -16,7 +16,7 @@ namespace SKEngio {
 
 		~AudioSource();
 
-		void loadStream(std::string fileName, AudioType _type);
+		void loadStream(const std::string& fileName, AudioType _type);
 
 		void play();
 		void stop();

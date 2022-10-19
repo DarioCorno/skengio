@@ -1,20 +1,10 @@
-#include <iostream>
-#include <iomanip>
+
 #include <cmath>
 #include "torus.h"
 #include "../../defines.h"
 #include "glm/glm.hpp"
 
 namespace SKEngio {
-
-	Torus::Torus() {
-
-	}
-
-	Torus::~Torus() {
-
-	}
-
     void Torus::Generate(float tubeR, float mainR, int mainSteps, int tubeSteps, float radArc = M_PI * 2.0f) {
         float arc = radArc;
 

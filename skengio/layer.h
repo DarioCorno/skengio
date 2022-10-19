@@ -1,12 +1,12 @@
 #pragma once
 
-#ifndef _SK_LAYER_
-#define _SK_LAYER_
+#ifndef SK_LAYER_
+#define SK_LAYER_
 
 #include "event.h"
 #include "camera.h"
 #include <skengio/renderParams.h>
-#include <skengio/utils/object.h>
+//#include <skengio/utils/object.h>
 
 namespace SKEngio {
 
@@ -15,9 +15,15 @@ namespace SKEngio {
         
         Camera* activeCamera;
         
-        Layer();
+        Layer() = default;
 
-        ~Layer();
+        // prevent copying object
+        Layer(const Layer&) = delete;
+        Layer(Layer&&) = delete;
+        Layer& operator=(const Layer&) = delete;
+        Layer& operator=(Layer&&) = delete;
+
+        virtual ~Layer() = default;
 
         void SetId(unsigned int id);
         unsigned int GetId();
@@ -32,7 +38,7 @@ namespace SKEngio {
 
         //void AddObject(Object* obj);
 
-        void setCamera(Camera* newCam) { activeCamera = newCam; };
+        void setCamera(Camera* newCam) { activeCamera = newCam; }
 
         bool enabled = true;
         

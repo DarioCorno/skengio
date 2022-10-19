@@ -21,10 +21,6 @@ namespace SKEngio {
     class Sphere : public Mesh
     {
     public:
-        // ctor/dtor
-        Sphere();
-        ~Sphere();
-
         // getters/setters
         float getRadius() const                 { return radius; }
         void Generate(float _radius, int _subdivisions);

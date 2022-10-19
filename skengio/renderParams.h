@@ -1,11 +1,11 @@
 #pragma once
 
-#ifndef _SK_RENDERPARAMS_
-#define _SK_RENDERPARAMS_
+#ifndef SK_RENDERPARAMS_
+#define SK_RENDERPARAMS_
 
 namespace SKEngio {
 
-    enum RenderPass {
+    enum class RenderPass {
         CameraDepth = 0,
         ShadowDepth,
         Final
@@ -13,19 +13,9 @@ namespace SKEngio {
 
     class RenderParams {
     public:
-        RenderParams() {
-            pass = RenderPass::Final;
-            useShadows = false;
-            drawUI = false;
-        }
-
-        ~RenderParams() {
-
-        }
-
-        RenderPass pass;
-        bool useShadows;
-        bool drawUI;
+        RenderPass pass = RenderPass::Final;
+        bool useShadows = false;
+        bool drawUI = true;
         float time;
     };
 }

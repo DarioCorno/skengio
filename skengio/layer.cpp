@@ -1,17 +1,6 @@
 #include "layer.h"
 
-#include "defines.h"
-
 namespace SKEngio {
-
-    Layer::Layer() {
-
-    }
-
-    Layer::~Layer() {
-
-    }
-
     void Layer::OnAttach() {
         //std::cout << "Layer attached" << this->GetId() << std::endl;
     }
@@ -20,15 +9,15 @@ namespace SKEngio {
         //std::cout << "Detaching Layer" << this->GetId() << std::endl;
     }
 
-    void Layer::OnUpdate(SKEngio::RenderParams* rp) {
+    void Layer::OnUpdate(RenderParams* rp) {
         
     }    
 
-    void Layer::OnDrawGUI(SKEngio::RenderParams* rp) {
+    void Layer::OnDrawGUI(RenderParams* rp) {
 
     }
 
-    void Layer::OnDraw(SKEngio::RenderParams* rp) {
+    void Layer::OnDraw(RenderParams* rp) {
 
     }
 

@@ -125,9 +125,6 @@
     <ClInclude Include="skengio\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="skengio\core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="skengio\defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>

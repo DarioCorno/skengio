@@ -1,10 +1,7 @@
 #pragma once
 
-#ifndef _SK_APPLICATION_
-#define _SK_APPLICATION_
-
-#include <iostream>
-#include <string>
+#ifndef SK_APPLICATION_
+#define SK_APPLICATION_
 
 #include "window.h"
 
@@ -16,6 +13,11 @@ namespace SKEngio {
         public:
 
             Application(WindowSpecs* windowSpecs, void (* errorCB)(int, const char*) );
+
+            Application(const Application&) = delete;
+            Application(Application&&) = delete;
+            Application& operator=(const Application&) = delete;
+            Application& operator=(Application&&) = delete;
 
             virtual ~Application();
 
@@ -33,7 +35,7 @@ namespace SKEngio {
         private:
 
             WindowManager* winMan;
-            SKEngio::Renderer* renderer;
+            Renderer* renderer;
     };
 }
 

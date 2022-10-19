@@ -1,23 +1,17 @@
 #pragma once
 
-#ifndef _SK_LIGHT_
-#define _SK_LIGHT_
+#ifndef SK_LIGHT_
+#define SK_LIGHT_
 
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 namespace SKEngio  {
 
     class Light {
         public:
 
-        glm::vec3 lightPosition;
-        glm::vec3 lightDiffuseColor;
-
-        Light();
-
-        ~Light();       
+        glm::vec3 lightPosition{ 0.0f, 14.0f, 0.0f };
+        glm::vec3 lightDiffuseColor{ 0.71f, 0.65f, 0.55f };
 
         void SetPosition(float x, float y, float z);
         void SetDiffuse(float r, float g, float b);

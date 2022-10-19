@@ -1,5 +1,3 @@
-#define GLEW_STATIC
-
 #include "skengio/application.h"
 #include "skengio/renderer.h"
 #include "skengio/logger.h"
@@ -10,14 +8,12 @@
 
 #include <iostream>
 #include <sstream>
-#include <string>
-
 
 static void errorCB(int error, const char* description) {
     std::cout << "ERROR: " << description << std::endl;
 }
 
-int main(void)
+int main()
 {
 
     SKEngio::WindowSpecs winSpecs;

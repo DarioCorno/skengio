@@ -1,11 +1,9 @@
 #pragma once
 
-#ifndef _SK_CAMERA_
-#define _SK_CAMERA_
+#ifndef SK_CAMERA_
+#define SK_CAMERA_
 
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 #include <string>
 
@@ -30,21 +28,21 @@ namespace SKEngio {
 
             Camera(unsigned int w, unsigned int h, float fov, std::string camID);
 
-            ~Camera();
+            ~Camera() = default;
     
             void setTarget(float x, float y, float z);
-            void setTarget(glm::vec3 newTarget);
+            void setTarget(const glm::vec3& newTarget);
             void translate(float x, float y, float z);
 
             void setPosition(float x, float y, float z);
-            void setPosition(glm::vec3 newPos);
+            void setPosition(const glm::vec3& newPos);
 
             void moveForward(float distance);
 
-            glm::mat4 getViewMatrix();
-            glm::mat4 getProjMatrix();
+            glm::mat4 getViewMatrix() const;
+            glm::mat4 getProjMatrix() const;
 
-            glm::vec3 getDirection();
+            glm::vec3 getDirection() const;
 
             void handleResize(unsigned int w, unsigned int h);
             void UpdateViewport();

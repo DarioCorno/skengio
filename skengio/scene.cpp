@@ -8,48 +8,46 @@ namespace SKEngio {
 
     Scene::Scene(unsigned int sceneid) {
         //initializes the layers manager
-        layerStack = new LayerStack();
         sceneID = sceneid;
     };
 
     Scene::~Scene() {
-        delete layerStack;
         delete music;
     };
 
     void Scene::OnAttach() {
-        for(Layer* layer : layerStack->layers) {
+        for(Layer* layer : layerStack.layers) {
             layer->OnAttach();
         }
     }
 
     void Scene::OnDetach() {
-        for(Layer* layer : layerStack->layers) {
+        for(Layer* layer : layerStack.layers) {
             layer->OnDetach();
         }
     }    
 
     void Scene::OnEvent(Event* e) {
 
-        if (e->type == EVENT_TYPE_KEYPRESS) {
+        if (e->type == EventType::KeyPress) {
             if (e->key == GLFW_KEY_W) {
-                activeCamera->moveForward(0.1);
+                activeCamera->moveForward(0.1f);
             }
             if (e->key == GLFW_KEY_S) {
-                activeCamera->moveForward(-0.1);
+                activeCamera->moveForward(-0.1f);
             }
             if (e->key == GLFW_KEY_A) {
-                activeCamera->translate(0.1, 0.0, 0.0);
+                activeCamera->translate(0.1f, 0.0f, 0.0f);
             }
             if (e->key == GLFW_KEY_D) {
-                activeCamera->translate(-0.1, 0.0, 0.0);
+                activeCamera->translate(-0.1f, 0.0f, 0.0f);
             }
             if (e->key == GLFW_KEY_Q) {
-                activeCamera->translate(-0.1, 0.0, 0.0);
+                activeCamera->translate(-0.1f, 0.0f, 0.0f);
             }
         }
         //pass the event to layerStack
-        layerStack->OnEvent(e);
+        layerStack.OnEvent(e);
 
     }
 
@@ -57,7 +55,7 @@ namespace SKEngio {
         if(!enabled) 
             return;
 
-        for(Layer* layer : layerStack->layers) {
+        for(Layer* layer : layerStack.layers) {
             if(layer->enabled) {
                 layer->OnDrawGUI(rp);
             }
@@ -72,7 +70,7 @@ namespace SKEngio {
         music->updateFFT();
 
         //update and render all scenes
-        for(Layer* layer : layerStack->layers) {
+        for(Layer* layer : layerStack.layers) {
             if(layer->enabled) {
                 layer->setCamera( activeCamera );
                 layer->OnUpdate(rp);
@@ -83,10 +81,10 @@ namespace SKEngio {
 
     void Scene::PushLayer(Layer* layer) {
         layer->setCamera(activeCamera);
-        layerStack->PushLayer(layer);
+        layerStack.PushLayer(layer);
     }
 
-    LayerStack* Scene::GetLayerStack() {
+    const LayerStack& Scene::GetLayerStack() const {
         return layerStack;
     }
 

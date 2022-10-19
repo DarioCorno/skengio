@@ -1,9 +1,8 @@
 #pragma once
 
-#ifndef _SK_MESH_
-#define _SK_MESH_
+#ifndef SK_MESH_
+#define SK_MESH_
 
-#include <iostream>
 #include <vector>
 
 namespace SKEngio {
@@ -31,8 +30,6 @@ namespace SKEngio {
         int interleavedStride = sizeof(float) * 12;                  // # of bytes to hop to the next vertex (should be 48 bytes)        
         //without color component
         //int interleavedStride = sizeof(float) * 8;                  // # of bytes to hop to the next vertex (should be 32 bytes)        
-
-        Mesh();
 
         ~Mesh();
 

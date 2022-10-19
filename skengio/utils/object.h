@@ -1,10 +1,9 @@
 #pragma once
-#ifndef _SK_OBJECT_
-#define _SK_OBJECT_
+#ifndef SK_OBJECT_
+#define SK_OBJECT_
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include <skengio/material.h>
 #include <skengio/renderParams.h>
 #include "shaderProgram.h"
@@ -16,11 +15,11 @@ namespace SKEngio {
 	class Object {
 		public:
 
-			Object() { 
-				model = glm::mat4(1.0f);
-				cubemap = NULL;
-				material = new SKEngio::Material();
-				castsShadows = true;
+			Object() : 
+				model {glm::mat4(1.0f)},
+				material {new Material()},
+				castsShadows {true}
+		    {
 			}
 
 			~Object() {
@@ -39,7 +38,7 @@ namespace SKEngio {
 
 				shader->SetDiffTexture(material->diffuseTexture->textureUnit);
 
-				if (cubemap != NULL) {
+				if (cubemap != nullptr) {
 					cubemap->bind();
 					shader->SetCubeTexture(cubemap->textureUnit);
 				}
@@ -70,14 +69,14 @@ namespace SKEngio {
 				cubemap = _cubemap;
 			}
 
-			Mesh* mesh;
-			ShaderProgram* shader;
+			Mesh* mesh{};
+			ShaderProgram* shader{};
 			glm::mat4 model;
 			Material* material;
 			bool castsShadows;
 
 		private:
-			Texture* cubemap;
+			Texture* cubemap{};
 
 	};
 }

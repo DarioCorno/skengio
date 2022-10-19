@@ -1,5 +1,8 @@
 #pragma once
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "skengio/defines.h"
 #include "skengio/utils/shaderProgram.h"
 #include "skengio/layer.h"
@@ -9,7 +12,7 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-class EffectOne : public SKEngio::Layer {
+class EffectOne final : public SKEngio::Layer {
     public:
 
         unsigned int vertexArray{};
@@ -26,7 +29,7 @@ class EffectOne : public SKEngio::Layer {
         int modelMatrixLocation = 0;
 
 
-        void OnAttach() {
+        void OnAttach() override {
 
             glGenVertexArrays(1, &vertexArray);
             glBindVertexArray(vertexArray);
@@ -65,14 +68,14 @@ class EffectOne : public SKEngio::Layer {
 
         }
 
-        void OnDetach() {
+        void OnDetach() override {
 
             delete shaderProgram;
             glDeleteVertexArrays(1, &vertexArray);
 
         }
 
-        void OnDrawGUI(SKEngio::RenderParams* rp) {
+        void OnDrawGUI(SKEngio::RenderParams* rp) override {
 
             ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver );
             ImGui::SetNextWindowBgAlpha(0.5f);
@@ -80,11 +83,11 @@ class EffectOne : public SKEngio::Layer {
             ImGui::Text("Flash speed:");
             ImGui::SliderFloat("float", &fxparam, 0.1f, 20.0f);
             ImGui::Text("ShaderProg ID: %i", shaderProgram->programID);
-            ImGui::Text("Camera     ID: %s", activeCamera->id);
+            ImGui::Text("Camera     ID: %s", activeCamera->id.c_str());
             ImGui::End();                    
         }
 
-        void OnUpdate(SKEngio::RenderParams* rp) {
+        void OnUpdate(SKEngio::RenderParams* rp) override {
 
             float t = rp->time;
 
@@ -103,7 +106,7 @@ class EffectOne : public SKEngio::Layer {
             glProgramUniformMatrix4fv( shaderProgram->programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model) );
         }
 
-        void OnDraw(SKEngio::RenderParams* rp) {
+        void OnDraw(SKEngio::RenderParams* rp) override {
 
             glDisable(GL_BLEND);
             glDisable(GL_CULL_FACE);

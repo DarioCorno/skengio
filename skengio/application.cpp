@@ -1,5 +1,7 @@
 
 #include "application.h"
+
+#include "logger.h"
 #include "renderer.h"
 
 static void keyCB (GLFWwindow * window, int key, int scancode, int action, int mods) {

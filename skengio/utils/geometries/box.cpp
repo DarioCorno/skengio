@@ -1,26 +1,12 @@
-#include <iostream>
-#include <iomanip>
-#include <cmath>
 #include "box.h"
 
 #include "glm/glm.hpp"
-
-#include "../../defines.h"
 
 #define _X_ 0
 #define _Y_ 1
 #define _Z_ 2
 
 namespace SKEngio {
-
-	Box::Box() {
-
-	}
-
-	Box::~Box() {
-
-	}
-
 	void Box::Generate(float width, float height, float depth, unsigned int widthSegments, unsigned int heightSegments, unsigned int depthSegments) {
 		numberOfVertices = 0;
 
@@ -50,11 +36,11 @@ namespace SKEngio {
 
 		// generate vertices, normals and uvs
 
-		for (int iy = 0; iy < gridY1; iy++) {
+		for (unsigned int iy = 0; iy < gridY1; iy++) {
 
 			float y = iy * (float)segmentHeight - heightHalf;
 
-			for (int ix = 0; ix < gridX1; ix++) {
+			for (unsigned int ix = 0; ix < gridX1; ix++) {
 
 				float x = ix * (float)segmentWidth - widthHalf;
 
@@ -93,9 +79,9 @@ namespace SKEngio {
 		// 2. a single segment consists of two faces
 		// 3. so we need to generate six (2*3) indices per segment
 
-		for (int iy = 0; iy < gridY; iy++) {
+		for (unsigned int iy = 0; iy < gridY; iy++) {
 
-			for (int ix = 0; ix < gridX; ix++) {
+			for (unsigned int ix = 0; ix < gridX; ix++) {
 
 				unsigned int a = numberOfVertices + ix + gridX1 * iy;
 				unsigned int b = numberOfVertices + ix + gridX1 * (iy + 1);

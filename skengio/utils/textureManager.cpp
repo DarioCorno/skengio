@@ -19,28 +19,19 @@
 namespace SKEngio {
 
     /* Null, because instance will be initialized on demand. */
-    TextureManager* TextureManager::instance = 0;
 
-    unsigned int TextureManager::textureCount = 0;
-
-    TextureManager* TextureManager::getInstance() {
-        if (instance == 0)
-            instance = new TextureManager();
-
+    TextureManager& TextureManager::getInstance() {
+        static TextureManager instance{};
         return instance;
     }
 
-    TextureManager::TextureManager(){
-        textureCount = 0;
-    }
-
-    SKEngio::Texture* TextureManager::Load(std::string fName, bool freeData) {
-        Texture* texture = new Texture();
+    std::unique_ptr<Texture> TextureManager::Load(const std::string& fName, bool freeData) {
+        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
 
         texture->data = stbi_load(fName.c_str(), &texture->width, &texture->height, &texture->numChannels, 0);
-        if (texture->data == NULL) {
+        if (texture->data == nullptr) {
             SK_LOG_ERR("TEXTURE ERROR! Cannot load " << fName.c_str());
-            return NULL;
+            return nullptr;
         }
 
         texture->textureUnit = textureCount++;
@@ -60,7 +51,7 @@ namespace SKEngio {
 
         if (freeData) {
             FreeData(texture->data);
-            texture->data = NULL;
+            texture->data = nullptr;
         }
 
         texture->loaded = true;
@@ -68,8 +59,8 @@ namespace SKEngio {
         return texture;
     }
 
-    SKEngio::Texture* TextureManager::LoadCubemap(std::vector<std::string> facesFiles) {
-        Texture* texture = new Texture();
+    std::unique_ptr<Texture> TextureManager::LoadCubemap(const std::vector<std::string>& facesFiles) {
+        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
         texture->textureUnit = textureCount++;
 
         glGenTextures(1, &texture->textureID);
@@ -89,7 +80,7 @@ namespace SKEngio {
             {
                 SK_LOG("Cubemap texture failed to load at path: " << facesFiles[i]);
                 stbi_image_free(data);
-                return NULL;
+                return nullptr;
             }
         }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -99,26 +90,26 @@ namespace SKEngio {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         texture->isCubemap = true;
-        texture->data = NULL;
+        texture->data = nullptr;
         texture->loaded = true;
 
         return texture;
     }
 
-    SKEngio::Texture* TextureManager::CreateFrameBufferTexture(unsigned int width, unsigned int height) {
-        Texture* texture = new Texture();
+    std::unique_ptr<Texture> TextureManager::CreateFrameBufferTexture(unsigned int width, unsigned int height) {
+        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
         texture->textureUnit = textureCount++;
 
         texture->width = width;
         texture->height = height;
         texture->isCubemap = false;
-        texture->data = NULL;
+        texture->data = nullptr;
 
         //create the texture for framebuffer
         glGenTextures(1, &texture->textureID);
         glActiveTexture(GL_TEXTURE0 + texture->textureUnit);
         glBindTexture(GL_TEXTURE_2D, texture->textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -129,19 +120,19 @@ namespace SKEngio {
 
     }
 
-    SKEngio::Texture* TextureManager::CreateShadowMapTexture(unsigned int width, unsigned int height) {
-        Texture* texture = new Texture();
+    std::unique_ptr<Texture> TextureManager::CreateShadowMapTexture(unsigned int width, unsigned int height) {
+        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
         texture->textureUnit = textureCount++;
 
         texture->width = width;
         texture->height = height;
         texture->isCubemap = false;
-        texture->data = NULL;
+        texture->data = nullptr;
 
         glGenTextures(1, &texture->textureID);
         glActiveTexture(GL_TEXTURE0 + texture->textureUnit);
         glBindTexture(GL_TEXTURE_2D, texture->textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -154,7 +145,7 @@ namespace SKEngio {
     void TextureManager::FreeData(unsigned char* data) {
         if (data) {
             stbi_image_free(data);
-            data = NULL;
+            data = nullptr;
         }
     }
 

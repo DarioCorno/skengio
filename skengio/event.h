@@ -1,24 +1,24 @@
 #pragma once
 
-#ifndef _SK_EVENT_
-#define _SK_EVENT_
+#ifndef SK_EVENT_
+#define SK_EVENT_
 
-#define EVENT_TYPE_KEYPRESS 0
-#define EVENT_TYPE_KEYRELEASE 1
-#define EVENT_TYPE_MOUSEMOVE 2
-#define EVENT_TYPE_MOUSEPRESS 3
-#define EVENT_TYPE_MOUSERELEASE 4
-#define EVENT_TYPE_MOUSESCROLL 5
-#define EVENT_TYPE_RESIZE 6
+enum class EventType
+{
+    None,
+    KeyPress,
+    KeyRelease,
+    MouseMove,
+    MousePress,
+    MouseRelease,
+    MouseScroll,
+    Resize
+};
 
 namespace SKEngio {
 
     class Event {
         public:
-
-            Event();
-
-            ~Event();
 
             void SetKeyPress(int _key, int _scancode, int _action, int _mods);
             void SetKeyRelease(int _key, int _scancode, int _action, int _mods);
@@ -28,7 +28,7 @@ namespace SKEngio {
             void SetMouseScroll(float _xoffset, float _yoffset);
             void SetResize(int _width, int _height);
 
-            int type;
+            EventType type = EventType::None;
 
             //resize
             int width = 0;

@@ -1,43 +1,19 @@
 #include "shaderProgram.h"
 #include <direct.h>
+#include <fstream>
+#include <string>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "skengio/defines.h"
 
 namespace SKEngio {
-
-    ShaderProgram::ShaderProgram() {
-        shaders[VERTEX] = 0;
-        shaders[FRAGMENT] = 0;
-        shaders[GEOMETRY] = 0;
-        shaders[TESSELATION] = 0; 
-
-        projMatrixLocation = -1;
-        viewMatrixLocation = -1;
-        modelMatrixLocation = -1;
-
-        viewPosLocation = -1;
-
-        uniformLightPositionLocation = -1;
-        uniformLightDiffuseLocation = -1;
-
-        uniformMaterialAmbientLocation = -1;
-        uniformMaterialDiffuseLocation = -1;
-        uniformMaterialSpecularLocation = -1;
-        uniformMaterialShininessLocation = -1;
-        uniformMaterialReflectivityLocation = -1;
-        uniformMaterialTexOpacityLocation = -1;
-
-        textureDepthLocation = -1;
-
-        isBind = false;
-    }
 
     ShaderProgram::~ShaderProgram() {
         SK_LOG("Unloading Shader Program (ID: " << programID << ")" );
         glDeleteProgram(programID);                   
     }
 
-    void ShaderProgram::LoadShader(std::string strPath, std::string strFileName, SHADERTYPE typeShader) {
+    void ShaderProgram::LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader) {
 
         GLuint handleShader = 0;
         GLint status;
@@ -56,7 +32,7 @@ namespace SKEngio {
         if(fullSource.length() > 0)
         {
             const char *data = fullSource.c_str();
-            glShaderSource(handleShader, 1, &data , NULL);
+            glShaderSource(handleShader, 1, &data , nullptr);
 
             //now compile the shader
             glCompileShader(handleShader);
@@ -64,7 +40,7 @@ namespace SKEngio {
             if(status == GL_FALSE)
             {
                 char infoLog[1024];
-                glGetShaderInfoLog(handleShader, 1024, NULL, infoLog);
+                glGetShaderInfoLog(handleShader, 1024, nullptr, infoLog);
                 SK_LOG("ERROR! The shader at " << strFileName.c_str() << " failed to compile with the following errors:"); 
                 SK_LOG_ERR(infoLog);
                 glDeleteShader(handleShader);
@@ -82,7 +58,7 @@ namespace SKEngio {
         }
     }
 
-    std::string ShaderProgram::LoadShaderFile(std::string strPath, std::string strFilename, GLuint iShaderHandle) {
+    std::string ShaderProgram::LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle) {
         
         std::string strPathFilename = strPath + strFilename;
         std::ifstream shaderSource(strPathFilename.c_str());
@@ -95,7 +71,7 @@ namespace SKEngio {
             return "";
         }
         // now read in the data
-        std::string fullSourceCode = "";
+        std::string fullSourceCode;
         std::ifstream file(strPathFilename)        ;
 
 		if (!file.is_open())
@@ -110,7 +86,7 @@ namespace SKEngio {
 		while (std::getline(file, lineBuffer))
 		{
 			// Look for the new shader include identifier
-			if (lineBuffer.find(includeIndentifier) != lineBuffer.npos)
+			if (lineBuffer.find(includeIndentifier) != std::string::npos)
 			{
 				// Remove the include identifier, this will cause the path to remain
 				lineBuffer.erase(0, includeIndentifier.size());
@@ -171,7 +147,7 @@ namespace SKEngio {
             glProgramUniform3fv(programID, viewPosLocation, 1, glm::value_ptr(camera->position));
     }
 
-    void ShaderProgram::SetModelUniforms(glm::mat4 modelMatrix) {
+    void ShaderProgram::SetModelUniforms(const glm::mat4& modelMatrix) {
         if(modelMatrixLocation != -1)
             glProgramUniformMatrix4fv(programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     }
@@ -203,7 +179,7 @@ namespace SKEngio {
 
     }
 
-    void ShaderProgram::SetViewMatrix(glm::mat4 viewMatrix) {
+    void ShaderProgram::SetViewMatrix(const glm::mat4& viewMatrix) {
         if (viewMatrixLocation != -1) {
             glProgramUniformMatrix4fv(programID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
         }

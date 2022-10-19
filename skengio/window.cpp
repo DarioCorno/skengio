@@ -1,6 +1,5 @@
 #include "window.h"
 
-#include <stdlib.h>
 #include <string>
 #include <iostream>
 
@@ -31,15 +30,15 @@ namespace SKEngio {
             glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-            window = glfwCreateWindow(width, height, this->caption.c_str(), monitor, NULL);
+            window = glfwCreateWindow(width, height, this->caption.c_str(), monitor, nullptr);
         }
         else {
             width = windowSpecs->width;
             height = windowSpecs->height;
-            window = glfwCreateWindow(this->width, this->height, this->caption.c_str(), NULL, NULL);
+            window = glfwCreateWindow(this->width, this->height, this->caption.c_str(), nullptr, nullptr);
         }
 
-        if(window == NULL) {
+        if(window == nullptr) {
             std::cout << "GLFW ERROR window init failed" << std::endl;
             exit(EXIT_FAILURE);
         }

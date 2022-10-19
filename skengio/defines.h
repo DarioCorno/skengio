@@ -1,5 +1,5 @@
-#ifndef _SK_DEFINES_
-#define _SK_DEFINES_
+#ifndef SK_DEFINES_
+#define SK_DEFINES_
 
 //SOME MATH DEFINES
 #define M_PI	3.14159

@@ -9,11 +9,13 @@
 
 #include <iostream>
 
+#include "defines.h"
+#include "logger.h"
+#include "renderer.h"
+#include "scene.h"
+
 
 namespace SKEngio {
-
-    class RenderParams;
-
     GUIManager::GUIManager(Renderer* parentR) {
         parentRenderer = parentR;
     }
@@ -58,27 +60,25 @@ namespace SKEngio {
     }
 
     void GUIManager::Draw() {
-            static int counter = 0;
-
             if(GUI_SHOW_FPS) {
                 ImGui::SetNextWindowPos(ImVec2(2, 2), ImGuiCond_FirstUseEver );
                 ImGui::SetNextWindowBgAlpha(0.2f);
                 ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-                ImGui::Begin("SKEngio", NULL, window_flags);
+                ImGui::Begin("SKEngio", nullptr, window_flags);
 
                 ImGui::Text("App average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                 ImGui::End();                    
             }
 
             if(logVisible) {
-                Logger* log = SKEngio::Logger::getInstance();
+                Logger& log = SKEngio::Logger::getInstance();
                 ImGui::SetNextWindowPos(ImVec2(0, winHeight - 150), 1 );
                 ImGui::SetNextWindowSize(ImVec2(winWidth, 150), 1 );
                 ImGui::SetNextWindowBgAlpha(0.2f);
                 ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-                ImGui::Begin("Application Log", NULL, log_window_flags);
+                ImGui::Begin("Application Log", nullptr, log_window_flags);
 
-                for(LogEntry le : log->buffer) {
+                for(const LogEntry& le : log.buffer) {
                     if(le.type == LOG_INFO) {
                         ImGui::Text( "%s" , le.entry.c_str() );
                     } else {
@@ -97,7 +97,7 @@ namespace SKEngio {
             ImGui::SetNextWindowSize(ImVec2(200, winHeight - ((logVisible) ? 150 : 0)), 1 );
             ImGui::SetNextWindowBgAlpha(0.2f);
             ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-            ImGui::Begin("Settings", NULL, log_window_flags);
+            ImGui::Begin("Settings", nullptr, log_window_flags);
             ImGui::Text("Audio");
             ImGui::Separator();
             //music is in scene 0 (horrible)
@@ -108,7 +108,7 @@ namespace SKEngio {
             for(Scene* scn : parentRenderer->GetSceneStack()->scenes) {
                 if ( ImGui::TreeNode( scn->dispName.c_str()) )
                 {
-                    for(Layer* lyr : scn->GetLayerStack()->layers ) {
+                    for(Layer* lyr : scn->GetLayerStack().layers ) {
                         std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
                         ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
                     }
@@ -143,22 +143,22 @@ namespace SKEngio {
     void GUIManager::OnEvent(Event* e) {
         ImGuiIO& io = ImGui::GetIO();
         switch(e->type) {
-            case EVENT_TYPE_KEYPRESS:
+            case EventType::KeyPress:
                 break;
-            case EVENT_TYPE_KEYRELEASE:
+            case EventType::KeyRelease:
                 break;
-            case EVENT_TYPE_MOUSEPRESS:
+            case EventType::MousePress:
                 io.MouseDown[ e->button ] = true;
                 break;
-            case EVENT_TYPE_MOUSERELEASE:
+            case EventType::MouseRelease:
                 io.MouseDown[ e->button ] = false;
                 break;
-            case EVENT_TYPE_MOUSEMOVE:
+            case EventType::MouseMove:
                 io.MousePos = ImVec2( e->xPos, e->yPos );
                 break;
-            case EVENT_TYPE_MOUSESCROLL:
+            case EventType::MouseScroll:
                 break;
-            case EVENT_TYPE_RESIZE:
+            case EventType::Resize:
                 winWidth = e->width;
                 winHeight = e->height;
                 break;

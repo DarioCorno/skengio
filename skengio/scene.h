@@ -11,7 +11,7 @@
 namespace SKEngio {
 
     class Scene {
-        public:
+    public:
 
         unsigned int sceneID;
 
@@ -19,13 +19,13 @@ namespace SKEngio {
         float endTime = SCENE_DEFAULT_END;
         float speedMult = 1;
 
-        SKEngio::AudioSource* music;
+        SKEngio::AudioSource* music{};
 
         Scene(unsigned int sceneid);
 
         ~Scene();
 
-        void SetName(std::string n) { dispName = n; };
+        void SetName(std::string n) { dispName = std::move(n); }
 
         void OnAttach();
         void OnDetach();
@@ -38,7 +38,7 @@ namespace SKEngio {
 
         void PushLayer(Layer* layer);
 
-        LayerStack* GetLayerStack();
+        const LayerStack& GetLayerStack() const;
 
         void setActiveCamera(Camera* cam);
 
@@ -47,9 +47,9 @@ namespace SKEngio {
         std::string dispName;
         bool enabled = true;
 
-        private:
+    private:
 
-        LayerStack* layerStack;
+        LayerStack layerStack;
 
         Camera* activeCamera;
         

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _SK_LAYERSTACK_
-#define _SK_LAYERSTACK_
+#ifndef SK_LAYERSTACK_
+#define SK_LAYERSTACK_
 
 #include <vector>
 
@@ -9,16 +9,9 @@
 
 namespace SKEngio {
 
-    class LayerStack {
+    class LayerStack final {
         public:
-
-        LayerStack();
-
-        virtual ~LayerStack();
-
         void PushLayer(Layer* layer);
-
-        void PopLayer(Layer* layer);
 
         void Destroy();
 
