@@ -23,6 +23,12 @@ namespace SKEngio {
 
         Scene(unsigned int sceneid);
 
+        // prevent copying object
+        Scene(const Scene&) = delete;
+        Scene(Scene&&) = delete;
+        Scene& operator=(const Scene&) = delete;
+        Scene& operator=(Scene&&) = delete;
+
         ~Scene();
 
         void SetName(std::string n) { dispName = std::move(n); }

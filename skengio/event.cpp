@@ -1,7 +1,5 @@
 #include <skengio/event.h>
 
-#include <stdlib.h>
-
 namespace SKEngio {
     void Event::SetKeyPress(int _key, int _scancode, int _action, int _mods) {
         type = EventType::KeyPress;

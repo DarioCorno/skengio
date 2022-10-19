@@ -10,10 +10,17 @@
 
 namespace SKEngio {
 
-    class SceneStack {
+    class SceneStack final {
     public:
+        SceneStack() = default;
+        
+        // prevent copying object
+        SceneStack(const SceneStack&) = delete;
+        SceneStack(SceneStack&&) = delete;
+        SceneStack& operator=(const SceneStack&) = delete;
+        SceneStack& operator=(SceneStack&&) = delete;
 
-        virtual ~SceneStack();
+        ~SceneStack();
 
         void AddScene(Scene* scene);
 

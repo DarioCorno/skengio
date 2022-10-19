@@ -28,8 +28,6 @@ namespace SKEngio {
 
             Camera(unsigned int w, unsigned int h, float fov, std::string camID);
 
-            ~Camera() = default;
-    
             void setTarget(float x, float y, float z);
             void setTarget(const glm::vec3& newTarget);
             void translate(float x, float y, float z);

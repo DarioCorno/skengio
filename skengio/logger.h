@@ -20,12 +20,15 @@ namespace SKEngio {
     class Logger
     {
         private:
+            Logger() = default;
         public:
             // prevent copying object
             Logger(const Logger&) = delete;
             Logger(Logger&&) = delete;
             Logger& operator=(const Logger&) = delete;
             Logger& operator=(Logger&&) = delete;
+
+            ~Logger() = default;
 
             void log(std::string a, unsigned int type);
 

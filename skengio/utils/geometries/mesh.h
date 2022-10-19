@@ -31,6 +31,14 @@ namespace SKEngio {
         //without color component
         //int interleavedStride = sizeof(float) * 8;                  // # of bytes to hop to the next vertex (should be 32 bytes)        
 
+        Mesh() = default;
+
+        // prevent copying object
+        Mesh(const Mesh&) = delete;
+        Mesh(Mesh&&) = delete;
+        Mesh& operator=(const Mesh&) = delete;
+        Mesh& operator=(Mesh&&) = delete;
+
         ~Mesh();
 
         void clear();
