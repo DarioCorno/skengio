@@ -12,15 +12,12 @@
 #ifndef GEOMETRY_SPHERE_H
 #define GEOMETRY_SPHERE_H
 
-#include <skengio/core.h>
-
 #include <vector>
 #include <map>
 
+#include "mesh.h"
+
 namespace SKEngio {
-
-    class Mesh;
-
     class Sphere : public Mesh
     {
     public:

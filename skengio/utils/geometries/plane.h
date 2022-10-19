@@ -3,14 +3,12 @@
 #ifndef GEOMETRY_PLANE_H
 #define GEOMETRY_PLANE_H
 
-#include <skengio/core.h>
-
 #include <vector>
 #include <map>
 
-namespace SKEngio {
-    class Mesh;
+#include "mesh.h"
 
+namespace SKEngio {
     class Plane : public Mesh
     {
     public:

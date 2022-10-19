@@ -3,14 +3,12 @@
 #ifndef GEOMETRY_BOX_H
 #define GEOMETRY_BOX_H
 
-#include <skengio/core.h>
-
 #include <vector>
 #include <map>
 
-namespace SKEngio {
-    class Mesh;
+#include "mesh.h"
 
+namespace SKEngio {
     class Box : public Mesh
     {
     public:

@@ -4,9 +4,6 @@
 #define _SK_SKYBOX_
 
 #include <GLEW/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <skengio/core.h>
 #include <skengio/utils/textureManager.h>
 
 namespace SKEngio {
@@ -79,7 +76,7 @@ namespace SKEngio {
                 delete shader;
             }
 
-            bool loadTextures(vector<std::string> facesFiles, bool freeData) {
+            bool loadTextures(std::vector<std::string> facesFiles, bool freeData) {
                 cubemapTexture = SKEngio::TextureManager::getInstance()->LoadCubemap(facesFiles, false);
                 return cubemapTexture;
             }

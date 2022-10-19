@@ -1,5 +1,6 @@
-#include "application.h"
 
+#include "application.h"
+#include "renderer.h"
 
 static void keyCB (GLFWwindow * window, int key, int scancode, int action, int mods) {
     SKEngio::Application* app = reinterpret_cast<SKEngio::Application *>(glfwGetWindowUserPointer(window));

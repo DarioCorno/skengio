@@ -30,7 +30,7 @@ namespace SKEngio {
             static TextureManager* getInstance();
 
             static SKEngio::TextureLoader* Load(std::string fName, bool freeData);
-            static SKEngio::TextureLoader* LoadCubemap(vector<std::string> facesFiles, bool freeData);
+            static SKEngio::TextureLoader* LoadCubemap(std::vector<std::string> facesFiles, bool freeData);
              
 
 	};

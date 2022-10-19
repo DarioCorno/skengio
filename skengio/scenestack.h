@@ -5,8 +5,8 @@
 
 #include <vector>
 
-#include "scene.h"
 #include "event.h"
+#include "scene.h"
 
 namespace SKEngio {
 

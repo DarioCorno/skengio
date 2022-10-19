@@ -6,9 +6,7 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
-
-#include "core.h"
+#include "window.h"
 
 namespace SKEngio {
 

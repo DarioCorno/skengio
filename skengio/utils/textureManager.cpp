@@ -26,7 +26,7 @@ namespace SKEngio {
         return texture;
     }
 
-    SKEngio::TextureLoader* TextureManager::LoadCubemap(vector<std::string> facesFiles, bool freeData) {
+    SKEngio::TextureLoader* TextureManager::LoadCubemap(std::vector<std::string> facesFiles, bool freeData) {
         TextureLoader* texture = new TextureLoader();
         texture->textureUnit = textureCount++;
         texture->LoadCubemap(facesFiles, freeData);

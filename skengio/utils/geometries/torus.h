@@ -3,15 +3,12 @@
 #ifndef GEOMETRY_TORUS_H
 #define GEOMETRY_TORUS_H
 
-#include <skengio/core.h>
-
 #include <vector>
 #include <map>
 
+#include "mesh.h"
+
 namespace SKEngio {
-
-    class Mesh;
-
     class Torus : public Mesh
     {
     public:

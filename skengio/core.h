@@ -15,9 +15,6 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
-
-using namespace std;
-
 #include "audiosource.h"
 #include "event.h"
 #include "window.h"

@@ -1,8 +1,6 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <skengio/core.h>
-
 #include "../logger.h"
 
 #include <string>
@@ -13,6 +11,10 @@
 #include <fstream>
 
 #include <skengio/material.h>
+
+#include "GLEW/glew.h"
+#include "skengio/camera.h"
+#include "skengio/light.h"
 
 namespace SKEngio {
 

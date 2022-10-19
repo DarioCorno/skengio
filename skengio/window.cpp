@@ -1,11 +1,10 @@
-#include "core.h"
 #include "window.h"
 
 #include <stdlib.h>
 #include <string>
 #include <iostream>
 
-using namespace std;
+#include "logger.h"
 
 namespace SKEngio {
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <skengio/core.h>
 #include <skengio/utils/object.h>
 #include <skengio/utils/skybox.h>
 #include <skengio/utils/geometries/mesh.h>
@@ -26,7 +25,7 @@ class EffectTwo : public SKEngio::Layer {
 
             //moved here for debug
             sky = new SKEngio::SKYBox();
-            vector<std::string> faces
+            std::vector<std::string> faces
             {
                 "resources/textures/skybox/posx.jpg",
                 "resources/textures/skybox/negx.jpg",

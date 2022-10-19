@@ -8,8 +8,6 @@
 #include <list>
 #include <string>
 
-using namespace std;
-
 #define LOG_ERROR 1
 #define LOG_INFO 0
 

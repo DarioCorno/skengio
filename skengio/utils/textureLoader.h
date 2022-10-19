@@ -3,10 +3,9 @@
 #ifndef _SK_TEXTURE_
 #define _SK_TEXTURE_
 
-#include "../core.h"
-
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace SKEngio {
 
@@ -28,7 +27,7 @@ namespace SKEngio {
 
             bool Load(std::string strFileName, bool freeData);
 
-            bool LoadCubemap(vector<std::string> facesFiles, bool freeData);
+            bool LoadCubemap(std::vector<std::string> facesFiles, bool freeData);
 
             void bind();
 

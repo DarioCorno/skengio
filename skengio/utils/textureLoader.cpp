@@ -1,5 +1,9 @@
 #include "textureLoader.h"
 
+#include "skengio/logger.h"
+
+#include <GLEW/glew.h>
+
 #ifndef STB_INCLUDED
 
 #define STB_INCLUDED
@@ -58,7 +62,7 @@ namespace SKEngio {
         return true;
     }
 
-    bool TextureLoader::LoadCubemap(vector<std::string> facesFiles, bool freeData) {
+    bool TextureLoader::LoadCubemap(std::vector<std::string> facesFiles, bool freeData) {
         glGenTextures(1, &textureID);
         glActiveTexture(GL_TEXTURE0 + textureUnit);
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);

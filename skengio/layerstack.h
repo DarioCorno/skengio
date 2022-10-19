@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "layer.h"
-#include "event.h"
 
 namespace SKEngio {
 

@@ -1,11 +1,13 @@
 #define GLFW_DLL
+#include "renderer.h"
+
 #include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "core.h"
-
 #include <vector>
 #include <algorithm>
+
+#include "GUIManager.h"
 
 namespace SKEngio {
 

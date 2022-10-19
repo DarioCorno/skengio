@@ -1,6 +1,5 @@
 #pragma once
 
-#include <skengio/core.h>
 #include <skengio/renderparams.h>
 
 class EffectOne : public SKEngio::Layer {

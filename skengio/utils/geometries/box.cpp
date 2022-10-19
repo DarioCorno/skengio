@@ -2,6 +2,9 @@
 #include <iomanip>
 #include <cmath>
 #include "box.h"
+
+#include "glm/glm.hpp"
+
 #include "../../defines.h"
 
 #define _X_ 0
@@ -43,7 +46,7 @@ namespace SKEngio {
 
 		unsigned int vertexCounter = 0;
 
-		glm::vec3 vector (0.0f, 0.0f , 0.0f);
+		glm::vec3 vector{ 0.0f, 0.0f , 0.0f };
 
 		// generate vertices, normals and uvs
 

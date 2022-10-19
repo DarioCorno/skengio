@@ -3,6 +3,7 @@
 #include <cmath>
 #include "torus.h"
 #include "../../defines.h"
+#include "glm/glm.hpp"
 
 namespace SKEngio {
 

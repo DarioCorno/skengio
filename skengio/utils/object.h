@@ -2,12 +2,13 @@
 #ifndef _SK_OBJECT_
 #define _SK_OBJECT_
 
-#include <skengio/core.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <skengio/material.h>
 #include <skengio/renderParams.h>
+#include "shaderProgram.h"
+#include "geometries/mesh.h"
 
 namespace SKEngio {
 

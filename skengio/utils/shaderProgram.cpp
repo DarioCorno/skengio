@@ -1,6 +1,8 @@
 #include "shaderProgram.h"
 #include <direct.h>
 
+#include "skengio/defines.h"
+
 namespace SKEngio {
 
     ShaderProgram::ShaderProgram() {

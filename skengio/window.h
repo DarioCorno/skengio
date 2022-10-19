@@ -1,19 +1,16 @@
 #pragma once
 
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <string>
-
-using namespace std;
-
 
 namespace SKEngio {
 
     struct WindowSpecs {
         unsigned int width;
         unsigned int height;
-        string caption;
+        std::string caption;
         bool fullscreen;
     };
 
@@ -24,7 +21,7 @@ namespace SKEngio {
 
         unsigned int width;
         unsigned int height;
-        string caption;
+        std::string caption;
 
         WindowManager(WindowSpecs* windowSpecs);
 
