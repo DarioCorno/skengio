@@ -66,7 +66,7 @@ namespace SKEngio {
 				model = glm::scale( model, glm::vec3(x, y, z) );
 			}
 
-			void setCubemap(TextureLoader* _cubemap) {
+			void setCubemap(Texture* _cubemap) {
 				cubemap = _cubemap;
 			}
 
@@ -77,7 +77,7 @@ namespace SKEngio {
 			bool castsShadows;
 
 		private:
-			TextureLoader* cubemap;
+			Texture* cubemap;
 
 	};
 }

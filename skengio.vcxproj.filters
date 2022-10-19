@@ -24,7 +24,7 @@
     <ClCompile Include="skengio\utils\shaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="skengio\utils\textureLoader.cpp">
+    <ClCompile Include="skengio\utils\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="skengio\application.cpp">
@@ -116,7 +116,7 @@
     <ClInclude Include="skengio\utils\shaderProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="skengio\utils\textureLoader.h">
+    <ClInclude Include="skengio\utils\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="skengio\application.h">

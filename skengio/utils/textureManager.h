@@ -3,9 +3,10 @@
 #ifndef _SK_TEXTUREMANAGER_
 #define _SK_TEXTUREMANAGER_
 
+#include <GLEW/glew.h>
 #include <iostream>
 #include <string>
-#include "textureLoader.h"
+#include "texture.h"
 
 namespace SKEngio {
 
@@ -29,9 +30,10 @@ namespace SKEngio {
 
             static TextureManager* getInstance();
 
-            static SKEngio::TextureLoader* Load(std::string fName, bool freeData);
-            static SKEngio::TextureLoader* LoadCubemap(std::vector<std::string> facesFiles, bool freeData);
+            static SKEngio::Texture* Load(std::string fName, bool freeData);
+            static SKEngio::Texture* LoadCubemap(std::vector<std::string> facesFiles);
              
+            static void FreeData(unsigned char* data);
 
 	};
 }

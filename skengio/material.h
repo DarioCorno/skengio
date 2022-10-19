@@ -7,11 +7,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "utils/textureLoader.h"
+#include "utils/texture.h"
 
 namespace SKEngio  {
 
-    class TextureLoader;
+    class Texture;
 
     class Material {
         public:
@@ -22,7 +22,7 @@ namespace SKEngio  {
         float materialShininess = 32.0f;
         float materialReflectivity = 0.4f;
 
-        SKEngio::TextureLoader* diffuseTexture;
+        SKEngio::Texture* diffuseTexture;
 
         Material();
 

@@ -77,8 +77,8 @@ namespace SKEngio {
                 delete shader;
             }
 
-            bool loadTextures(std::vector<std::string> facesFiles, bool freeData) {
-                cubemapTexture = SKEngio::TextureManager::getInstance()->LoadCubemap(facesFiles, false);
+            bool loadTextures(std::vector<std::string> facesFiles) {
+                cubemapTexture = SKEngio::TextureManager::getInstance()->LoadCubemap(facesFiles);
                 return cubemapTexture;
             }
 
@@ -111,7 +111,7 @@ namespace SKEngio {
 
             ShaderProgram* shader;
             unsigned int skyboxVAO, skyboxVBO;
-            TextureLoader* cubemapTexture;
+            Texture* cubemapTexture;
 
 	};
 }

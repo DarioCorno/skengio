@@ -28,7 +28,7 @@
 #include "GUIManager.h"
 #include "renderer.h"
 #include "skengio/utils/shaderProgram.h"
-#include "skengio/utils/textureLoader.h"
+#include "skengio/utils/texture.h"
 #include "application.h"
 
 #endif

@@ -34,7 +34,7 @@ class EffectTwo : public SKEngio::Layer {
                 "resources/textures/skybox/posz.jpg",
                 "resources/textures/skybox/negz.jpg"
             };
-            bool ok = sky->loadTextures(faces, true);
+            bool ok = sky->loadTextures(faces);
 
             plane = new SKEngio::Object();
             plane->mesh = new SKEngio::Plane();

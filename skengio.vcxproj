@@ -178,7 +178,7 @@
     <ClCompile Include="skengio\utils\geometries\sphere.cpp" />
     <ClCompile Include="skengio\utils\geometries\torus.cpp" />
     <ClCompile Include="skengio\utils\shaderProgram.cpp" />
-    <ClCompile Include="skengio\utils\textureLoader.cpp" />
+    <ClCompile Include="skengio\utils\texture.cpp" />
     <ClCompile Include="skengio\utils\textureManager.cpp" />
     <ClCompile Include="skengio\window.cpp" />
   </ItemGroup>
@@ -223,7 +223,7 @@
     <ClInclude Include="skengio\utils\object.h" />
     <ClInclude Include="skengio\utils\shaderProgram.h" />
     <ClInclude Include="skengio\utils\skybox.h" />
-    <ClInclude Include="skengio\utils\textureLoader.h" />
+    <ClInclude Include="skengio\utils\texture.h" />
     <ClInclude Include="skengio\utils\textureManager.h" />
     <ClInclude Include="skengio\window.h" />
   </ItemGroup>
