@@ -218,7 +218,7 @@ namespace SKEngio {
             bind();
 
         if (textureCubeLocation != -1) {
-            glProgramUniform1i(programID, textureDiffuseLocation, textureID);
+            glProgramUniform1i(programID, textureCubeLocation, textureID);
         }
     }
 

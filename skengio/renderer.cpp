@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "GUIManager.h"
+#include "skengio/utils/textureManager.h"
 
 namespace SKEngio {
 
@@ -35,6 +36,7 @@ namespace SKEngio {
         delete camera;
         delete fboShader;
         delete depthDebugShader;
+        delete Depth_Texture;
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -124,30 +126,25 @@ namespace SKEngio {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
         GenerateFrameBO(winMan->width, winMan->height);
-        GenerateDepthBO();
+        //GenerateShadowMapsBuffers();
 
         return true;   
     }
 
-    void Renderer::GenerateDepthBO() {
+    void Renderer::GenerateShadowMapsBuffers() {
         if (Depth_FBO != -1)
             glDeleteFramebuffers(1, &Depth_FBO);
 
         glGenFramebuffers(1, &Depth_FBO);        
 
-        if (Depth_Texture != -1)
-            glDeleteTextures(1, &Depth_Texture);
+        if (Depth_Texture != NULL)
+            glDeleteTextures(1, &Depth_Texture->textureID);
 
-        glGenTextures(1, &Depth_Texture);
-        glBindTexture(GL_TEXTURE_2D, Depth_Texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        Depth_Texture = TextureManager::getInstance()->CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
 
         glBindFramebuffer(GL_FRAMEBUFFER, Depth_FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, Depth_Texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, Depth_Texture->textureID, 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -161,17 +158,20 @@ namespace SKEngio {
     }
 
     void Renderer::GenerateFrameBO(unsigned int width, unsigned int height) {
-        if(Post_FBOtexture != -1)
-            glDeleteTextures(1, &Post_FBOtexture);
+        if(Post_FBOtexture != NULL)
+            glDeleteTextures(1, &Post_FBOtexture->textureID);
+
+
+        Post_FBOtexture = TextureManager::getInstance()->CreateFrameBufferTexture(winMan->width, winMan->height);
 
         //create the texture for framebuffer
-        glGenTextures(1, &Post_FBOtexture);
-        glBindTexture(GL_TEXTURE_2D, Post_FBOtexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, winMan->width, winMan->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        //glGenTextures(1, &Post_FBOtexture);
+        //glBindTexture(GL_TEXTURE_2D, Post_FBOtexture);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, winMan->width, winMan->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         if (Post_FBO != -1)
             glDeleteFramebuffers(1, &Post_FBO);
@@ -179,7 +179,7 @@ namespace SKEngio {
         //frame buffer object for fx
         glGenFramebuffers(1, &Post_FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Post_FBOtexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Post_FBOtexture->textureID, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             SK_LOG_ERR( "ERROR Creating Post Frame Buffer Object");
@@ -226,20 +226,21 @@ namespace SKEngio {
         simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         */
         
-        //RenderPass curPass = renderParams->pass;
-        //renderParams->pass = RenderPass::ShadowDepth;
+        RenderPass curPass = renderParams->pass;
+        renderParams->pass = RenderPass::ShadowDepth;
 
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, Depth_FBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        glActiveTexture(GL_TEXTURE0);
+        Depth_Texture->bind();
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
             scene->UpdateAndDraw(renderParams);
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //renderParams->pass = curPass;
+        Depth_Texture->unbind();
+        renderParams->pass = curPass;
     }
 
     void Renderer::Draw() {
@@ -252,78 +253,69 @@ namespace SKEngio {
         if(renderParams->useShadows)
             _ShadowMapPass();
 
-        //activate the frame buffer object
-        if (renderParams->useVBO) {
-            glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
-        }
-        else {
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        }
+        //enable the frame buffer object
+        glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
         
         camera->UpdateViewport();
 
+        //deafult rendering settings
         glDepthMask(GL_TRUE);
         glClearDepth(1.0);
         glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-
-        if (!renderParams->useVBO) {
-
-            //begin the gui rendering normal way
-            if (renderParams->drawUI) {
-                _DrawUI();
-            }
-        }
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
         if (depthDebug) {
 
-            glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            depthDebugShader->bind();
             glDisable(GL_DEPTH_TEST);
             glDisable(GL_CULL_FACE);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, Depth_Texture); // color attachment texture
+            depthDebugShader->bind();
+            Depth_Texture->bind();
+
             glBindVertexArray(quad_VAO); // VAO of the quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             depthDebugShader->unbind();
+            Depth_Texture->unbind();
 
         }
-        else {
+        else 
+        {
 
             //update and render all scenes
             for (Scene* scene : sceneStack->scenes) {
-                //TODO: should manage double update per frame in case of shadowPass (see _ShadowMapPass)
                 scene->UpdateAndDraw(renderParams);
             }
 
-            if (renderParams->useVBO) {
-                //render the frame buffer object
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            //disable the frame buffer
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-                //begin the gui rendering normal way
-                if (renderParams->drawUI) {
-                    _DrawUI();
-                }
+            //begin the gui rendering
+            if (renderParams->drawUI) 
+                _DrawUI();
 
-                glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                fboShader->bind();
-                glDisable(GL_DEPTH_TEST);
-                glDisable(GL_CULL_FACE);
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, Post_FBOtexture); // color attachment texture
-                glBindVertexArray(quad_VAO); // VAO of the quad
-                glDrawArrays(GL_TRIANGLES, 0, 6);
+            //---BEGIN rendering frame buffer quad
+            //frame buffer quads settings
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
+            glEnable(GL_TEXTURE_2D);
+            fboShader->bind();
+            Post_FBOtexture->bind();
 
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                fboShader->unbind();
-            }
+            glBindVertexArray(quad_VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            fboShader->unbind();
+            Post_FBOtexture->unbind();
+            //---END rendering frame buffer quad
 
             GLenum err = glGetError();
             if (err != 0) {
@@ -331,9 +323,8 @@ namespace SKEngio {
             }
 
             //end the gui rendering
-            if (renderParams->drawUI) {
+            if (renderParams->drawUI) 
                 guiMan->DrawSwapBuffers();
-            }
         }
 
         glfwMakeContextCurrent(winMan->window);

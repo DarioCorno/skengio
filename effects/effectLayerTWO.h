@@ -24,7 +24,6 @@ class EffectTwo : public SKEngio::Layer {
             SK_LOG("Attaching layer " << this->GetId() );
 
             //moved here for debug
-            sky = new SKEngio::SKYBox();
             std::vector<std::string> faces
             {
                 "resources/textures/skybox/posx.jpg",
@@ -34,7 +33,7 @@ class EffectTwo : public SKEngio::Layer {
                 "resources/textures/skybox/posz.jpg",
                 "resources/textures/skybox/negz.jpg"
             };
-            bool ok = sky->loadTextures(faces);
+            sky = new SKEngio::SKYBox(faces);
 
             plane = new SKEngio::Object();
             plane->mesh = new SKEngio::Plane();
@@ -127,10 +126,7 @@ class EffectTwo : public SKEngio::Layer {
         }
 
         void OnDraw(SKEngio::RenderParams* rp) {
-            float t = rp->time;
 
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
 
@@ -138,6 +134,8 @@ class EffectTwo : public SKEngio::Layer {
             torus->render(rp);
             plane->render(rp);
 
+
+            //skybox is rendered as last not to waste fragments (see the render function for details)
             if(! (rp->pass == SKEngio::RenderPass::ShadowDepth))
                 sky->render(activeCamera);
 

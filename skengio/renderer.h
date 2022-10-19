@@ -51,7 +51,7 @@ namespace SKEngio {
             void _DrawUI();
             void _ShadowMapPass();
             void GenerateFrameBO(unsigned int width, unsigned int height);
-            void GenerateDepthBO();
+            void GenerateShadowMapsBuffers();
             void HandleResize(int width, int height);
             void setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
@@ -72,10 +72,10 @@ namespace SKEngio {
 
             unsigned int Post_FBO = -1;
             unsigned int Post_RBO = -1;
-            unsigned int Post_FBOtexture = -1;
+            Texture* Post_FBOtexture = NULL;
 
             unsigned int Depth_FBO{};
-            unsigned int Depth_Texture{};
+            Texture* Depth_Texture = NULL;
 
             SKEngio::ShaderProgram* fboShader;
             SKEngio::ShaderProgram* depthDebugShader;

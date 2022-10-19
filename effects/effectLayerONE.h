@@ -36,9 +36,9 @@ class EffectOne : public SKEngio::Layer {
 
             float vertices[] = {
                 // positions        
-                0.5f,  -0.5f, 0.0f,  
-                -0.5f, -0.5f, 0.0f,  
-                0.0f, 0.5f, 0.0f, 
+                0.3f,  -0.3f, 0.0f,  
+                -0.3f, -0.3f, 0.0f,  
+                0.0f, 0.3f, 0.0f, 
             };
 
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -106,11 +106,13 @@ class EffectOne : public SKEngio::Layer {
         void OnDraw(SKEngio::RenderParams* rp) {
 
             glDisable(GL_BLEND);
+            glDisable(GL_CULL_FACE);
         
             shaderProgram->bind();
 
             glBindVertexArray(vertexArray);
             glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+            glEnable(GL_CULL_FACE);
         }
 
     

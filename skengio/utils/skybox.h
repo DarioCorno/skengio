@@ -10,7 +10,7 @@
 namespace SKEngio {
 	class SKYBox {
         public:
-		    SKYBox() {
+		    SKYBox(std::vector<std::string> facesFiles) {
                 float skyboxVertices[] = {
                     // positions          
                     -1.0f,  1.0f, -1.0f,
@@ -68,6 +68,10 @@ namespace SKEngio {
                 shader->LoadShader("./shaders/", "skybox.vert", SKEngio::ShaderProgram::VERTEX);
                 shader->LoadShader("./shaders/", "skybox.frag", SKEngio::ShaderProgram::FRAGMENT);
                 shader->CreateProgram();
+
+                loadTextures(facesFiles);
+
+                shader->SetCubeTexture(cubemapTexture->textureUnit);
 		    }
 
             ~SKYBox() {
@@ -77,16 +81,13 @@ namespace SKEngio {
                 delete shader;
             }
 
-            bool loadTextures(std::vector<std::string> facesFiles) {
-                cubemapTexture = SKEngio::TextureManager::getInstance()->LoadCubemap(facesFiles);
-                return cubemapTexture;
-            }
-
             void render(Camera* camera) {
+
                 // draw skybox as last
                 glEnable(GL_CULL_FACE);
                 glDisable(GL_BLEND);
                 glEnable(GL_DEPTH_TEST);
+                glEnable(GL_TEXTURE_2D);
                 // skybox is rendered at the same depth as glClearDepth value
                 // change depth function so depth test passes when values are equal to depth buffer's content
                 glDepthFunc(GL_LEQUAL);  
@@ -97,21 +98,28 @@ namespace SKEngio {
                 glm::mat4 viewNoTrans = glm::mat4(glm::mat3(camera->getViewMatrix() ));
                 shader->SetViewMatrix(viewNoTrans);
 
-
-                // skybox cube
-                glBindVertexArray(skyboxVAO);
-                //glActiveTexture(GL_TEXTURE11);
                 cubemapTexture->bind();
+
+                // render the skybox cube
+                glBindVertexArray(skyboxVAO);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
                 glBindVertexArray(0);
+                cubemapTexture->unbind();
+
                 glDepthFunc(GL_LESS); // set depth function back to default
 
-                cubemapTexture->unbind();
             }
 
             ShaderProgram* shader;
             unsigned int skyboxVAO, skyboxVBO;
             Texture* cubemapTexture;
+
+            private:
+
+                bool loadTextures(std::vector<std::string> facesFiles) {
+                    cubemapTexture = SKEngio::TextureManager::getInstance()->LoadCubemap(facesFiles);
+                    return cubemapTexture;
+                }
 
 	};
 }

@@ -116,8 +116,6 @@ namespace SKEngio {
                 }
             }
             ImGui::Separator();
-            ImGui::Checkbox("Use FBO", &parentRenderer->renderParams->useVBO);
-            ImGui::Separator();
             ImGui::Checkbox("Shadows", &parentRenderer->renderParams->useShadows);
             ImGui::Separator();
             ImGui::Checkbox( "Show Log", &logVisible );

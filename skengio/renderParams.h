@@ -15,7 +15,6 @@ namespace SKEngio {
     public:
         RenderParams() {
             pass = RenderPass::Final;
-            useVBO = true;
             useShadows = false;
             drawUI = true;
         }
@@ -25,7 +24,6 @@ namespace SKEngio {
         }
 
         RenderPass pass;
-        bool useVBO;
         bool useShadows;
         bool drawUI;
         float time;
