@@ -2,6 +2,7 @@
 
 #include "skengio/logger.h"
 
+#define GLEW_STATIC
 #include <GLEW/glew.h>
 
 #ifndef STB_INCLUDED

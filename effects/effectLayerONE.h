@@ -1,6 +1,13 @@
 #pragma once
 
-#include <skengio/renderparams.h>
+#include "skengio/defines.h"
+#include "skengio/utils/shaderProgram.h"
+#include "skengio/layer.h"
+#include "skengio/renderparams.h"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 class EffectOne : public SKEngio::Layer {
     public:

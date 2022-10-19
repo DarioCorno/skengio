@@ -3,6 +3,7 @@
 #ifndef _SK_SKYBOX_
 #define _SK_SKYBOX_
 
+#define GLEW_STATIC
 #include <GLEW/glew.h>
 #include <skengio/utils/textureManager.h>
 

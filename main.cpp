@@ -1,6 +1,10 @@
+#define GLEW_STATIC
 
-#include "skengio/core.h"
+#include "skengio/application.h"
+#include "skengio/renderer.h"
 #include "skengio/logger.h"
+#include "skengio/window.h"
+#include "skengio/scene.h"
 #include "effects/effectLayerONE.h"
 #include "effects/effectLayerTWO.h"
 

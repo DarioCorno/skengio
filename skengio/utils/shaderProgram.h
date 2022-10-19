@@ -12,6 +12,7 @@
 
 #include <skengio/material.h>
 
+#define GLEW_STATIC
 #include "GLEW/glew.h"
 #include "skengio/camera.h"
 #include "skengio/light.h"

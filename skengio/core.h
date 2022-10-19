@@ -4,7 +4,6 @@
 #define _SK_CORE_
 
 #define GLEW_STATIC
-#define GLFW_DLL
 #include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
