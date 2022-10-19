@@ -20,15 +20,15 @@ namespace SKEngio {
         //std::cout << "Detaching Layer" << this->GetId() << std::endl;
     }
 
-    void Layer::OnUpdate(float t) {
+    void Layer::OnUpdate(SKEngio::RenderParams* rp) {
         
     }    
 
-    void Layer::OnDrawGUI(float t) {
+    void Layer::OnDrawGUI(SKEngio::RenderParams* rp) {
 
     }
 
-    void Layer::OnDraw(float t) {
+    void Layer::OnDraw(SKEngio::RenderParams* rp) {
 
     }
 
@@ -43,5 +43,9 @@ namespace SKEngio {
     unsigned int Layer::GetId() {
         return id;
     }
+
+    //void Layer::AddObject(Object* obj) {
+    //    //objects.push_back(obj);
+    //}
 
 }

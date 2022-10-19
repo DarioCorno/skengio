@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef _SK_TEXTURE_
+#define _SK_TEXTURE_
+
 #include "../core.h"
 
 #include <string>
@@ -10,19 +13,31 @@ namespace SKEngio {
     class TextureLoader {
         public:
 
-        int width, height;
-        int numChannels;
-        unsigned int textureID;
-        unsigned char* data = NULL;
-        bool loaded = false;
+            int width;
+            int height;
+            int numChannels;
+            unsigned int textureID;
+            unsigned int textureUnit;
+            unsigned char* data = NULL;
+            bool loaded = false;
+            bool isCubemap = false;
 
-        TextureLoader();
+            TextureLoader();
 
-        ~TextureLoader();
+            ~TextureLoader();
 
-        bool Load(std::string strFileName, bool freeData);
+            bool Load(std::string strFileName, bool freeData);
 
-        void bind();
+            bool LoadCubemap(vector<std::string> facesFiles, bool freeData);
+
+            void bind();
+
+            void unbind();
+
+        private:
 
     };
 }
+
+
+#endif

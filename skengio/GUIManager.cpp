@@ -1,20 +1,29 @@
-#include <GL/glew.h>
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "GUIManager.h"
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_glfw.h"
-#include "../imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
 
+
 namespace SKEngio {
+
+    class RenderParams;
 
     GUIManager::GUIManager(Renderer* parentR) {
         parentRenderer = parentR;
     }
 
     GUIManager::~GUIManager() {        
+        std::cout << "Destroying GUImanager" << std::endl;
+
+        // Cleanup
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
 
     }
 
@@ -22,8 +31,6 @@ namespace SKEngio {
         
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-        //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -34,7 +41,6 @@ namespace SKEngio {
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
-        //ImGui::StyleColorsLight();
 
         // Setup Platform/Renderer backends
         ImGui_ImplGlfw_InitForOpenGL(_window, true);
@@ -42,16 +48,6 @@ namespace SKEngio {
 
         glfwGetWindowSize(_window, &winWidth, &winHeight);
 
-    }
-
-    void GUIManager::Destroy() {
-
-        std::cout << "Destroying GUImanager" << std::endl;
-        
-        // Cleanup
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();        
     }
 
     void GUIManager::DrawBegin() {
@@ -95,12 +91,17 @@ namespace SKEngio {
                 ImGui::End();
             }
 
-            //scenes checkboxes
+            //scenes rows
             ImGui::SetNextWindowPos(ImVec2(winWidth - 200, 0), 1 );
             ImGui::SetNextWindowSize(ImVec2(200, winHeight - ((logVisible) ? 150 : 0)), 1 );
             ImGui::SetNextWindowBgAlpha(0.2f);
             ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
             ImGui::Begin("Settings", NULL, log_window_flags);
+            ImGui::Text("Audio");
+            ImGui::Separator();
+            //music is in scene 0 (horrible)
+            Scene* scene0 = parentRenderer->GetSceneStack()->scenes[0];
+            ImGui::PlotLines("dB", scene0->music->getFFT(), 512);
             ImGui::Text("Scenes");
             ImGui::Separator();
             for(Scene* scn : parentRenderer->GetSceneStack()->scenes) {
@@ -113,6 +114,10 @@ namespace SKEngio {
                     ImGui::TreePop();
                 }
             }
+            ImGui::Separator();
+            ImGui::Checkbox("Use FBO", &parentRenderer->renderParams->useVBO);
+            ImGui::Separator();
+            ImGui::Checkbox("Shadows", &parentRenderer->renderParams->useShadows);
             ImGui::Separator();
             ImGui::Checkbox( "Show Log", &logVisible );
             

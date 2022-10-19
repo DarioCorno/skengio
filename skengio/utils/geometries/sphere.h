@@ -12,18 +12,21 @@
 #ifndef GEOMETRY_SPHERE_H
 #define GEOMETRY_SPHERE_H
 
-#include "../../core.h"
+#include <skengio/core.h>
 
 #include <vector>
 #include <map>
 
 namespace SKEngio {
+
+    class Mesh;
+
     class Sphere : public Mesh
     {
     public:
         // ctor/dtor
         Sphere();
-        ~Sphere() {}
+        ~Sphere();
 
         // getters/setters
         float getRadius() const                 { return radius; }

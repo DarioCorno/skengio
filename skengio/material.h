@@ -3,28 +3,43 @@
 #ifndef _SK_MATERIAL_
 #define _SK_MATERIAL_
 
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include "utils/textureLoader.h"
 
 namespace SKEngio  {
+
+    class TextureLoader;
 
     class Material {
         public:
 
-        glm::vec4 materialAmbientColor  = glm::vec4( 0.5f, 0.5f, 0.5f, 1 );
-        glm::vec4 materialDiffuseColor  = glm::vec4( 0.7f, 0.7f, 0.7f, 1 );
-        glm::vec4 materialSpecularColor = glm::vec4( 0.4f, 0.4f, 0.4f, 1 );
-        float materialShininess = 1.0f;
+        glm::vec3 materialAmbientColor  = glm::vec3( 0.5f, 0.5f, 0.5f );
+        glm::vec3 materialDiffuseColor  = glm::vec3( 0.7f, 0.7f, 0.7f );
+        glm::vec3 materialSpecularColor = glm::vec3( 1.0f, 1.0f, 1.0f );
+        float materialShininess = 32.0f;
+        float materialReflectivity = 0.4f;
+
+        SKEngio::TextureLoader* diffuseTexture;
 
         Material();
 
         ~Material();       
 
-        void SetAmbient(float r, float g, float b, float a);
-        void SetDiffuse(float r, float g, float b, float a);
-        void SetSpecular(float r, float g, float b, float a);
+        void SetAmbient(float r, float g, float b);
+        void SetDiffuse(float r, float g, float b);
+        void SetSpecular(float r, float g, float b);
         void SetShininess(float _shiny);
+        void SetReflectivity(float _refl);
+
+        glm::vec3 GetAmbient();
+        glm::vec3 GetDiffuse();
+        glm::vec3 GetSpecular();
+        float GetShininess();
+        float GetReflectivity();
+
 
     };
 

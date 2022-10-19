@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <stdlib.h>
@@ -8,7 +8,7 @@
 
 namespace SKEngio {
 
-    Camera::Camera(unsigned int w, unsigned int h, float fov, unsigned int camID) {
+    Camera::Camera(unsigned int w, unsigned int h, float fov, std::string camID) {
         id = camID;
         width = w;
         height = h;
@@ -19,7 +19,7 @@ namespace SKEngio {
         target = glm::vec3(0.0f, 0.0f, 0.0f);
         upVector = glm::vec3(0.0f, 1.0f, 0.0f);
         handleResize(w,h);
-    };
+    }
 
     Camera::~Camera() {
 
@@ -61,6 +61,7 @@ namespace SKEngio {
 
     void Camera::translate(float x, float y, float z) {
         position += glm::vec3( x,y,z);
+        target += glm::vec3(x, y, z);
     }
 
     void Camera::handleResize(unsigned int w, unsigned int h) {
@@ -69,16 +70,20 @@ namespace SKEngio {
         width = w;
         height = h;
 
-		float ratio = w / float(h);
-		glViewport(0, 0, w, h);
+        UpdateViewport();
+    }
 
-		projMatrix = glm::perspective(fieldOfView, ratio, nearPlane, farPlane);    
-		
+    void Camera::UpdateViewport() {
+
+        float ratio = width / float(height);
+        glViewport(0, 0, width, height);
+
+        projMatrix = glm::perspective(fieldOfView, ratio, nearPlane, farPlane);
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         //setPerspective(fovAngle, ratio, nearPlane, farPlane);
-        glMatrixMode(GL_MODELVIEW);            
-        std::cout << "Camera " << id << " resize to: " << width << " " << height << std::endl;
+        glMatrixMode(GL_MODELVIEW);
     }
 
 }

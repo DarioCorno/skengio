@@ -1,5 +1,8 @@
 #include "scene.h"
 
+#include <GLEW/glew.h>
+#include <GLFW/glfw3.h>
+
 namespace SKEngio {
 
     Scene::Scene(unsigned int sceneid) {
@@ -9,7 +12,8 @@ namespace SKEngio {
     };
 
     Scene::~Scene() {
-
+        delete layerStack;
+        delete music;
     };
 
     void Scene::OnAttach() {
@@ -26,54 +30,67 @@ namespace SKEngio {
 
     void Scene::OnEvent(Event* e) {
 
+        if (e->type == EVENT_TYPE_KEYPRESS) {
+            if (e->key == GLFW_KEY_W) {
+                activeCamera->moveForward(0.1);
+            }
+            if (e->key == GLFW_KEY_S) {
+                activeCamera->moveForward(-0.1);
+            }
+            if (e->key == GLFW_KEY_A) {
+                activeCamera->translate(0.1, 0.0, 0.0);
+            }
+            if (e->key == GLFW_KEY_D) {
+                activeCamera->translate(-0.1, 0.0, 0.0);
+            }
+            if (e->key == GLFW_KEY_Q) {
+                activeCamera->translate(-0.1, 0.0, 0.0);
+            }
+        }
         //pass the event to layerStack
         layerStack->OnEvent(e);
 
     }
 
-    void Scene::OnDrawGUI(float timeValue) {
-        if(!enabled) return;
+    void Scene::OnDrawGUI(RenderParams* rp) {
+        if(!enabled) 
+            return;
 
         for(Layer* layer : layerStack->layers) {
             if(layer->enabled) {
-                layer->OnDrawGUI(timeValue);
+                layer->OnDrawGUI(rp);
             }
         }
     }
 
-    void Scene::UpdateAndDraw(float timeValue) {
+    void Scene::UpdateAndDraw(RenderParams* rp) {
         
-        if(!enabled) return;
+        if(!enabled) 
+            return;
+
+        music->updateFFT();
 
         //update and render all scenes
         for(Layer* layer : layerStack->layers) {
             if(layer->enabled) {
                 layer->setCamera( activeCamera );
-                layer->OnUpdate(timeValue);
-                layer->OnDraw(0.0f);
+                layer->OnUpdate(rp);
+                layer->OnDraw(rp);
             }
         }        
+    }
+
+    void Scene::PushLayer(Layer* layer) {
+        layer->setCamera(activeCamera);
+        layerStack->PushLayer(layer);
     }
 
     LayerStack* Scene::GetLayerStack() {
         return layerStack;
     }
 
-    void Scene::Destroy() {
-        layerStack->Destroy();
-    }
-
-    void Scene::addCamera(Camera* newCamera) {
-        cameraList.push_back(newCamera);
-    }
-
-    void Scene::setActiveCamera(unsigned int camID) {
-        for(Camera* cam : cameraList) {
-            if (cam->id == camID) {
-                activeCamera = cam;
-                break;
-            }
-        }   
+    void Scene::setActiveCamera(Camera* cam) {
+        activeCamera = cam;
     }
 
     void Scene::handleResize(int width, int height) {

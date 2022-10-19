@@ -13,7 +13,11 @@ namespace SKEngio {
     }
 
     SceneStack::~SceneStack() {
+		for (Scene* scene : scenes) {
+			scene->OnDetach();
+		}
 
+		scenes.clear();
     }
 
     void SceneStack::AddScene(Scene* scene) {
@@ -22,8 +26,8 @@ namespace SKEngio {
 		sceneInsertIndex++;
     }
 
-	void SceneStack::PopScene(Scene* scene)
-	{
+	void SceneStack::PopScene(Scene* scene) {
+	
 		auto it = std::find(scenes.begin(), scenes.begin() + sceneInsertIndex, scene);
 		if (it != scenes.begin() + sceneInsertIndex)
 		{
@@ -43,11 +47,4 @@ namespace SKEngio {
 	}
 
 
-	void SceneStack::Destroy() {
-		for(Scene* scene : scenes) {
-			scene->OnDetach();
-		}
-
-		scenes.clear();
-	} 
 }

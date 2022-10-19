@@ -1,11 +1,5 @@
 #include "application.h"
 
-//#include "window.h"
-//#include "renderer.h"
-//#include "application.h"
-//#include "layer.h"
-//#include "layerstack.h"
-//#include "event.h"
 
 static void keyCB (GLFWwindow * window, int key, int scancode, int action, int mods) {
     SKEngio::Application* app = reinterpret_cast<SKEngio::Application *>(glfwGetWindowUserPointer(window));
@@ -46,15 +40,10 @@ namespace SKEngio {
 
         glfwSetErrorCallback( errorCB );
 
-        if (!glfwInit()) {
-            SK_LOG("ERROR GLFW Cannot initialize GLFW.");
-            exit(EXIT_FAILURE);
-        }
-
         //initializes glfw Window
         this->winMan = new SKEngio::WindowManager( windowSpecs );
         
-        //initializes OGL stuff for the glfw window
+        //initializes OGL stuff 
         this->renderer = new SKEngio::Renderer(this->winMan);
 
         glfwSetWindowUserPointer(winMan->window, reinterpret_cast<void *>(this));
@@ -63,8 +52,6 @@ namespace SKEngio {
         glfwSetCursorPosCallback(winMan->window, &mouseMoveCB);
         glfwSetMouseButtonCallback(winMan->window, &mouseButtonCB);
 
-        //just call the resize once at the beginning
-        //renderer->HandleResize(windowSpecs->width, windowSpecs->height);
     }
 
     Application::~Application() {
@@ -79,22 +66,21 @@ namespace SKEngio {
 			switch (key)
 			{
 				case GLFW_KEY_ESCAPE:
-				case GLFW_KEY_Q:
 					glfwSetWindowShouldClose(this->winMan->window, GL_TRUE);
 					break;
 			}
 
-            SK_LOG(key << " pressed.");
+            //SK_LOG(key << " pressed.");
             Event* e = new Event();
             e->SetKeyPress(key, scancode, action ,mods);
             renderer->OnEvent(e);
+
 		} else {
+
             Event* e = new Event();
             e->SetKeyRelease(key, scancode, action ,mods);
             renderer->OnEvent(e);
         }
-
-
     }
 
     void Application::HandleMouseButtonEvent(int button, int action, int mods) {
@@ -132,8 +118,6 @@ namespace SKEngio {
         Event* e = new Event();
         e->SetResize(width, height);
         renderer->OnEvent(e);
-        //renderer->HandleResize(width, height);
-        //std::cout << "Resize: " << width << " " << height << std::endl;
     }
 
     void Application::HandleMouseScrollEvent(double xOffset, double yOffset) {
@@ -148,6 +132,7 @@ namespace SKEngio {
 
         while (!glfwWindowShouldClose(winMan->window))
         {
+
             this->renderer->Draw();
 
             glfwPollEvents();	//or glfwWaitEvents()

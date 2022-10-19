@@ -22,8 +22,8 @@ namespace SKEngio {
 		layerInsertIndex++;
     }
 
-	void LayerStack::PopLayer(Layer* layer)
-	{
+	void LayerStack::PopLayer(Layer* layer) {
+
 		auto it = std::find(layers.begin(), layers.begin() + layerInsertIndex, layer);
 		if (it != layers.begin() + layerInsertIndex)
 		{

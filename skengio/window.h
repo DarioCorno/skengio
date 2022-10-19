@@ -14,6 +14,7 @@ namespace SKEngio {
         unsigned int width;
         unsigned int height;
         string caption;
+        bool fullscreen;
     };
 
     class WindowManager {

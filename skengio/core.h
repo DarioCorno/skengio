@@ -1,28 +1,28 @@
 #pragma once
 
+#ifndef _SK_CORE_
+#define _SK_CORE_
+
+#define GLEW_STATIC
 #define GLFW_DLL
-#include <GL/glew.h>
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include <stdlib.h>
 #include <string>
 #include <iostream>
 
-#pragma comment(lib, "glfw3dll.lib")
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glew32.lib")
-#pragma comment(lib, "opengl32.lib")
-
 using namespace std;
 
+#include "audiosource.h"
 #include "event.h"
 #include "window.h"
-#include "./utils/geometries/mesh.h"
-#include "./utils/geometries/sphere.h"
+#include "skengio/utils/geometries/mesh.h"
+#include "skengio/utils/geometries/sphere.h"
 #include "light.h"
 #include "material.h"
 #include "scene.h"
@@ -31,7 +31,8 @@ using namespace std;
 #include "layerstack.h"
 #include "GUIManager.h"
 #include "renderer.h"
-#include "./utils/shaderProgram.h"
-#include "./utils/textureLoader.h"
+#include "skengio/utils/shaderProgram.h"
+#include "skengio/utils/textureLoader.h"
 #include "application.h"
 
+#endif

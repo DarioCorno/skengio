@@ -3,6 +3,7 @@
 #ifndef _SK_MESH_
 #define _SK_MESH_
 
+#include <iostream>
 #include <vector>
 
 namespace SKEngio {
@@ -17,7 +18,9 @@ namespace SKEngio {
         std::vector<unsigned int> indices;    
 
         //vertex buffer object and vertex attribs object
-        unsigned int VBO, VAO, EBO;
+        unsigned int VBO{};
+        unsigned int VAO{};
+        unsigned int EBO{};
    
 
         // interleaved
@@ -69,6 +72,7 @@ namespace SKEngio {
         void draw();
 
     };
+
 }
 
 

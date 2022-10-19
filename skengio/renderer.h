@@ -1,25 +1,25 @@
 #pragma once
 
+#ifndef _SK_RENDERER_
+#define _SK_RENDERER_
+
 #include <vector>
 
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "core.h"
 
 #include "scene.h"
 #include "scenestack.h"
-
-//#include "layerstack.h"
-//#include "event.h"
-//#include "GUIManager.h"
-//#include "camera.h"
+#include "renderParams.h"
 
 namespace SKEngio {
 
     class GUIManager;
-    
+    class ShaderProgram;
+
     class Renderer {
         public:
 
@@ -41,8 +41,18 @@ namespace SKEngio {
 
             void AddScene(Scene* newScene);
 
+            Camera* NewCamera(float fov, std::string camID);
+
+            SKEngio::RenderParams* renderParams;
+
         private:
 
+            const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+            void _DrawUI();
+            void _ShadowMapPass();
+            void GenerateFrameBO(unsigned int width, unsigned int height);
+            void GenerateDepthBO();
             void HandleResize(int width, int height);
             void setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
@@ -54,11 +64,25 @@ namespace SKEngio {
 
         	glm::mat4x4 mProjMatrix, mModelViewMatrix;
 
-            //float fovAngle = 45.0f;
-            //float nearPlane = 0.01f;
-            //float farPlane = 100.0f;
-
             SceneStack* sceneStack;
+
+            bool depthDebug = false;
+
+            unsigned int quad_VBO{};
+            unsigned int quad_VAO{};
+
+            unsigned int Post_FBO = -1;
+            unsigned int Post_RBO = -1;
+            unsigned int Post_FBOtexture = -1;
+
+            unsigned int Depth_FBO{};
+            unsigned int Depth_Texture{};
+
+            SKEngio::ShaderProgram* fboShader;
+            SKEngio::ShaderProgram* depthDebugShader;
+
+            Camera* camera = NULL;
 
     };
 }
+#endif

@@ -1,13 +1,12 @@
 #include "mesh.h"
 
 
-#include <GL/glew.h>
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
 
 namespace SKEngio {
-
     Mesh::Mesh() {
     }
 
@@ -63,32 +62,32 @@ namespace SKEngio {
 
     void Mesh::buildInterleavedArray() {
         std::size_t count = vertexes.size();
-        int vi = 0;
-        int ci = 0;
-        int ni = 0;
-        int ti = 0;
-        for(vi = 0; vi < count; vi += 3)
+        unsigned int vi = 0;
+        unsigned int ci = 0;
+        unsigned int ni = 0;
+        unsigned int ti = 0;
+        for (vi = 0; vi < count; vi += 3)
         {
             interleavedVertices.push_back(vertexes[vi]);
-            interleavedVertices.push_back(vertexes[vi+1]);
-            interleavedVertices.push_back(vertexes[vi+2]);
+            interleavedVertices.push_back(vertexes[vi + 1]);
+            interleavedVertices.push_back(vertexes[vi + 2]);
 
             interleavedVertices.push_back(colors[ci]);
-            interleavedVertices.push_back(colors[ci+1]);
-            interleavedVertices.push_back(colors[ci+2]);
-            interleavedVertices.push_back(colors[ci+3]);
+            interleavedVertices.push_back(colors[ci + 1]);
+            interleavedVertices.push_back(colors[ci + 2]);
+            interleavedVertices.push_back(colors[ci + 3]);
 
             interleavedVertices.push_back(normals[ni]);
-            interleavedVertices.push_back(normals[ni+1]);
-            interleavedVertices.push_back(normals[ni+2]);
+            interleavedVertices.push_back(normals[ni + 1]);
+            interleavedVertices.push_back(normals[ni + 2]);
 
             interleavedVertices.push_back(texCoords[ti]);
-            interleavedVertices.push_back(texCoords[ti+1]);
+            interleavedVertices.push_back(texCoords[ti + 1]);
 
             ni += 3;
             ci += 4;
             ti += 2;
-        }        
+        }
     }
 
     void Mesh::createGLBuffers() {
@@ -97,11 +96,11 @@ namespace SKEngio {
         glGenBuffers(1, &EBO);
 
         // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        glBindVertexArray(VAO);       
+        glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         unsigned int vertexCount = interleavedVertices.size();
         //type of buffer, size in bytes of the whole buffer, buffer pointer, draw type
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount, interleavedVertices.data() , GL_STATIC_DRAW);        
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount, interleavedVertices.data(), GL_STATIC_DRAW);
 
         unsigned int stride = getInterleavedStride();
 
@@ -126,14 +125,14 @@ namespace SKEngio {
 
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);        
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
     }
 
     void Mesh::draw() {
-        glBindVertexArray(VAO);       
+        glBindVertexArray(VAO);
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         //glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0 );
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
     }
 
 }

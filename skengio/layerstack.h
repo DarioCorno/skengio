@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef _SK_LAYERSTACK_
+#define _SK_LAYERSTACK_
+
 #include <vector>
 
 #include "layer.h"
@@ -41,3 +44,5 @@ namespace SKEngio {
     };
 
 }
+
+#endif

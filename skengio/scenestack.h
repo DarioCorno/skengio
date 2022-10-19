@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef _SK_SCENESTACK_
+#define _SK_SCENESTACK_
+
 #include <vector>
 
 #include "scene.h"
@@ -17,8 +20,6 @@ namespace SKEngio {
         void AddScene(Scene* scene);
 
         void PopScene(Scene* scene);
-
-        void Destroy();
 
         void OnEvent(Event* e);
 
@@ -41,3 +42,5 @@ namespace SKEngio {
     };
 
 }
+
+#endif

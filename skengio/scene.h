@@ -1,11 +1,12 @@
 #pragma once
 
 #include "defines.h"
-
+#include "audiosource.h"
 #include "layerstack.h"
 #include "camera.h"
 
 #include <string>
+#include "renderParams.h"
 
 namespace SKEngio {
 
@@ -18,6 +19,8 @@ namespace SKEngio {
         float endTime = SCENE_DEFAULT_END;
         float speedMult = 1;
 
+        SKEngio::AudioSource* music;
+
         Scene(unsigned int sceneid);
 
         ~Scene();
@@ -29,15 +32,15 @@ namespace SKEngio {
 
         void OnEvent(Event* e);
 
-        void OnDrawGUI(float timeValue);
+        void OnDrawGUI(RenderParams* rp);
 
-        void UpdateAndDraw(float timeValue);
+        void UpdateAndDraw(RenderParams* rp);
+
+        void PushLayer(Layer* layer);
 
         LayerStack* GetLayerStack();
-        void Destroy();
 
-        void addCamera(Camera* newCam);
-        void setActiveCamera(unsigned int camID);
+        void setActiveCamera(Camera* cam);
 
         void handleResize(int width, int height);
 
@@ -48,7 +51,6 @@ namespace SKEngio {
 
         LayerStack* layerStack;
 
-        std::vector<Camera*> cameraList;
         Camera* activeCamera;
         
 
