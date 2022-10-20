@@ -3,6 +3,8 @@
 #ifndef SK_RENDERPARAMS_
 #define SK_RENDERPARAMS_
 
+#include "utils/texture.h"
+
 namespace SKEngio {
 
     enum class RenderPass {
@@ -17,6 +19,7 @@ namespace SKEngio {
         bool useShadows = false;
         bool drawUI = true;
         float time;
+        Texture* depthMap;
     };
 }
 

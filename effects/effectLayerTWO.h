@@ -8,6 +8,7 @@
 #include <skengio/utils/geometries/plane.h>
 #include <skengio/utils/textureManager.h>
 #include <skengio/renderparams.h>
+#include <skengio/utils/texture.h>
 
 class EffectTwo final : public SKEngio::Layer {
     public:
@@ -64,7 +65,7 @@ class EffectTwo final : public SKEngio::Layer {
             torus->shader->CreateProgram();
 
             torus->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/metal.jpg", false);
-            torus->setCubemap(sky->cubemapTexture.get() );
+            torus->setCubemap(sky->cubemapTexture );
 
             //create a light with deafult colors
             light = new SKEngio::Light();
@@ -134,12 +135,12 @@ class EffectTwo final : public SKEngio::Layer {
 
 
             torus->render(rp);
+            //plane->material->diffuseTexture = rp->depthMap;
             plane->render(rp);
 
 
-            //skybox is rendered as last not to waste fragments (see the render function for details)
-            if(! (rp->pass == SKEngio::RenderPass::ShadowDepth))
-                sky->render(activeCamera);
+            //skybox is rendered as last not to waste fragments (see its render function for details)
+            sky->render(activeCamera);
 
         }
 

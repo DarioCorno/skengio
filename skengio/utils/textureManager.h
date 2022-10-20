@@ -28,10 +28,10 @@ namespace SKEngio {
 
             static TextureManager& getInstance();
 
-            std::unique_ptr<Texture> Load(const std::string& fName, bool freeData);
-            std::unique_ptr<Texture> LoadCubemap(const std::vector<std::string>& facesFiles);
-            std::unique_ptr<Texture> CreateShadowMapTexture(unsigned int width, unsigned int height);
-            std::unique_ptr<Texture> CreateFrameBufferTexture(unsigned int width, unsigned int height);
+            Texture* Load(const std::string& fName, bool freeData);
+            Texture* LoadCubemap(const std::vector<std::string>& facesFiles);
+            Texture* CreateShadowMapTexture(unsigned int width, unsigned int height);
+            Texture* CreateFrameBufferTexture(unsigned int width, unsigned int height);
 
             void FreeData(unsigned char* data);
 

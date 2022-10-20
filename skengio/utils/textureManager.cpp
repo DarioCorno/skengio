@@ -25,8 +25,8 @@ namespace SKEngio {
         return instance;
     }
 
-    std::unique_ptr<Texture> TextureManager::Load(const std::string& fName, bool freeData) {
-        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
+    Texture* TextureManager::Load(const std::string& fName, bool freeData) {
+        Texture* texture = new Texture();
 
         texture->data = stbi_load(fName.c_str(), &texture->width, &texture->height, &texture->numChannels, 0);
         if (texture->data == nullptr) {
@@ -59,8 +59,8 @@ namespace SKEngio {
         return texture;
     }
 
-    std::unique_ptr<Texture> TextureManager::LoadCubemap(const std::vector<std::string>& facesFiles) {
-        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
+    Texture* TextureManager::LoadCubemap(const std::vector<std::string>& facesFiles) {
+        Texture* texture = new Texture();
         texture->textureUnit = textureCount++;
 
         glGenTextures(1, &texture->textureID);
@@ -96,8 +96,8 @@ namespace SKEngio {
         return texture;
     }
 
-    std::unique_ptr<Texture> TextureManager::CreateFrameBufferTexture(unsigned int width, unsigned int height) {
-        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
+    Texture* TextureManager::CreateFrameBufferTexture(unsigned int width, unsigned int height) {
+        Texture* texture = new Texture();
         texture->textureUnit = textureCount++;
 
         texture->width = width;
@@ -120,8 +120,8 @@ namespace SKEngio {
 
     }
 
-    std::unique_ptr<Texture> TextureManager::CreateShadowMapTexture(unsigned int width, unsigned int height) {
-        std::unique_ptr<Texture> texture = std::make_unique<Texture>();
+    Texture* TextureManager::CreateShadowMapTexture(unsigned int width, unsigned int height) {
+        Texture* texture =  new Texture();
         texture->textureUnit = textureCount++;
 
         texture->width = width;

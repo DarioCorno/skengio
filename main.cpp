@@ -48,7 +48,7 @@ int main()
     mylayerTwo->SetId(1);
     scene->PushLayer(mylayerTwo);
 
-    scene->music->play();
+    //scene->music->play();
     app->Run();
 
     delete app;

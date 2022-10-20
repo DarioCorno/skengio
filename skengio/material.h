@@ -17,7 +17,7 @@ namespace SKEngio  {
         float materialShininess = 32.0f;
         float materialReflectivity = 0.4f;
 
-        std::unique_ptr<Texture> diffuseTexture;
+        Texture* diffuseTexture;
 
         void SetAmbient(float r, float g, float b);
         void SetDiffuse(float r, float g, float b);

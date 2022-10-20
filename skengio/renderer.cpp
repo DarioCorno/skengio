@@ -118,35 +118,33 @@ namespace SKEngio {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
         GenerateFrameBO(winMan->width, winMan->height);
-        GenerateDepthMapBuffers(winMan->width, winMan->height);
-        GenerateShadowMapsBuffers();
+        //GenerateDepthMapBuffers(winMan->width, winMan->height);
+        //GenerateShadowMapsBuffers();
 
         return true;   
     }
 
     void Renderer::GenerateDepthMapBuffers(int width, int height) {
-        glGenFramebuffers(1, &DepthMap_FBO);
-
-        if (DepthMap_Texture != nullptr)
-            glDeleteTextures(1, &DepthMap_Texture->textureID);
-
-
-        DepthMap_Texture = TextureManager::getInstance().CreateShadowMapTexture(width, height);
-
-        //thell the FBO where to write
-        glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthMap_Texture->textureID, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        //shader for debugging depth
-        depthDebugShader = std::make_unique<ShaderProgram>();
-        depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
-        depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
-        depthDebugShader->CreateProgram();
-
-        depthDebugShader->SetDepthTexture(DepthMap_Texture->textureUnit);
+        //glGenFramebuffers(1, &DepthMap_FBO);
+        //
+        //DepthMap_Texture = TextureManager::getInstance().CreateShadowMapTexture(width, height);
+        //
+        ////thell the FBO where to write
+        //glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
+        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthMap_Texture->textureID, 0);
+        //glDrawBuffer(GL_NONE);
+        //glReadBuffer(GL_NONE);
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //
+        ////shader for debugging depth
+        //depthDebugShader = std::make_unique<ShaderProgram>();
+        //depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
+        //depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
+        //depthDebugShader->CreateProgram();
+        //
+        //depthDebugShader->SetDepthTexture(DepthMap_Texture->textureUnit);
+        //
+        //renderParams->depthMap = DepthMap_Texture;
 
     }
 
@@ -178,41 +176,57 @@ namespace SKEngio {
     }
 
     void Renderer::GenerateFrameBO(unsigned int width, unsigned int height) {
-        if(Post_FBOtexture != nullptr)
-            glDeleteTextures(1, &Post_FBOtexture->textureID);
 
+        if(FrameBOtexture != nullptr)
+            glDeleteTextures(1, &FrameBOtexture->textureID);
 
-        Post_FBOtexture = TextureManager::getInstance().CreateFrameBufferTexture(winMan->width, winMan->height);
+        //frame buffer object for fx ("container" of many render buffers
+        glGenFramebuffers(1, &FrameBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
 
-        //create the texture for framebuffer
-        //glGenTextures(1, &Post_FBOtexture);
-        //glBindTexture(GL_TEXTURE_2D, Post_FBOtexture);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, winMan->width, winMan->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        //frame buffer object for fx
-        glGenFramebuffers(1, &Post_FBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Post_FBOtexture->textureID, 0);
+       FrameBOtexture = TextureManager::getInstance().CreateFrameBufferTexture(winMan->width, winMan->height);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FrameBOtexture->textureID, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             SK_LOG_ERR( "ERROR Creating Post Frame Buffer Object");
         }
 
-        // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-        glGenRenderbuffers(1, &Post_RBO);
-        glBindRenderbuffer(GL_RENDERBUFFER, Post_RBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height); // use a single renderbuffer object for both a depth AND stencil buffer.
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, Post_RBO); // now actually attach it
-
-        //shader for FBO
+        //shader for FrameBO
         fboShader = std::make_unique<ShaderProgram>();
         fboShader->LoadShader("./shaders/", "fboshader.vert", SKEngio::ShaderProgram::VERTEX);
         fboShader->LoadShader("./shaders/", "fboshader.frag", SKEngio::ShaderProgram::FRAGMENT);
         fboShader->CreateProgram();
+
+        // create a renderbuffer object for depth attachment
+        glGenRenderbuffers(1, &DepthRBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, DepthRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height); // use a single renderbuffer object for both a depth AND stencil buffer.
+        //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, FrameBO); // attach it to FBO
+
+        // attach the renderbuffer to depth attachment point
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER,      // 1. fbo target: GL_FRAMEBUFFER
+            GL_DEPTH_ATTACHMENT, // 2. attachment point
+            GL_RENDERBUFFER,     // 3. rbo target: GL_RENDERBUFFER
+            DepthRBO);              // 4. rbo ID
+        
+        DepthBOTexture = TextureManager::getInstance().CreateShadowMapTexture(winMan->width, winMan->height);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthBOTexture->textureID, 0);
+
+        //
+        //if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        //    SK_LOG_ERR("ERROR Creating Depth Render Buffer Object");
+        //}
+        ////qui va messa la creazione del depth buffer
+        ////https ://stackoverflow.com/questions/2213030/whats-the-concept-of-and-differences-between-framebuffer-and-renderbuffer-in-op
+        ////http://www.songho.ca/opengl/gl_fbo.html
+        
+        depthDebugShader = std::make_unique<ShaderProgram>();
+        depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
+        depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
+        depthDebugShader->CreateProgram();
+        depthDebugShader->SetDepthTexture(DepthBOTexture->textureUnit);
+        //renderParams->depthMap = DepthMap_Texture;
+        
 
     }
 
@@ -244,16 +258,16 @@ namespace SKEngio {
         renderParams->pass = RenderPass::ShadowDepth;
 
         //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        DepthMap_Texture->bind();
+        DepthBOTexture->bind();
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
             scene->UpdateAndDraw(renderParams.get());
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        DepthMap_Texture->unbind();
+        DepthBOTexture->unbind();
         renderParams->pass = curPass;
     }
 
@@ -268,7 +282,7 @@ namespace SKEngio {
             ShadowMapPass();
 
         //enable the frame buffer object
-        glBindFramebuffer(GL_FRAMEBUFFER, Post_FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
         
         camera->UpdateViewport();
 
@@ -284,62 +298,54 @@ namespace SKEngio {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-        if (depthDebug) {
-
-            glDisable(GL_DEPTH_TEST);
-            glDisable(GL_CULL_FACE);
-            glEnable(GL_TEXTURE_2D);
-            depthDebugShader->bind();
-            DepthMap_Texture->bind();
-
-            glBindVertexArray(quad_VAO); // VAO of the quad
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            depthDebugShader->unbind();
-            DepthMap_Texture->unbind();
-
+        //update and render all scenes
+        for (Scene* scene : sceneStack->scenes) {
+            scene->UpdateAndDraw(renderParams.get());
         }
-        else 
-        {
 
-            //update and render all scenes
-            for (Scene* scene : sceneStack->scenes) {
-                scene->UpdateAndDraw(renderParams.get());
-            }
+        //disable the frame buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-            //disable the frame buffer
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //begin the gui rendering
+        if (renderParams->drawUI) 
+            DrawUI();
 
-            //begin the gui rendering
-            if (renderParams->drawUI) 
-                DrawUI();
-
-            //---BEGIN rendering frame buffer quad
-            //frame buffer quads settings
-            glDisable(GL_DEPTH_TEST);
-            glDisable(GL_CULL_FACE);
-            glEnable(GL_TEXTURE_2D);
+        //---BEGIN rendering frame buffer quad
+        //frame buffer quads settings
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_TEXTURE_2D);
+        if (!depthDebug) {
             fboShader->bind();
-            Post_FBOtexture->bind();
-
-            glBindVertexArray(quad_VAO);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            fboShader->unbind();
-            Post_FBOtexture->unbind();
-            //---END rendering frame buffer quad
-
-            GLenum err = glGetError();
-            if (err != 0) {
-                SK_LOG_ERR("GLError CODE: " << err );
-            }
-
-            //end the gui rendering
-            if (renderParams->drawUI) 
-                guiMan->DrawSwapBuffers();
+            FrameBOtexture->bind();
         }
+        else {
+            depthDebugShader->bind();
+            DepthBOTexture->bind();
+        }
+
+        glBindVertexArray(quad_VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        if (!depthDebug) {
+            fboShader->unbind();
+            FrameBOtexture->unbind();
+        }
+        else {
+            depthDebugShader->unbind();
+            DepthBOTexture->unbind();
+        }
+        //---END rendering frame buffer quad
+
+        GLenum err = glGetError();
+        if (err != 0) {
+            SK_LOG_ERR("GLError CODE: " << err );
+        }
+
+        //end the gui rendering
+        if (renderParams->drawUI) 
+            guiMan->DrawSwapBuffers();
 
         glfwMakeContextCurrent(winMan->window);
         glfwSwapBuffers(winMan->window);

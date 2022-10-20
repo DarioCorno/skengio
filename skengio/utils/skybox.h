@@ -91,6 +91,7 @@ namespace SKEngio {
                 // draw skybox as last
                 glEnable(GL_CULL_FACE);
                 glDisable(GL_BLEND);
+                glDepthMask(GL_FALSE);  //disable depth writing
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_TEXTURE_2D);
                 // skybox is rendered at the same depth as glClearDepth value
@@ -112,12 +113,13 @@ namespace SKEngio {
                 cubemapTexture->unbind();
 
                 glDepthFunc(GL_LESS); // set depth function back to default
+                glDepthMask(GL_TRUE);  //re enable depth writing
 
             }
 
             std::unique_ptr<ShaderProgram> shader;
             unsigned int skyboxVAO, skyboxVBO;
-            std::unique_ptr<Texture> cubemapTexture;
+            Texture* cubemapTexture;
 
             private:
 
