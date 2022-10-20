@@ -64,6 +64,8 @@ class EffectTwo final : public SKEngio::Layer {
             torus->shader->CreateProgram();
 
             torus->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/metal.jpg", false);
+            torus->setCubemap(sky->cubemapTexture.get() );
+
             //create a light with deafult colors
             light = new SKEngio::Light();
 
