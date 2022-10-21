@@ -28,15 +28,23 @@ namespace SKEngio {
 				delete material;
 			}
 
+			void basicRender() {
+				shader->bind();
+				shader->SetModelUniforms(model);
+				mesh->draw();
+			}
+
 			void render(RenderParams* rp) {
 
 				if ( (rp->pass == RenderPass::ShadowDepth) && (!castsShadows) )
 					return;
 
 				shader->bind();
-				material->diffuseTexture->bind();
 
-				shader->SetDiffTexture(material->diffuseTexture->textureUnit);
+				if (material->diffuseTexture) {
+					material->diffuseTexture->bind();
+					shader->SetDiffTexture(material->diffuseTexture->textureUnit);
+				}
 
 				if (cubemap != nullptr) {
 					cubemap->bind();
@@ -46,7 +54,8 @@ namespace SKEngio {
 				shader->SetModelUniforms(model);
 				mesh->draw();
 
-				material->diffuseTexture->unbind();
+				if (material->diffuseTexture)
+					material->diffuseTexture->unbind();
 			}
 
 			void resetTransforms() {

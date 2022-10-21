@@ -15,7 +15,7 @@ namespace SKEngio  {
         glm::vec3 materialDiffuseColor{ 0.7f, 0.7f, 0.7f };
         glm::vec3 materialSpecularColor{ 1.0f, 1.0f, 1.0f };
         float materialShininess = 32.0f;
-        float materialReflectivity = 0.4f;
+        float materialReflectivity = 0.25f;
 
         Texture* diffuseTexture;
 

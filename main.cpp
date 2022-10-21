@@ -20,7 +20,7 @@ int main()
     winSpecs.width = 1024;
     winSpecs.height = 768;
     winSpecs.caption = "SKEngio test";
-    winSpecs.fullscreen = false;
+    winSpecs.fullscreen = true;
 
     SKEngio::Application* app = new SKEngio::Application(&winSpecs, &errorCB);
 
@@ -48,7 +48,7 @@ int main()
     mylayerTwo->SetId(1);
     scene->PushLayer(mylayerTwo);
 
-    //scene->music->play();
+    scene->music->play();
     app->Run();
 
     delete app;

@@ -246,5 +246,7 @@
     <None Include=".gitignore" />
     <None Include="shaders\LinearizeDepth.glsl" />
     <None Include="shaders\fboshader.frag" />
+    <None Include="shaders\utility.vert" />
+    <None Include="shaders\utility.frag" />
   </ItemGroup>
 </Project>

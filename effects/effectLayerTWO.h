@@ -69,9 +69,10 @@ class EffectTwo final : public SKEngio::Layer {
 
             //create a light with deafult colors
             light = new SKEngio::Light();
+            light->enableDebug();
 
             //move camera position and target, camera was set from renderer activeCamera
-            activeCamera->setPosition(0.0f, 0.0f, -5.0f);
+            activeCamera->setPosition(0.0f, 0.0f, 30.0f);
             activeCamera->setTarget(0.0f, 0.0f, 0.0f);
 
         }
@@ -107,7 +108,7 @@ class EffectTwo final : public SKEngio::Layer {
             float t = rp->time;
 
             torus->resetTransforms();
-            torus->translate(0.0f, 0.0f, (sin(t / 2) * 15.0f));
+            torus->translate(0.0f, 0.0f, (sin(t / 3.0f) * 10.0f));
             torus->rotate((float)(t * 50.0f), 0.5f, 0.5f, 0.0f);
 
             glm::vec3 pos = activeCamera->position;
@@ -119,7 +120,8 @@ class EffectTwo final : public SKEngio::Layer {
             torus->shader->SetCameraUniforms(activeCamera);
             plane->shader->SetCameraUniforms(activeCamera);
 
-            light->SetPosition(-20.0f, 20.0f, -20.0f);
+            light->SetPosition(sin(t) * 10.0f, 5.0f, -3.0f);
+            light->setDebugCamera(activeCamera);
 
             torus->shader->SetLightUniforms(light);
             torus->shader->SetMaterialUniforms(torus->material);
@@ -137,7 +139,7 @@ class EffectTwo final : public SKEngio::Layer {
             torus->render(rp);
             //plane->material->diffuseTexture = rp->depthMap;
             plane->render(rp);
-
+            light->drawDebug();
 
             //skybox is rendered as last not to waste fragments (see its render function for details)
             sky->render(activeCamera);

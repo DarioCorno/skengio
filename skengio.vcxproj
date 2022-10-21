@@ -238,6 +238,8 @@
     <None Include="shaders\perlin.glsl" />
     <None Include="shaders\skybox.frag" />
     <None Include="shaders\skybox.vert" />
+    <None Include="shaders\utility.frag" />
+    <None Include="shaders\utility.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
