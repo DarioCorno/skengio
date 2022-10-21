@@ -1,52 +1,53 @@
-#include "event.h"
+#include <skengio/event.h>
 
 namespace SKEngio {
-    Event::Event() {
-    };
-
-    Event::~Event() { };
-
     void Event::SetKeyPress(int _key, int _scancode, int _action, int _mods) {
-        type = EVENT_TYPE_KEYPRESS;
+        type = EventType::KeyPress;
         key = _key;
         scancode = _scancode;
         action = _action;
         mods = _mods;
-    };
+    }
+
     void Event::SetKeyRelease(int _key, int _scancode, int _action, int _mods) {
-        type = EVENT_TYPE_KEYRELEASE;
+        type = EventType::KeyRelease;
         key = _key;
         scancode = _scancode;
         action = _action;
         mods = _mods;
-    };
+    }
+
     void Event::SetMousePress(int _button, int _action, int _mods) {
-        type = EVENT_TYPE_MOUSEPRESS;
+        type = EventType::MousePress;
         button = _button;
         action = _action;
         mods = _mods;
-    };
+    }
+
     void Event::SetMouseRelease(int _button, int _action, int _mods) {
-        type = EVENT_TYPE_MOUSERELEASE;
+        type = EventType::MouseRelease;
         button = _button;
         action = _action;
         mods = _mods;
-    };
+    }
+
     void Event::SetMouseMove(float _xpos, float _ypos) {
-        type = EVENT_TYPE_MOUSEMOVE;
+        type = EventType::MouseMove;
         xPos = _xpos;
         yPos = _ypos;
-    };
+    }
+
     void Event::SetMouseScroll(float _xoffset, float _yoffset) {
-        type = EVENT_TYPE_MOUSESCROLL;
+        type = EventType::MouseScroll;
         xOffset = _xoffset;
         yOffset = _yoffset;
-    };
+    }
+
     void Event::SetResize(int _width, int _height) {
-        type = EVENT_TYPE_RESIZE;
+        type = EventType::Resize;
         width = _width;
         height = _height;
-    };
+    }
 
 
 }

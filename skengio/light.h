@@ -1,35 +1,37 @@
 #pragma once
 
-#ifndef _SK_LIGHT_
-#define _SK_LIGHT_
+#ifndef SK_LIGHT_
+#define SK_LIGHT_
 
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "skengio/utils/geometries/box.h"
+#include "skengio/camera.h"
+
+#include <memory>
 
 namespace SKEngio  {
+
+    class Object;
+
     class Light {
         public:
 
-        glm::vec3 lightPosition;
-        glm::vec3 lightAmbientColor;
-        glm::vec3 lightDiffuseColor;
-        glm::vec3 lightSpecularColor;
+            glm::vec3 lightPosition{ 0.0f, 14.0f, 0.0f };
+            glm::vec3 lightDiffuseColor{ 0.71f, 0.65f, 0.55f };
 
-        Light();
+            void SetPosition(float x, float y, float z);
+            void SetDiffuse(float r, float g, float b);
 
-        ~Light();       
+            glm::vec3 GetPosition();
+            glm::vec3 GetDiffuse();
 
-        void SetPosition(float x, float y, float z);
-        void SetAmbient(float r, float g, float b);
-        void SetDiffuse(float r, float g, float b);
-        void SetSpecular(float r, float g, float b);
+            void enableDebug();
+            void setDebugCamera(Camera* cam);
+            void drawDebug();
 
-
-        glm::vec3 GetPosition();
-        glm::vec3 GetAmbient();
-        glm::vec3 GetDiffuse();
-        glm::vec3 GetSpecular();
+        private:
+            std::unique_ptr<Object> lightdeb;
+            bool hasDebug = false;
 
     };
 

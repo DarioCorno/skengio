@@ -1,15 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <string>
+#ifndef SK_APPLICATION_
+#define SK_APPLICATION_
 
-using namespace std;
-
-#include "core.h"
-
-//#include "window.h"
-//#include "application.h"
-//#include "renderer.h"
+#include "window.h"
 
 namespace SKEngio {
 
@@ -18,24 +12,31 @@ namespace SKEngio {
     class Application {
         public:
 
-        Application(WindowSpecs* windowSpecs, void (* errorCB)(int, const char*) );
+            Application(WindowSpecs* windowSpecs, void (* errorCB)(int, const char*) );
 
-        virtual ~Application();
+            Application(const Application&) = delete;
+            Application(Application&&) = delete;
+            Application& operator=(const Application&) = delete;
+            Application& operator=(Application&&) = delete;
 
-        void Run();
+            virtual ~Application();
 
-        void HandleKeyboardEvent(int key, int scancode, int action, int mods);
-        void HandleResizeEvent(int iWidth, int iHeight);
-        void HandleMouseButtonEvent(int button, int action, int mods);
-        void HandleMouseMoveEvent(double xPos, double yPos);
-        void HandleMouseScrollEvent(double xOffset, double yOffset);
+            void Run();
 
-        GLFWwindow* GetWindow();
-        SKEngio::Renderer* GetRenderer();
+            void HandleKeyboardEvent(int key, int scancode, int action, int mods);
+            void HandleResizeEvent(int iWidth, int iHeight);
+            void HandleMouseButtonEvent(int button, int action, int mods);
+            void HandleMouseMoveEvent(double xPos, double yPos);
+            void HandleMouseScrollEvent(double xOffset, double yOffset);
+
+            GLFWwindow* GetWindow();
+            SKEngio::Renderer* GetRenderer();
 
         private:
 
-        WindowManager* winMan;
-        SKEngio::Renderer* renderer;
+            WindowManager* winMan;
+            Renderer* renderer;
     };
 }
+
+#endif

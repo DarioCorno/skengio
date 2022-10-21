@@ -1,22 +1,17 @@
 #pragma once
 
+#ifndef SK_LAYERSTACK_
+#define SK_LAYERSTACK_
+
 #include <vector>
 
 #include "layer.h"
-#include "event.h"
 
 namespace SKEngio {
 
-    class LayerStack {
+    class LayerStack final {
         public:
-
-        LayerStack();
-
-        virtual ~LayerStack();
-
         void PushLayer(Layer* layer);
-
-        void PopLayer(Layer* layer);
 
         void Destroy();
 
@@ -41,3 +36,5 @@ namespace SKEngio {
     };
 
 }
+
+#endif

@@ -6,29 +6,19 @@
 #include <string>
 
 namespace SKEngio {
-
-    /* Null, because instance will be initialized on demand. */
-    Logger* Logger::instance = 0;
-
-    Logger* Logger::getInstance()
+    Logger& Logger::getInstance()
     {
-        if (instance == 0)
-        {
-            instance = new Logger();
-        }
-
+        static Logger instance{};
         return instance;
     }
 
-    Logger::Logger()
-    {}
-
     void Logger::log(std::string a, unsigned int type) {
         std::cout << a << std::endl;
-        LogEntry entry;
-        entry.entry = a;
-        entry.type = type;
-        buffer.push_back( entry );
+        LogEntry entry{
+            std::move(a),
+            type
+        };
+        buffer.push_back( std::move(entry) );
     }            
 
 

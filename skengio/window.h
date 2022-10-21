@@ -1,19 +1,18 @@
 #pragma once
 
+#define GLEW_STATIC
+#include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <string>
-
-using namespace std;
-
 
 namespace SKEngio {
 
     struct WindowSpecs {
         unsigned int width;
         unsigned int height;
-        string caption;
+        std::string caption;
+        bool fullscreen;
     };
 
     class WindowManager {
@@ -23,11 +22,17 @@ namespace SKEngio {
 
         unsigned int width;
         unsigned int height;
-        string caption;
+        std::string caption;
 
         WindowManager(WindowSpecs* windowSpecs);
 
-        virtual ~WindowManager();
+        // prevent copying object
+        WindowManager(const WindowManager&) = delete;
+        WindowManager(WindowManager&&) = delete;
+        WindowManager& operator=(const WindowManager&) = delete;
+        WindowManager& operator=(WindowManager&&) = delete;
+
+        ~WindowManager();
 
     };
 }

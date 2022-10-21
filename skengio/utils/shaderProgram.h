@@ -1,53 +1,103 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "../core.h"
-
 #include "../logger.h"
 
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <filesystem>
-#include <unistd.h>
-#include <fstream>
+
+#include <skengio/material.h>
+
+#define GLEW_STATIC
+#include "GLEW/glew.h"
+#include "skengio/camera.h"
+#include "skengio/light.h"
 
 namespace SKEngio {
-
     //a simple class to load and compile shaders
     class ShaderProgram
     {
-    public:
+        public:
         
-        enum SHADERTYPE {VERTEX = 0, FRAGMENT, GEOMETRY, TESSELATION};
+            enum SHADERTYPE {VERTEX = 0, FRAGMENT, GEOMETRY, TESSELATION};
 
-        unsigned int shaders[4];    //shaders ID for every shader type
-        unsigned int programID = 0;
+            unsigned int shaders[4]{};    //shaders IDs for every shader type
+            unsigned int programID = 0;
 
-        // constructor generates the shader on the fly
-        // ------------------------------------------------------------------------
-        ShaderProgram();
+            ShaderProgram() = default;
 
-        ~ShaderProgram();
+            // prevent copying object
+            ShaderProgram(const ShaderProgram&) = delete;
+            ShaderProgram(ShaderProgram&&) = delete;
+            ShaderProgram& operator=(const ShaderProgram&) = delete;
+            ShaderProgram& operator=(ShaderProgram&&) = delete;
 
-        void LoadShader(std::string strPath, std::string strFileName, SHADERTYPE typeShader);
+            ~ShaderProgram();
 
-        void CreateProgram();
+            void LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader);
 
-        void bind();
+            void CreateProgram();
 
-        void unbind();
+            void SetCameraUniforms(Camera* camera);
+            void SetModelUniforms(const glm::mat4& modelMatrix);
+            void SetLightUniforms(Light* light);
+            void SetMaterialUniforms(Material* mat);
 
-    private:
+            void SetViewMatrix(const glm::mat4& viewMatrix);
 
-        std::string includeIndentifier = "#include ";
+            void SetDiffTexture(int textureID);
+            void SetCubeTexture(int textureID);
+            void SetDepthTexture(int textureID);
 
-        std::string LoadShaderFile(std::string strPath, std::string strFilename, GLuint iShaderHandle);      
+            void bind();
 
-        // utility function for checking shader compilation/linking errors.
-        // ------------------------------------------------------------------------
-        void checkLinkingErrors();
+            void unbind();
+
+        private:
+
+            std::string includeIndentifier = "#include ";
+
+            std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle);      
+
+            void getMatricesUniformsLocation();
+            void getCameraUniformsLocation();
+            void getLightUniformsLocation();
+            void getTexturesUniforms();
+            void getMaterialUniformsLocation();
+
+
+            // utility function for checking shader compilation/linking errors.
+            void checkLinkingErrors();
+
+            bool isBind = false;
+
+            //UNIFORMS LOCATIONS
+            //default proj + view + model matrices 
+            int projMatrixLocation = -1;
+            int viewMatrixLocation = -1;
+            int modelMatrixLocation = -1;
+
+            //camera uniform location
+            int viewPosLocation = -1;
+            int targetPosLocation = -1;
+            int nearPlaneLocation = -1;
+            int farPlaneLocation = -1;
+            int fovLocation = -1;
+
+            //standard light uniforms
+            int uniformLightPositionLocation = -1;
+            int uniformLightDiffuseLocation = -1;
+
+            //standard material uniforms
+            int uniformMaterialAmbientLocation = -1;
+            int uniformMaterialDiffuseLocation = -1;
+            int uniformMaterialSpecularLocation = -1;
+            int uniformMaterialShininessLocation = -1;
+            int uniformMaterialReflectivityLocation = -1;
+
+            //textures location
+            int textureDiffuseLocation = -1;
+            int textureCubeLocation = -1;
+            int textureDepthLocation = -1;
 
     };
 

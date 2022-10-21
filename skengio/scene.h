@@ -1,16 +1,17 @@
 #pragma once
 
 #include "defines.h"
-
+#include "audiosource.h"
 #include "layerstack.h"
 #include "camera.h"
 
 #include <string>
+#include "renderParams.h"
 
 namespace SKEngio {
 
     class Scene {
-        public:
+    public:
 
         unsigned int sceneID;
 
@@ -18,37 +19,44 @@ namespace SKEngio {
         float endTime = SCENE_DEFAULT_END;
         float speedMult = 1;
 
+        SKEngio::AudioSource* music{};
+
         Scene(unsigned int sceneid);
+
+        // prevent copying object
+        Scene(const Scene&) = delete;
+        Scene(Scene&&) = delete;
+        Scene& operator=(const Scene&) = delete;
+        Scene& operator=(Scene&&) = delete;
 
         ~Scene();
 
-        void SetName(std::string n) { dispName = n; };
+        void SetName(std::string n) { dispName = std::move(n); }
 
         void OnAttach();
         void OnDetach();
 
         void OnEvent(Event* e);
 
-        void OnDrawGUI(float timeValue);
+        void OnDrawGUI(RenderParams* rp);
 
-        void UpdateAndDraw(float timeValue);
+        void UpdateAndDraw(RenderParams* rp);
 
-        LayerStack* GetLayerStack();
-        void Destroy();
+        void PushLayer(Layer* layer);
 
-        void addCamera(Camera* newCam);
-        void setActiveCamera(unsigned int camID);
+        const LayerStack& GetLayerStack() const;
+
+        void setActiveCamera(Camera* cam);
 
         void handleResize(int width, int height);
 
         std::string dispName;
         bool enabled = true;
 
-        private:
+    private:
 
-        LayerStack* layerStack;
+        LayerStack layerStack;
 
-        std::vector<Camera*> cameraList;
         Camera* activeCamera;
         
 

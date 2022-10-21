@@ -1,56 +1,50 @@
 #include "light.h"
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include "../glm/glm.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "../glm/gtc/type_ptr.hpp"
-
-#include "defines.h"
+#include "skengio/utils/object.h"
 
 namespace SKEngio {
-    Light::Light() {
-        lightPosition = glm::vec3(4.0f, 4.0f, -4.0f );
-        lightAmbientColor = glm::vec3( 0.5f, 0.2f, 0.8f );
-        lightDiffuseColor = glm::vec3( 1.0f, 0.7f, 0.9f );
-        lightSpecularColor = glm::vec3(1.0f, 1.0f, 1.0f );
-    }
-
-    Light::~Light() {
-
-    }
-
     void Light::SetPosition(float x, float y, float z) {
         lightPosition = glm::vec3( x, y, z ) ;
+        if (hasDebug) {
+            lightdeb->resetTransforms();
+            lightdeb->translate(x, y, z);
+        }
+
     }
 
-    void Light::SetAmbient(float r, float g, float b ) {
-        lightAmbientColor = glm::vec3( r, g, b );
-    }
-    
     void Light::SetDiffuse(float r, float g, float b ) {
         lightDiffuseColor = glm::vec3( r, g, b );
     }
 
-    void Light::SetSpecular(float r, float g, float b ) {
-        lightSpecularColor = glm::vec3( r, g, b );
-    }
-
     glm::vec3 Light::GetPosition() {
         return lightPosition;
-    };
-
-    glm::vec3 Light::GetAmbient() {
-        return lightAmbientColor;
-    };
+    }
 
     glm::vec3 Light::GetDiffuse() {
         return lightDiffuseColor;
-    };
+    }
 
-    glm::vec3 Light::GetSpecular() {
-        return lightSpecularColor;
-    };
+    void Light::enableDebug() {
+        hasDebug = true;
+
+        lightdeb = std::make_unique<Object>();
+        lightdeb->mesh = new Box();
+        ((SKEngio::Box*)lightdeb->mesh)->Generate(0.4f, 0.4f, 0.4f, 1, 1, 1);
+        lightdeb->mesh->buildInterleavedArray();
+        lightdeb->mesh->createGLBuffers();
+
+        lightdeb->shader = new SKEngio::ShaderProgram();
+        lightdeb->shader->LoadShader("./shaders/", "utility.vert", SKEngio::ShaderProgram::VERTEX);
+        lightdeb->shader->LoadShader("./shaders/", "utility.frag", SKEngio::ShaderProgram::FRAGMENT);
+        lightdeb->shader->CreateProgram();
+    }
+
+    void Light::setDebugCamera(Camera* cam) {
+        lightdeb->shader->SetCameraUniforms(cam);
+    }
+
+    void Light::drawDebug() {
+        lightdeb->basicRender();
+    }
 
 }

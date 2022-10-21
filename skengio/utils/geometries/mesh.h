@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _SK_MESH_
-#define _SK_MESH_
+#ifndef SK_MESH_
+#define SK_MESH_
 
 #include <vector>
 
@@ -17,7 +17,9 @@ namespace SKEngio {
         std::vector<unsigned int> indices;    
 
         //vertex buffer object and vertex attribs object
-        unsigned int VBO, VAO, EBO;
+        unsigned int VBO{};
+        unsigned int VAO{};
+        unsigned int EBO{};
    
 
         // interleaved
@@ -29,7 +31,13 @@ namespace SKEngio {
         //without color component
         //int interleavedStride = sizeof(float) * 8;                  // # of bytes to hop to the next vertex (should be 32 bytes)        
 
-        Mesh();
+        Mesh() = default;
+
+        // prevent copying object
+        Mesh(const Mesh&) = delete;
+        Mesh(Mesh&&) = delete;
+        Mesh& operator=(const Mesh&) = delete;
+        Mesh& operator=(Mesh&&) = delete;
 
         ~Mesh();
 
@@ -69,6 +77,7 @@ namespace SKEngio {
         void draw();
 
     };
+
 }
 
 

@@ -1,28 +1,31 @@
 #pragma once
 
+#ifndef SK_SCENESTACK_
+#define SK_SCENESTACK_
+
 #include <vector>
 
-#include "scene.h"
 #include "event.h"
+#include "scene.h"
 
 namespace SKEngio {
 
-    class SceneStack {
-        public:
+    class SceneStack final {
+    public:
+        SceneStack() = default;
+        
+        // prevent copying object
+        SceneStack(const SceneStack&) = delete;
+        SceneStack(SceneStack&&) = delete;
+        SceneStack& operator=(const SceneStack&) = delete;
+        SceneStack& operator=(SceneStack&&) = delete;
 
-        SceneStack();
-
-        virtual ~SceneStack();
+        ~SceneStack();
 
         void AddScene(Scene* scene);
 
-        void PopScene(Scene* scene);
-
-        void Destroy();
-
         void OnEvent(Event* e);
-
-
+        
 		std::vector<Scene*>::iterator begin() { return scenes.begin(); }
 		std::vector<Scene*>::iterator end() { return scenes.end(); }
 		std::vector<Scene*>::reverse_iterator rbegin() { return scenes.rbegin(); }
@@ -35,9 +38,9 @@ namespace SKEngio {
 
         std::vector<Scene*> scenes;
 
-        private:
-
-        unsigned int sceneInsertIndex = 0;
+    private:
     };
 
 }
+
+#endif

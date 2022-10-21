@@ -12,19 +12,15 @@
 #ifndef GEOMETRY_SPHERE_H
 #define GEOMETRY_SPHERE_H
 
-#include "../../core.h"
-
 #include <vector>
 #include <map>
+
+#include "mesh.h"
 
 namespace SKEngio {
     class Sphere : public Mesh
     {
     public:
-        // ctor/dtor
-        Sphere();
-        ~Sphere() {}
-
         // getters/setters
         float getRadius() const                 { return radius; }
         void Generate(float _radius, int _subdivisions);
