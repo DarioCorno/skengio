@@ -7,6 +7,8 @@ uniform vec3 camViewPos;
 uniform vec3 camTargetPos;
 uniform float camFOV;
 
+//deeply inspired by https://gist.github.com/slarson/6c3be61a2f7dd85cb7ef8df28276976a
+
 in vec2 TexCoords; // uv coords
 in vec2 pos;
 out vec4 color;
