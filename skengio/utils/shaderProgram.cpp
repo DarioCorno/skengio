@@ -124,6 +124,7 @@ namespace SKEngio {
         bind();
         //retrieve all the available uniforms in current program
         getMatricesUniformsLocation();
+        getCameraUniformsLocation();
         getLightUniformsLocation();
         getMaterialUniformsLocation();
         getTexturesUniforms();
@@ -143,8 +144,21 @@ namespace SKEngio {
             glProgramUniformMatrix4fv(programID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat));
         }
 
-        if(viewPosLocation != -1)
+        if (viewPosLocation != -1)
             glProgramUniform3fv(programID, viewPosLocation, 1, glm::value_ptr(camera->position));
+
+        if(targetPosLocation != -1)
+            glProgramUniform3fv(programID, targetPosLocation, 1, glm::value_ptr(camera->target));
+
+        if (nearPlaneLocation != -1)
+            glProgramUniform1f(programID, nearPlaneLocation, camera->nearPlane);
+
+        if (farPlaneLocation != -1)
+            glProgramUniform1f(programID, farPlaneLocation, camera->farPlane);
+
+        if (fovLocation != -1)
+            glProgramUniform1f(programID, fovLocation, camera->fieldOfView);
+
     }
 
     void ShaderProgram::SetModelUniforms(const glm::mat4& modelMatrix) {
@@ -221,8 +235,17 @@ namespace SKEngio {
         projMatrixLocation = glGetUniformLocation(programID, PROJ_MATRIX_UNIFORM_NAME);
         viewMatrixLocation = glGetUniformLocation(programID, VIEW_MATRIX_UNIFORM_NAME);
         modelMatrixLocation = glGetUniformLocation(programID, MODEL_MATRIX_UNIFORM_NAME);
+    }
 
+    void ShaderProgram::getCameraUniformsLocation() {
+        //this program must be in use
         viewPosLocation = glGetUniformLocation(programID, CAMERA_VIEWPOS_UNIFORM_NAME);
+        targetPosLocation = glGetUniformLocation(programID, CAMERA_TARGETPOS_UNIFORM_NAME);
+
+        nearPlaneLocation = glGetUniformLocation(programID, CAMERA_NEAR_PLANE_UNIFORM_NAME);
+        farPlaneLocation = glGetUniformLocation(programID, CAMERA_FAR_PLANE_UNIFORM_NAME);
+        fovLocation = glGetUniformLocation(programID, CAMERA_FOV_UNIFORM_NAME);
+
     }
 
     void ShaderProgram::getLightUniformsLocation() {

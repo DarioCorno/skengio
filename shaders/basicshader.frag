@@ -13,7 +13,7 @@ in vec3 FragPos;
 
 uniform sampler2D difTexture;
 uniform samplerCube cubeTexture;
-uniform vec3 viewPos;
+uniform vec3 camViewPos;
 
 //https://github.com/tuxalin/procedural-tileable-shaders
 //_include perlin.glsl
@@ -31,7 +31,7 @@ void main()
     vec3 diffuse = (angle * materialDiffuse) * lightDiffuse;
 
     //specular
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 viewDir = normalize(camViewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
     vec3 specular = lightDiffuse * (spec * materialSpecular);  

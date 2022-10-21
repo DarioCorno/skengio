@@ -39,9 +39,9 @@ class EffectOne final : public SKEngio::Layer {
 
             float vertices[] = {
                 // positions        
-                0.3f,  -0.3f, 0.0f,  
-                -0.3f, -0.3f, 0.0f,  
-                0.0f, 0.3f, 0.0f, 
+                1.0f,  -1.0f, 0.0f,  
+                -1.0f, -1.0f, 0.0f,  
+                0.0f, 1.0f, 0.0f, 
             };
 
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);

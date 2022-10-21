@@ -236,7 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fboshader.vert" />
-    <None Include="shaders\fboshader.frag" />
+    <None Include="shaders\fboshader.frag_backup" />
     <None Include="shaders\perlin.glsl" />
     <None Include="shaders\skybox.vert" />
     <None Include="shaders\skybox.frag" />
@@ -244,5 +244,7 @@
     <None Include="shaders\depthmapDebug.frag" />
     <None Include="shaders\depthmapDebug.vert" />
     <None Include=".gitignore" />
+    <None Include="shaders\LinearizeDepth.glsl" />
+    <None Include="shaders\fboshader.frag" />
   </ItemGroup>
 </Project>

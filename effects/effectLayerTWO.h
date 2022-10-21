@@ -27,18 +27,18 @@ class EffectTwo final : public SKEngio::Layer {
             //moved here for debug
             std::vector<std::string> faces
             {
-                "resources/textures/skybox/posx.jpg",
-                "resources/textures/skybox/negx.jpg",
-                "resources/textures/skybox/posy.jpg",
-                "resources/textures/skybox/negy.jpg",
-                "resources/textures/skybox/posz.jpg",
-                "resources/textures/skybox/negz.jpg"
+                "resources/textures/skybox2/posx.jpg",
+                "resources/textures/skybox2/negx.jpg",
+                "resources/textures/skybox2/posy.jpg",
+                "resources/textures/skybox2/negy.jpg",
+                "resources/textures/skybox2/posz.jpg",
+                "resources/textures/skybox2/negz.jpg"
             };
             sky = new SKEngio::SKYBox(faces);
 
             plane = new SKEngio::Object();
             plane->mesh = new SKEngio::Plane();
-            ((SKEngio::Plane*)plane->mesh)->Generate(20.0f, 20.0f, 4, 4);  
+            ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);  
             plane->mesh->buildInterleavedArray();
             plane->mesh->createGLBuffers();
 
@@ -49,13 +49,13 @@ class EffectTwo final : public SKEngio::Layer {
 
             plane->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/checker.jpg", false);
             //plane is still, we can set his model matrix now
-            plane->translate(0.0f, -2.0f, 0.0f);
+            plane->translate(0.0f, -8.0f, 0.0f);
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
             plane->castsShadows = false;
 
             torus = new SKEngio::Object();
             torus->mesh = new SKEngio::Torus();
-            ( (SKEngio::Torus*)torus->mesh )->Generate(0.4f, 1.0f, 32, 24, M_PI * 2.0f);  //torus
+            ( (SKEngio::Torus*)torus->mesh )->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->buildInterleavedArray();
             torus->mesh->createGLBuffers();
 
@@ -71,7 +71,7 @@ class EffectTwo final : public SKEngio::Layer {
             light = new SKEngio::Light();
 
             //move camera position and target, camera was set from renderer activeCamera
-            activeCamera->setPosition(0.0f, 0.0f, -4.0f);
+            activeCamera->setPosition(0.0f, 0.0f, -5.0f);
             activeCamera->setTarget(0.0f, 0.0f, 0.0f);
 
         }
@@ -107,19 +107,19 @@ class EffectTwo final : public SKEngio::Layer {
             float t = rp->time;
 
             torus->resetTransforms();
-            torus->translate(0.0f, 0.0f, (sin(t / 2) * 5.0f));
+            torus->translate(0.0f, 0.0f, (sin(t / 2) * 15.0f));
             torus->rotate((float)(t * 50.0f), 0.5f, 0.5f, 0.0f);
 
             glm::vec3 pos = activeCamera->position;
-            pos.x = sin(t / 10.0f) * 10.0f;
-            pos.z = cos(t / 10.0f) * 10.0f;
+            pos.x = sin(t / 10.0f) * 40.0f;
+            pos.z = cos(t / 10.0f) * 40.0f;
             activeCamera->setPosition(pos);
 
             //set the shader camera uniforms
             torus->shader->SetCameraUniforms(activeCamera);
             plane->shader->SetCameraUniforms(activeCamera);
 
-            light->SetPosition(-10.0f, 20.0f, -10.0f);
+            light->SetPosition(-20.0f, 20.0f, -20.0f);
 
             torus->shader->SetLightUniforms(light);
             torus->shader->SetMaterialUniforms(torus->material);

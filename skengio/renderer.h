@@ -41,11 +41,12 @@ namespace SKEngio {
 
             const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
+            void InitFulscreenQuad();
+            void InitDebugQuad();
             void DrawUI();
             void ShadowMapPass();
             void GenerateFrameBO(unsigned int width, unsigned int height);
             void GenerateShadowMapsBuffers();
-            void GenerateDepthMapBuffers(int width, int height);
             void HandleResize(int width, int height);
             //void SetPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
@@ -61,6 +62,9 @@ namespace SKEngio {
 
             unsigned int quad_VBO{};
             unsigned int quad_VAO{};
+
+            unsigned int debug_VBO{};
+            unsigned int debug_VAO{};
 
             //frame buffer object
             unsigned int FrameBO = -1;

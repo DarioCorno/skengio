@@ -36,7 +36,7 @@ namespace SKEngio {
             Renderer* parentRenderer;
             int winWidth, winHeight;
             const char* glsl_version = "#version 130";  //GLSL used by ImGui
-            bool logVisible = true;
+            bool logVisible = false;
     };
 }
 

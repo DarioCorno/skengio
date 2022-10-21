@@ -59,6 +59,7 @@ namespace SKEngio {
             std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle);      
 
             void getMatricesUniformsLocation();
+            void getCameraUniformsLocation();
             void getLightUniformsLocation();
             void getTexturesUniforms();
             void getMaterialUniformsLocation();
@@ -75,8 +76,12 @@ namespace SKEngio {
             int viewMatrixLocation = -1;
             int modelMatrixLocation = -1;
 
-            //viewpos uniform location
+            //camera uniform location
             int viewPosLocation = -1;
+            int targetPosLocation = -1;
+            int nearPlaneLocation = -1;
+            int farPlaneLocation = -1;
+            int fovLocation = -1;
 
             //standard light uniforms
             int uniformLightPositionLocation = -1;

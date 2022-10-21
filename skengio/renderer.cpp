@@ -95,6 +95,16 @@ namespace SKEngio {
         SK_LOG("Vendor: " << glGetString(GL_VENDOR) );
         SK_LOG("Renderer: " << glGetString(GL_RENDERER) );     
 
+        InitFulscreenQuad();
+        InitDebugQuad();
+
+        GenerateFrameBO(winMan->width, winMan->height);
+        //GenerateShadowMapsBuffers();
+
+        return true;   
+    }
+
+    void Renderer::InitFulscreenQuad() {
         float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
             // positions   // texCoords
             -1.0f,  1.0f,  0.0f, 1.0f,
@@ -117,34 +127,30 @@ namespace SKEngio {
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-        GenerateFrameBO(winMan->width, winMan->height);
-        //GenerateDepthMapBuffers(winMan->width, winMan->height);
-        //GenerateShadowMapsBuffers();
-
-        return true;   
     }
 
-    void Renderer::GenerateDepthMapBuffers(int width, int height) {
-        //glGenFramebuffers(1, &DepthMap_FBO);
-        //
-        //DepthMap_Texture = TextureManager::getInstance().CreateShadowMapTexture(width, height);
-        //
-        ////thell the FBO where to write
-        //glBindFramebuffer(GL_FRAMEBUFFER, DepthMap_FBO);
-        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthMap_Texture->textureID, 0);
-        //glDrawBuffer(GL_NONE);
-        //glReadBuffer(GL_NONE);
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //
-        ////shader for debugging depth
-        //depthDebugShader = std::make_unique<ShaderProgram>();
-        //depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
-        //depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
-        //depthDebugShader->CreateProgram();
-        //
-        //depthDebugShader->SetDepthTexture(DepthMap_Texture->textureUnit);
-        //
-        //renderParams->depthMap = DepthMap_Texture;
+    void Renderer::InitDebugQuad() {
+        float debugVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+            // positions   // texCoords
+            -1.0f,  -0.5,  0.0f, 1.0f,
+            -1.0f, -1.0f,  0.0f, 0.0f,
+             -0.5, -1.0f,  1.0f, 0.0f,
+
+            -1.0f,  -0.5,  0.0f, 1.0f,
+             -0.5, -1.0f,  1.0f, 0.0f,
+             -0.5,  -0.5,  1.0f, 1.0f
+        };
+
+        // Create buffer: for the vertex data for frame buffer rectange
+        glGenVertexArrays(1, &debug_VAO);
+        glGenBuffers(1, &debug_VBO);
+        glBindVertexArray(debug_VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, debug_VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(debugVertices), &debugVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)nullptr);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     }
 
@@ -188,7 +194,7 @@ namespace SKEngio {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FrameBOtexture->textureID, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            SK_LOG_ERR( "ERROR Creating Post Frame Buffer Object");
+            SK_LOG_ERR( "ERROR Creating Frame Buffer Object");
         }
 
         //shader for FrameBO
@@ -200,8 +206,7 @@ namespace SKEngio {
         // create a renderbuffer object for depth attachment
         glGenRenderbuffers(1, &DepthRBO);
         glBindRenderbuffer(GL_RENDERBUFFER, DepthRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height); // use a single renderbuffer object for both a depth AND stencil buffer.
-        //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, FrameBO); // attach it to FBO
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height); 
 
         // attach the renderbuffer to depth attachment point
         glFramebufferRenderbuffer(GL_FRAMEBUFFER,      // 1. fbo target: GL_FRAMEBUFFER
@@ -212,19 +217,18 @@ namespace SKEngio {
         DepthBOTexture = TextureManager::getInstance().CreateShadowMapTexture(winMan->width, winMan->height);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthBOTexture->textureID, 0);
 
-        //
-        //if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        //    SK_LOG_ERR("ERROR Creating Depth Render Buffer Object");
-        //}
-        ////qui va messa la creazione del depth buffer
-        ////https ://stackoverflow.com/questions/2213030/whats-the-concept-of-and-differences-between-framebuffer-and-renderbuffer-in-op
-        ////http://www.songho.ca/opengl/gl_fbo.html
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            SK_LOG_ERR("ERROR Creating Depth Render Buffer Object");
+        }
         
         depthDebugShader = std::make_unique<ShaderProgram>();
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
         depthDebugShader->CreateProgram();
         depthDebugShader->SetDepthTexture(DepthBOTexture->textureUnit);
+
+        //bind the depth texture to the main fbo shader (for DOF effect for example)
+        fboShader->SetDepthTexture(DepthBOTexture->textureUnit);
         //renderParams->depthMap = DepthMap_Texture;
         
 
@@ -285,6 +289,7 @@ namespace SKEngio {
         glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
         
         camera->UpdateViewport();
+        fboShader->SetCameraUniforms( camera.get() );       //set the camera data into fbo shader
 
         //deafult rendering settings
         glDepthMask(GL_TRUE);
@@ -315,28 +320,32 @@ namespace SKEngio {
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         glEnable(GL_TEXTURE_2D);
-        if (!depthDebug) {
-            fboShader->bind();
-            FrameBOtexture->bind();
-        }
-        else {
-            depthDebugShader->bind();
-            DepthBOTexture->bind();
-        }
+
+        fboShader->bind();
+        FrameBOtexture->bind();
 
         glBindVertexArray(quad_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        if (!depthDebug) {
-            fboShader->unbind();
-            FrameBOtexture->unbind();
-        }
-        else {
+
+        fboShader->unbind();
+        FrameBOtexture->unbind();
+        //---END rendering frame buffer quad
+
+
+        if (depthDebug) {
+            depthDebugShader->SetCameraUniforms(camera.get());       //set the camera data into depth rbo shader
+            depthDebugShader->bind();
+            DepthBOTexture->bind();
+
+            glBindVertexArray(debug_VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             depthDebugShader->unbind();
             DepthBOTexture->unbind();
         }
-        //---END rendering frame buffer quad
 
         GLenum err = glGetError();
         if (err != 0) {
