@@ -221,6 +221,7 @@
     <ClInclude Include="skengio\utils\geometries\torus.h" />
     <ClInclude Include="skengio\utils\object.h" />
     <ClInclude Include="skengio\utils\shaderProgram.h" />
+    <ClInclude Include="skengio\utils\singleton.h" />
     <ClInclude Include="skengio\utils\skybox.h" />
     <ClInclude Include="skengio\utils\texture.h" />
     <ClInclude Include="skengio\utils\textureManager.h" />

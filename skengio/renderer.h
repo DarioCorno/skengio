@@ -12,12 +12,15 @@
 #include "window.h"
 #include "utils/shaderProgram.h"
 #include "utils/texture.h"
+#include "skengio/utils/singleton.h"
 
 namespace SKEngio {
-    class Renderer final {
+    class Renderer final : public Singleton<Renderer>{
         public:
 
-            Renderer(WindowManager* winMan);
+            //Renderer(WindowManager* winMan);
+
+            void Init();
 
             bool InitGL();
 
@@ -49,12 +52,6 @@ namespace SKEngio {
             void GenerateShadowMapsBuffers();
             void HandleResize(int width, int height);
             //void SetPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-
-            //just a reference (shared with Application)
-            WindowManager* winMan;
-
-            //the gui manager
-            std::unique_ptr<GUIManager> guiMan;
 
         	glm::mat4x4 mProjMatrix, mModelViewMatrix;
 

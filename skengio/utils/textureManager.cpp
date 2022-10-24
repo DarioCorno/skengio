@@ -20,10 +20,10 @@ namespace SKEngio {
 
     /* Null, because instance will be initialized on demand. */
 
-    TextureManager& TextureManager::getInstance() {
-        static TextureManager instance{};
-        return instance;
-    }
+    //TextureManager& TextureManager::getInstance() {
+    //    static TextureManager instance{};
+    //    return instance;
+    //}
 
     Texture* TextureManager::Load(const std::string& fName, bool freeData) {
         Texture* texture = new Texture();

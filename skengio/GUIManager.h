@@ -8,32 +8,25 @@
 #include <GLFW/glfw3.h>
 
 #include "event.h"
+#include "skengio/utils/singleton.h"
 
 namespace SKEngio {
     class Renderer;
 
-    class GUIManager {
+    class GUIManager final : public Singleton<GUIManager>{
         public:
-            explicit GUIManager(Renderer* parentR);
 
-            GUIManager(const GUIManager&) = delete;
-            GUIManager(GUIManager&&) = delete;
-            GUIManager& operator=(const GUIManager&) = delete;
-            GUIManager& operator=(GUIManager&&) = delete;
-
-            ~GUIManager();
-
-            void InitGUI(GLFWwindow* window );
+            void InitGUI();
+            void Destroy();
 
             void DrawBegin();
             void Draw();
-            void DrawEnd(GLFWwindow* window);
+            void DrawEnd();
             void DrawSwapBuffers();
 
             void OnEvent(Event* e);
 
         private:
-            Renderer* parentRenderer;
             int winWidth, winHeight;
             const char* glsl_version = "#version 130";  //GLSL used by ImGui
             bool logVisible = false;

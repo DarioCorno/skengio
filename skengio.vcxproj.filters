@@ -233,6 +233,9 @@
     <ClInclude Include="skengio\renderParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="skengio\utils\singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fboshader.vert" />

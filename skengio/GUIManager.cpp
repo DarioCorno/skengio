@@ -16,21 +16,21 @@
 
 
 namespace SKEngio {
-    GUIManager::GUIManager(Renderer* parentR) {
-        parentRenderer = parentR;
-    }
-
-    GUIManager::~GUIManager() {        
-        std::cout << "Destroying GUImanager" << std::endl;
-
-        // Cleanup
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-
-    }
-
-    void GUIManager::InitGUI(GLFWwindow* _window ) {
+    //GUIManager::GUIManager() {
+    //    //parentRenderer = parentR;
+    //}
+    //
+    //GUIManager::~GUIManager() {        
+    //    std::cout << "Destroying GUImanager" << std::endl;
+    //
+    //    // Cleanup
+    //    ImGui_ImplOpenGL3_Shutdown();
+    //    ImGui_ImplGlfw_Shutdown();
+    //    ImGui::DestroyContext();
+    //
+    //}
+    
+    void GUIManager::InitGUI() {
         
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -46,10 +46,20 @@ namespace SKEngio {
         ImGui::StyleColorsDark();
 
         // Setup Platform/Renderer backends
-        ImGui_ImplGlfw_InitForOpenGL(_window, true);
+        ImGui_ImplGlfw_InitForOpenGL( WindowManager::get().window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
 
-        glfwGetWindowSize(_window, &winWidth, &winHeight);
+        //glfwGetWindowSize( WindowManager::get().window, &winWidth, &winHeight);
+
+    }
+
+    void GUIManager::Destroy() {
+        std::cout << "Destroying GUImanager" << std::endl;
+
+        // Cleanup
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
 
     }
 
@@ -60,6 +70,7 @@ namespace SKEngio {
     }
 
     void GUIManager::Draw() {
+
             if(GUI_SHOW_FPS) {
                 ImGui::SetNextWindowPos(ImVec2(2, 2), ImGuiCond_FirstUseEver );
                 ImGui::SetNextWindowBgAlpha(0.2f);
@@ -101,11 +112,11 @@ namespace SKEngio {
             ImGui::Text("Audio");
             ImGui::Separator();
             //music is in scene 0 (horrible)
-            Scene* scene0 = parentRenderer->GetSceneStack()->scenes[0];
+            Scene* scene0 = Renderer::get().GetSceneStack()->scenes[0];
             ImGui::PlotLines("dB", scene0->music->getFFT(), 512);
             ImGui::Text("Scenes");
             ImGui::Separator();
-            for(Scene* scn : parentRenderer->GetSceneStack()->scenes) {
+            for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
                 if ( ImGui::TreeNode( scn->dispName.c_str()) )
                 {
                     for(Layer* lyr : scn->GetLayerStack().layers ) {
@@ -116,9 +127,9 @@ namespace SKEngio {
                 }
             }
             ImGui::Separator();
-            ImGui::Checkbox("Depth", &parentRenderer->depthDebug);
+            ImGui::Checkbox("Depth", &Renderer::get().depthDebug);
             ImGui::Separator();
-            ImGui::Checkbox("Shadows", &parentRenderer->renderParams->useShadows);
+            ImGui::Checkbox("Shadows", &Renderer::get().renderParams->useShadows);
             ImGui::Separator();
             ImGui::Checkbox( "Show Log", &logVisible );
             
@@ -127,10 +138,10 @@ namespace SKEngio {
 
     }
 
-    void GUIManager::DrawEnd(GLFWwindow* window) {
+    void GUIManager::DrawEnd() {
         ImGui::Render();
         int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glfwGetFramebufferSize(WindowManager::get().window, &display_w, &display_h);
         //glViewport(0, 0, display_w, display_h);
 
         //glClearColor(0.0f, 1.0f, 0.0f, 1.0f);

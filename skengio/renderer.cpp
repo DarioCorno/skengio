@@ -15,20 +15,36 @@ namespace SKEngio {
 
     class GUIManager;
     
-    Renderer::Renderer(WindowManager* winMan) {
+    //Renderer::Renderer(WindowManager* winMan) {
+    //    //keeps a reference to winManager
+    //    this->winMan = winMan;
+    //    
+    //    //create the render params object with defaults
+    //    renderParams = std::make_unique<RenderParams>();
+    //
+    //    sceneStack = std::make_unique<SceneStack>();
+    //
+    //    //initializes the opengl stuff
+    //    this->InitGL();
+    //
+    //    //initialize the GUI system
+    //    this->InitGUI();
+    //}
+
+   void Renderer::Init() {
         //keeps a reference to winManager
-        this->winMan = winMan;
-        
+        //this->winMan = winMan;
+
         //create the render params object with defaults
         renderParams = std::make_unique<RenderParams>();
 
         sceneStack = std::make_unique<SceneStack>();
 
         //initializes the opengl stuff
-        this->InitGL();
+        InitGL();
 
         //initialize the GUI system
-        this->InitGUI();
+        InitGUI();
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -61,19 +77,19 @@ namespace SKEngio {
         }
 
         //forward to GUI
-        guiMan->OnEvent(e);
+        GUIManager::get().OnEvent(e);
     }
 
 
     void Renderer::InitGUI() {
-        guiMan = std::make_unique<GUIManager>( this );
-        guiMan->InitGUI(winMan->window);
+        //guiMan = std::make_unique<GUIManager>( this );
+        GUIManager::get().InitGUI();
     }
 
 
     bool Renderer::InitGL() {
 
-        glfwMakeContextCurrent(this->winMan->window);
+        glfwMakeContextCurrent(WindowManager::get().window);
 
         //set vsync true
         glfwSwapInterval(1);
@@ -98,7 +114,7 @@ namespace SKEngio {
         InitFulscreenQuad();
         InitDebugQuad();
 
-        GenerateFrameBO(winMan->width, winMan->height);
+        GenerateFrameBO(WindowManager::get().width, WindowManager::get().height);
         //GenerateShadowMapsBuffers();
 
         return true;   
@@ -162,7 +178,7 @@ namespace SKEngio {
             glDeleteTextures(1, &ShadowMap_Texture->textureID);
 
 
-        ShadowMap_Texture = TextureManager::getInstance().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
+        ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
 
         //thell the FBO where to write
         glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
@@ -190,7 +206,7 @@ namespace SKEngio {
         glGenFramebuffers(1, &FrameBO);
         glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
 
-       FrameBOtexture = TextureManager::getInstance().CreateFrameBufferTexture(winMan->width, winMan->height);
+       FrameBOtexture = TextureManager::get().CreateFrameBufferTexture(WindowManager::get().width, WindowManager::get().height);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FrameBOtexture->textureID, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -214,7 +230,7 @@ namespace SKEngio {
             GL_RENDERBUFFER,     // 3. rbo target: GL_RENDERBUFFER
             DepthRBO);              // 4. rbo ID
         
-        DepthBOTexture = TextureManager::getInstance().CreateShadowMapTexture(winMan->width, winMan->height);
+        DepthBOTexture = TextureManager::get().CreateShadowMapTexture( WindowManager::get().width, WindowManager::get().height);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthBOTexture->textureID, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -235,12 +251,12 @@ namespace SKEngio {
     }
 
     void Renderer::DrawUI() {
-        guiMan->DrawBegin();
-        guiMan->Draw();
+        GUIManager::get().DrawBegin();
+        GUIManager::get().Draw();
         for (Scene* scene : sceneStack->scenes) {
             scene->OnDrawGUI(renderParams.get());
         }
-        guiMan->DrawEnd(winMan->window);
+        GUIManager::get().DrawEnd();
     }
 
     void Renderer::ShadowMapPass() {
@@ -277,7 +293,7 @@ namespace SKEngio {
 
     void Renderer::Draw() {
 
-        if (winMan->width == 0 || winMan->height == 0)
+        if (WindowManager::get().width == 0 || WindowManager::get().height == 0)
             return;
 
         renderParams->time = glfwGetTime();
@@ -354,14 +370,16 @@ namespace SKEngio {
 
         //end the gui rendering
         if (renderParams->drawUI) 
-            guiMan->DrawSwapBuffers();
+            GUIManager::get().DrawSwapBuffers();
 
-        glfwMakeContextCurrent(winMan->window);
-        glfwSwapBuffers(winMan->window);
+        glfwMakeContextCurrent(WindowManager::get().window);
+        glfwSwapBuffers(WindowManager::get().window);
     }
 
     void Renderer::NewCamera(float fov, std::string camID) {
-        camera = std::make_unique<Camera>(winMan->width, winMan->height, fov, std::move(camID));
+        camera = std::make_unique<Camera>(
+            WindowManager::get().width, 
+            WindowManager::get().height, fov, std::move(camID));
     }
 
     void Renderer::AddScene(Scene* newScene) {

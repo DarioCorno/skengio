@@ -6,6 +6,8 @@
 
 #include <string>
 
+#include "skengio/utils/singleton.h"
+
 namespace SKEngio {
 
     struct WindowSpecs {
@@ -15,7 +17,7 @@ namespace SKEngio {
         bool fullscreen;
     };
 
-    class WindowManager {
+    class WindowManager final : public Singleton<WindowManager> {
         public:
 
         GLFWwindow* window;
@@ -24,15 +26,18 @@ namespace SKEngio {
         unsigned int height;
         std::string caption;
 
-        WindowManager(WindowSpecs* windowSpecs);
+        //WindowManager(WindowSpecs* windowSpecs);
+        
+        void Init(WindowSpecs* windowSpecs);
+        void Destroy();
 
         // prevent copying object
-        WindowManager(const WindowManager&) = delete;
-        WindowManager(WindowManager&&) = delete;
-        WindowManager& operator=(const WindowManager&) = delete;
-        WindowManager& operator=(WindowManager&&) = delete;
+        //WindowManager(const WindowManager&) = delete;
+        //WindowManager(WindowManager&&) = delete;
+        //WindowManager& operator=(const WindowManager&) = delete;
+        //WindowManager& operator=(WindowManager&&) = delete;
 
-        ~WindowManager();
+        //~WindowManager();
 
     };
 }

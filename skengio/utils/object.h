@@ -26,6 +26,7 @@ namespace SKEngio {
 				delete mesh;
 				delete shader;
 				delete material;
+				delete cubemap;
 			}
 
 			void basicRender() {
