@@ -34,10 +34,10 @@ int main()
     //    SK_LOG("Cannot retrieve renderer");
     //}
     //rend->NewCamera(45.0f, "cam01");
-    SKEngio::Renderer::get().NewCamera(45.0f, "cam01");
 
     SKEngio::Scene* scene = new SKEngio::Scene(1);
     scene->SetName("Scena 01");
+    scene->SetCamera(45.0f, "cam01");
     //rend->AddScene(scene);
     SKEngio::Renderer::get().AddScene(scene);
 

@@ -70,12 +70,12 @@ namespace SKEngio {
             glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-            window = glfwCreateWindow(width, height, this->caption.c_str(), monitor, nullptr);
+            window = glfwCreateWindow(width, height, caption.c_str(), monitor, nullptr);
         }
         else {
             width = windowSpecs->width;
             height = windowSpecs->height;
-            window = glfwCreateWindow(this->width, this->height, this->caption.c_str(), nullptr, nullptr);
+            window = glfwCreateWindow(width, height, caption.c_str(), nullptr, nullptr);
         }
 
         if (window == nullptr) {

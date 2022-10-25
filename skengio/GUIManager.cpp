@@ -49,7 +49,7 @@ namespace SKEngio {
         ImGui_ImplGlfw_InitForOpenGL( WindowManager::get().window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
 
-        //glfwGetWindowSize( WindowManager::get().window, &winWidth, &winHeight);
+        glfwGetWindowSize( WindowManager::get().window, &winWidth, &winHeight);
 
     }
 
@@ -119,7 +119,7 @@ namespace SKEngio {
             for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
                 if ( ImGui::TreeNode( scn->dispName.c_str()) )
                 {
-                    for(Layer* lyr : scn->GetLayerStack().layers ) {
+                    for(Layer* lyr : scn->layers ) {
                         std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
                         ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
                     }

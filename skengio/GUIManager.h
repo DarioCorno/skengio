@@ -9,6 +9,7 @@
 
 #include "event.h"
 #include "skengio/utils/singleton.h"
+#include "skengio/layer.h"
 
 namespace SKEngio {
     class Renderer;

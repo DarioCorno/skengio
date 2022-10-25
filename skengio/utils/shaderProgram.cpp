@@ -173,6 +173,10 @@ namespace SKEngio {
         if(uniformLightDiffuseLocation != -1)
             glProgramUniform3fv(programID, uniformLightDiffuseLocation, 1, glm::value_ptr(light->GetDiffuse()));
 
+        if (uniformLightViewProjLocation != -1)
+            glProgramUniform3fv(programID, uniformLightViewProjLocation, 1, glm::value_ptr(light->getLightViewProjMatrix()));
+
+        
     }
 
     void ShaderProgram::SetMaterialUniforms(Material* material) {
@@ -252,6 +256,7 @@ namespace SKEngio {
         //this program must be in use
         uniformLightPositionLocation = glGetUniformLocation(programID, LIGHT_POSITION_UNIFORM_NAME);
         uniformLightDiffuseLocation = glGetUniformLocation(programID, LIGHT_DIFFUSE_UNIFORM_NAME);
+        uniformLightViewProjLocation = glGetUniformLocation(programID, LIGHT_VIEWPROJMATRIX_UNIFORM_NAME);
     }
 
     void ShaderProgram::getMaterialUniformsLocation() {

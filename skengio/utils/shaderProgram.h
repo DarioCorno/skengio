@@ -86,6 +86,7 @@ namespace SKEngio {
             //standard light uniforms
             int uniformLightPositionLocation = -1;
             int uniformLightDiffuseLocation = -1;
+            int uniformLightViewProjLocation = -1;  //view projection for shadow maps depth rendering
 
             //standard material uniforms
             int uniformMaterialAmbientLocation = -1;

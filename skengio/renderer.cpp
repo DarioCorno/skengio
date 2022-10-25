@@ -15,23 +15,7 @@ namespace SKEngio {
 
     class GUIManager;
     
-    //Renderer::Renderer(WindowManager* winMan) {
-    //    //keeps a reference to winManager
-    //    this->winMan = winMan;
-    //    
-    //    //create the render params object with defaults
-    //    renderParams = std::make_unique<RenderParams>();
-    //
-    //    sceneStack = std::make_unique<SceneStack>();
-    //
-    //    //initializes the opengl stuff
-    //    this->InitGL();
-    //
-    //    //initialize the GUI system
-    //    this->InitGUI();
-    //}
-
-   void Renderer::Init() {
+    void Renderer::Init() {
         //keeps a reference to winManager
         //this->winMan = winMan;
 
@@ -44,7 +28,7 @@ namespace SKEngio {
         InitGL();
 
         //initialize the GUI system
-        InitGUI();
+        GUIManager::get().InitGUI();
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -81,18 +65,12 @@ namespace SKEngio {
     }
 
 
-    void Renderer::InitGUI() {
-        //guiMan = std::make_unique<GUIManager>( this );
-        GUIManager::get().InitGUI();
-    }
-
-
     bool Renderer::InitGL() {
 
         glfwMakeContextCurrent(WindowManager::get().window);
 
         //set vsync true
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -115,7 +93,7 @@ namespace SKEngio {
         InitDebugQuad();
 
         GenerateFrameBO(WindowManager::get().width, WindowManager::get().height);
-        //GenerateShadowMapsBuffers();
+        GenerateShadowMapsBuffers();
 
         return true;   
     }
@@ -174,10 +152,6 @@ namespace SKEngio {
     void Renderer::GenerateShadowMapsBuffers() {
         glGenFramebuffers(1, &ShadowMap_FBO);
 
-        if (ShadowMap_Texture != nullptr)
-            glDeleteTextures(1, &ShadowMap_Texture->textureID);
-
-
         ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
 
         //thell the FBO where to write
@@ -189,8 +163,8 @@ namespace SKEngio {
 
         //shader for debugging depth
         shadowDebugShader = std::make_unique<ShaderProgram>();
-        shadowDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
-        shadowDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
+        shadowDebugShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
+        shadowDebugShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
         shadowDebugShader->CreateProgram();
 
         shadowDebugShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
@@ -259,20 +233,19 @@ namespace SKEngio {
         GUIManager::get().DrawEnd();
     }
 
+    void Renderer::UpdateCurrentScene(RenderParams* rp) {
+        //will set the current scene according ot time and other params
+        scene = sceneStack->scenes[0];
+    }
+
     void Renderer::ShadowMapPass() {
 
-        /*
-        glm::mat4 lightProjection, lightView;
-        glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 7.5f;
-        lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-        lightSpaceMatrix = lightProjection * lightView;
+        Light* light = scene->lights[0];
 
         // render scene from light's point of view
-        simpleDepthShader.use();
-        simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        */
+        shadowDebugShader->bind();
+        shadowDebugShader->SetLightUniforms(light);
+        
         
         RenderPass curPass = renderParams->pass;
         renderParams->pass = RenderPass::ShadowDepth;
@@ -298,14 +271,14 @@ namespace SKEngio {
 
         renderParams->time = glfwGetTime();
 
+        UpdateCurrentScene( renderParams.get() );
+
         if(renderParams->useShadows)
             ShadowMapPass();
 
         //enable the frame buffer object
         glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
         
-        camera->UpdateViewport();
-        fboShader->SetCameraUniforms( camera.get() );       //set the camera data into fbo shader
 
         //deafult rendering settings
         glDepthMask(GL_TRUE);
@@ -320,9 +293,9 @@ namespace SKEngio {
 
 
         //update and render all scenes
-        for (Scene* scene : sceneStack->scenes) {
-            scene->UpdateAndDraw(renderParams.get());
-        }
+        scene->camera->UpdateViewport();
+        fboShader->SetCameraUniforms( scene->camera );       //set the camera data into fbo shader
+        scene->UpdateAndDraw(renderParams.get());
 
         //disable the frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -351,7 +324,7 @@ namespace SKEngio {
 
 
         if (depthDebug) {
-            depthDebugShader->SetCameraUniforms(camera.get());       //set the camera data into depth rbo shader
+            depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
             depthDebugShader->bind();
             DepthBOTexture->bind();
 
@@ -361,6 +334,19 @@ namespace SKEngio {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             depthDebugShader->unbind();
             DepthBOTexture->unbind();
+        }
+
+        if (renderParams->useShadows) {
+            shadowDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
+            shadowDebugShader->bind();
+            ShadowMap_Texture->bind();
+
+            glBindVertexArray(debug_VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            shadowDebugShader->unbind();
+            ShadowMap_Texture->unbind();
         }
 
         GLenum err = glGetError();
@@ -376,17 +362,7 @@ namespace SKEngio {
         glfwSwapBuffers(WindowManager::get().window);
     }
 
-    void Renderer::NewCamera(float fov, std::string camID) {
-        camera = std::make_unique<Camera>(
-            WindowManager::get().width, 
-            WindowManager::get().height, fov, std::move(camID));
-    }
-
     void Renderer::AddScene(Scene* newScene) {
-        if (camera == nullptr) {
-            SK_LOG_ERR("ERROR! Adding scene to Renderer before adding a camera");
-        }
-        newScene->setActiveCamera(camera.get());
         sceneStack->AddScene(newScene);
     }
 

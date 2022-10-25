@@ -6,7 +6,6 @@
 #include "glm/glm.hpp"
 #include "skengio/utils/geometries/box.h"
 #include "skengio/camera.h"
-
 #include <memory>
 
 namespace SKEngio  {
@@ -29,8 +28,10 @@ namespace SKEngio  {
             void setDebugCamera(Camera* cam);
             void drawDebug();
 
+            glm::mat4 getLightViewProjMatrix();
+
         private:
-            std::unique_ptr<Object> lightdeb;
+            Object* lightdeb;
             bool hasDebug = false;
 
     };

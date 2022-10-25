@@ -42,9 +42,6 @@
     <ClCompile Include="skengio\layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="skengio\layerstack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="skengio\light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -135,9 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="skengio\layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="skengio\layerstack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="skengio\light.h">
@@ -239,7 +233,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fboshader.vert" />
-    <None Include="shaders\fboshader.frag_backup" />
     <None Include="shaders\perlin.glsl" />
     <None Include="shaders\skybox.vert" />
     <None Include="shaders\skybox.frag" />
@@ -251,5 +244,7 @@
     <None Include="shaders\fboshader.frag" />
     <None Include="shaders\utility.vert" />
     <None Include="shaders\utility.frag" />
+    <None Include="shaders\shadowMap.vert" />
+    <None Include="shaders\shadowMap.frag" />
   </ItemGroup>
 </Project>
