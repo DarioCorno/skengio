@@ -2,11 +2,15 @@
 
 #include "defines.h"
 #include "audiosource.h"
-#include "layerstack.h"
 #include "camera.h"
+#include "event.h"
 
 #include <string>
 #include "renderParams.h"
+#include "skengio/light.h"
+#include "skengio/layer.h"
+
+#include <vector>
 
 namespace SKEngio {
 
@@ -44,21 +48,17 @@ namespace SKEngio {
 
         void PushLayer(Layer* layer);
 
-        const LayerStack& GetLayerStack() const;
-
-        void setActiveCamera(Camera* cam);
+        Camera* SetCamera(float fov, std::string camID);
+        Light* AddLight();
 
         void handleResize(int width, int height);
 
         std::string dispName;
         bool enabled = true;
 
-    private:
-
-        LayerStack layerStack;
-
-        Camera* activeCamera;
-        
+        Camera* camera = nullptr;
+        std::vector<Light*> lights;
+        std::vector<Layer*> layers;
 
     };
 

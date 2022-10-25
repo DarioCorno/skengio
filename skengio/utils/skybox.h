@@ -124,7 +124,7 @@ namespace SKEngio {
             private:
 
                 bool loadTextures(const std::vector<std::string>& facesFiles) {
-                    cubemapTexture = TextureManager::getInstance().LoadCubemap(facesFiles);
+                    cubemapTexture = TextureManager::get().LoadCubemap(facesFiles);
                     return cubemapTexture != nullptr;
                 }
 

@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "skengio/application.h"
 #include "skengio/renderer.h"
 #include "skengio/logger.h"
@@ -20,19 +24,22 @@ int main()
     winSpecs.width = 1024;
     winSpecs.height = 768;
     winSpecs.caption = "SKEngio test";
-    winSpecs.fullscreen = true;
+    winSpecs.fullscreen = false;
 
-    SKEngio::Application* app = new SKEngio::Application(&winSpecs, &errorCB);
+    SKEngio::Application app; // = new SKEngio::Application(&winSpecs, &errorCB);
+    app.Initialize(&winSpecs, &errorCB);
 
-    SKEngio::Renderer* rend = app->GetRenderer();
-    if (!rend) {
-        SK_LOG("Cannot retrieve renderer");
-    }
-    rend->NewCamera(45.0f, "cam01");
+    //SKEngio::Renderer* rend = app.GetRenderer();
+    //if (!rend) {
+    //    SK_LOG("Cannot retrieve renderer");
+    //}
+    //rend->NewCamera(45.0f, "cam01");
 
     SKEngio::Scene* scene = new SKEngio::Scene(1);
     scene->SetName("Scena 01");
-    rend->AddScene(scene);
+    scene->SetCamera(45.0f, "cam01");
+    //rend->AddScene(scene);
+    SKEngio::Renderer::get().AddScene(scene);
 
     scene->music = new SKEngio::AudioSource();
     scene->music->loadStream("moby_elekfunk.mp3", SKEngio::AudioType::Stream);
@@ -48,9 +55,15 @@ int main()
     mylayerTwo->SetId(1);
     scene->PushLayer(mylayerTwo);
 
-    scene->music->play();
-    app->Run();
+    //scene->music->play();
+    app.Run();
 
-    delete app;
+    app.Destroy();
+    delete scene;
+    delete mylayerOne;
+    delete mylayerTwo;
+
+    _CrtDumpMemoryLeaks();
+
     return 0;
 }

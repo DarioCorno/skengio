@@ -47,7 +47,7 @@ class EffectTwo final : public SKEngio::Layer {
             plane->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
             plane->shader->CreateProgram();
 
-            plane->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/checker.jpg", false);
+            plane->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
             //plane is still, we can set his model matrix now
             plane->translate(0.0f, -8.0f, 0.0f);
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
@@ -64,7 +64,7 @@ class EffectTwo final : public SKEngio::Layer {
             torus->shader->LoadShader("./shaders/","basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
             torus->shader->CreateProgram();
 
-            torus->material->diffuseTexture = SKEngio::TextureManager::getInstance().Load("./resources/textures/metal.jpg", false);
+            torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
             torus->setCubemap(sky->cubemapTexture );
 
             //create a light with deafult colors

@@ -165,7 +165,6 @@
     <ClCompile Include="skengio\event.cpp" />
     <ClCompile Include="skengio\GUIManager.cpp" />
     <ClCompile Include="skengio\layer.cpp" />
-    <ClCompile Include="skengio\layerstack.cpp" />
     <ClCompile Include="skengio\light.cpp" />
     <ClCompile Include="skengio\logger.cpp" />
     <ClCompile Include="skengio\material.cpp" />
@@ -206,7 +205,6 @@
     <ClInclude Include="skengio\event.h" />
     <ClInclude Include="skengio\GUIManager.h" />
     <ClInclude Include="skengio\layer.h" />
-    <ClInclude Include="skengio\layerstack.h" />
     <ClInclude Include="skengio\light.h" />
     <ClInclude Include="skengio\logger.h" />
     <ClInclude Include="skengio\material.h" />
@@ -221,6 +219,7 @@
     <ClInclude Include="skengio\utils\geometries\torus.h" />
     <ClInclude Include="skengio\utils\object.h" />
     <ClInclude Include="skengio\utils\shaderProgram.h" />
+    <ClInclude Include="skengio\utils\singleton.h" />
     <ClInclude Include="skengio\utils\skybox.h" />
     <ClInclude Include="skengio\utils\texture.h" />
     <ClInclude Include="skengio\utils\textureManager.h" />
@@ -231,11 +230,12 @@
     <None Include="shaders\depthmapDebug.frag" />
     <None Include="shaders\depthmapDebug.vert" />
     <None Include="shaders\fboshader.frag" />
-    <None Include="shaders\fboshader.frag_backup" />
     <None Include="shaders\fboshader.vert" />
     <None Include="shaders\LinearizeDepth.glsl" />
     <None Include="shaders\materialUniforms.glsl" />
     <None Include="shaders\perlin.glsl" />
+    <None Include="shaders\shadowMap.frag" />
+    <None Include="shaders\shadowMap.vert" />
     <None Include="shaders\skybox.frag" />
     <None Include="shaders\skybox.vert" />
     <None Include="shaders\utility.frag" />

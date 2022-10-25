@@ -6,7 +6,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <skengio/material.h>
 #include <skengio/renderParams.h>
-#include "shaderProgram.h"
+#include <skengio/utils/shaderProgram.h>
 #include "geometries/mesh.h"
 
 namespace SKEngio {
@@ -26,6 +26,7 @@ namespace SKEngio {
 				delete mesh;
 				delete shader;
 				delete material;
+				delete cubemap;
 			}
 
 			void basicRender() {

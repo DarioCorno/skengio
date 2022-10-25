@@ -17,7 +17,6 @@ namespace SKEngio {
     }
 
 	void SceneStack::OnEvent(Event* e) {
-		//manage event for layerstack
 
 		//pass the event to all the layers
 		for(Scene* scene : scenes){

@@ -4,22 +4,27 @@
 #define SK_APPLICATION_
 
 #include "window.h"
+#include "skengio/utils/singleton.h"
 
 namespace SKEngio {
 
     class Renderer;
     
-    class Application {
+    class Application : public Singleton<Application> {
         public:
 
-            Application(WindowSpecs* windowSpecs, void (* errorCB)(int, const char*) );
+            //Application(WindowSpecs* windowSpecs, void (* errorCB)(int, const char*) );
 
-            Application(const Application&) = delete;
-            Application(Application&&) = delete;
-            Application& operator=(const Application&) = delete;
-            Application& operator=(Application&&) = delete;
+            //Application(const Application&) = delete;
+            //Application(Application&&) = delete;
+            //Application& operator=(const Application&) = delete;
+            //Application& operator=(Application&&) = delete;
 
-            virtual ~Application();
+            //virtual ~Application();
+
+            void Initialize(WindowSpecs* windowSpecs, void (*errorCB)(int, const char*));
+
+            void Destroy();
 
             void Run();
 
@@ -29,13 +34,13 @@ namespace SKEngio {
             void HandleMouseMoveEvent(double xPos, double yPos);
             void HandleMouseScrollEvent(double xOffset, double yOffset);
 
-            GLFWwindow* GetWindow();
-            SKEngio::Renderer* GetRenderer();
+            //GLFWwindow* GetWindow();
+            //SKEngio::Renderer* GetRenderer();
 
         private:
 
-            WindowManager* winMan;
-            Renderer* renderer;
+            //WindowManager* winMan;
+            //Renderer* renderer;
     };
 }
 

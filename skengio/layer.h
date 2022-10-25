@@ -5,8 +5,7 @@
 
 #include "event.h"
 #include "camera.h"
-#include <skengio/renderParams.h>
-//#include <skengio/utils/object.h>
+#include "skengio/renderParams.h"
 
 namespace SKEngio {
 
@@ -16,12 +15,6 @@ namespace SKEngio {
         Camera* activeCamera;
         
         Layer() = default;
-
-        // prevent copying object
-        Layer(const Layer&) = delete;
-        Layer(Layer&&) = delete;
-        Layer& operator=(const Layer&) = delete;
-        Layer& operator=(Layer&&) = delete;
 
         virtual ~Layer() = default;
 

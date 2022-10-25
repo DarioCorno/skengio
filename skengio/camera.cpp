@@ -19,7 +19,6 @@ namespace SKEngio {
         nearPlane{0.01f},
         farPlane{100.0f}
     {
-
         handleResize(w,h);
     }
 

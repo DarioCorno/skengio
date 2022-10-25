@@ -8,7 +8,7 @@
 namespace SKEngio {
 
     Texture::~Texture() {
-        TextureManager::getInstance().FreeData(data);
+        TextureManager::get().FreeData(data);
     }
 
     void Texture::bind() {

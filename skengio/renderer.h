@@ -12,16 +12,17 @@
 #include "window.h"
 #include "utils/shaderProgram.h"
 #include "utils/texture.h"
+#include "skengio/utils/singleton.h"
 
 namespace SKEngio {
-    class Renderer final {
+    class Renderer final : public Singleton<Renderer>{
         public:
 
-            Renderer(WindowManager* winMan);
+            //Renderer(WindowManager* winMan);
+
+            void Init();
 
             bool InitGL();
-
-            void InitGUI();
 
             void Draw();
 
@@ -30,8 +31,6 @@ namespace SKEngio {
             SceneStack* GetSceneStack();
 
             void AddScene(Scene* newScene);
-
-            void NewCamera(float fov, std::string camID);
 
             std::unique_ptr<RenderParams> renderParams;
 
@@ -48,17 +47,13 @@ namespace SKEngio {
             void GenerateFrameBO(unsigned int width, unsigned int height);
             void GenerateShadowMapsBuffers();
             void HandleResize(int width, int height);
+            void UpdateCurrentScene(RenderParams* rp);
             //void SetPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-
-            //just a reference (shared with Application)
-            WindowManager* winMan;
-
-            //the gui manager
-            std::unique_ptr<GUIManager> guiMan;
 
         	glm::mat4x4 mProjMatrix, mModelViewMatrix;
 
             std::unique_ptr<SceneStack> sceneStack;
+            Scene* scene;   //current active scene
 
             unsigned int quad_VBO{};
             unsigned int quad_VAO{};
@@ -79,9 +74,6 @@ namespace SKEngio {
             unsigned int ShadowMap_FBO{};
             Texture* ShadowMap_Texture;
             std::unique_ptr<ShaderProgram> shadowDebugShader;
-
-
-            std::unique_ptr<Camera> camera = nullptr;
 
     };
 }
