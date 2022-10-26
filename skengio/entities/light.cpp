@@ -1,5 +1,7 @@
 #include "light.h"
 
+#include "skengio/entities/geometries/box.h"
+
 namespace SKEngio {
 
     void Light::SetPosition(float x, float y, float z) {
@@ -27,5 +29,6 @@ namespace SKEngio {
         lightSpaceMatrix = lightProjection * lightView;
         return lightSpaceMatrix;
     }
+
 
 }

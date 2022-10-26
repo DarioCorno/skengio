@@ -9,6 +9,7 @@
 #include <skengio/utils/shaderProgram.h>
 #include "geometries/mesh.h"
 #include "skengio/utils/transform.h"
+#include "skengio/entities/geometries/box.h"
 
 namespace SKEngio {
 
@@ -52,6 +53,16 @@ namespace SKEngio {
 				}
 			}
 
+			void renderGizmo(RenderParams* rp) {
+				if (hasGizmo) {
+					gizmo->shader->bind();
+					gizmo->shader->SetCameraUniforms(rp->camera);
+					gizmo->shader->SetModelUniforms(transform.getModelMatrix());
+					gizmo->mesh->draw();
+					gizmo->shader->unbind();
+				}
+			}
+
 			void render(RenderParams* rp) {
 
 				if ( (rp->pass == RenderPass::ShadowDepth) && (!castsShadows) )
@@ -75,6 +86,8 @@ namespace SKEngio {
 
 				if (material->diffuseTexture)
 					material->diffuseTexture->unbind();
+
+				renderGizmo(rp);
 
 				renderChilds(rp);
 
@@ -116,17 +129,32 @@ namespace SKEngio {
 				childs.back()->setParent( this );
 			}
 
+			void initGizmo(ShaderProgram* gShader) {
+				//should all this be in Entity?
+				gizmo = new Entity();
+				gizmo->mesh = new Box();
+				((SKEngio::Box*)gizmo->mesh)->Generate(1.0f, 1.0f, 1.0f, 1, 1, 1);
+				gizmo->mesh->buildInterleavedArray();
+				gizmo->mesh->createGLBuffers();
+				gizmo->shader = gShader;
+				hasGizmo = true;
+			}
+
 			Mesh* mesh{};
 			ShaderProgram* shader{};
 			Transform transform;
 			Material* material;
 			bool castsShadows;
 
+
 		private:
 
 			Entity* parent;
 			std::vector<Entity*> childs;
 			Texture* cubemap{};
+
+			bool hasGizmo = false;
+			Entity* gizmo;
 
 	};
 }

@@ -48,10 +48,11 @@ class EffectTwo final : public SKEngio::Layer {
             plane->shader->CreateProgram();
 
             plane->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
-            //plane is still, we can set his model matrix now
             plane->translate(0.0f, -8.0f, 0.0f);
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
             plane->castsShadows = false;
+            plane->updateSelfAndChild();    //planeis still, non need to update transforms
+            plane->shader->SetMaterialUniforms(plane->material); //plane material is static
 
             torus = new SKEngio::Entity();
             torus->mesh = new SKEngio::Torus();
@@ -69,6 +70,7 @@ class EffectTwo final : public SKEngio::Layer {
 
             //create a light with deafult colors
             light = new SKEngio::Light();
+            light->initGizmo( SKEngio::Renderer::get().GetGizmoShader() );
 
         }
 
@@ -110,21 +112,18 @@ class EffectTwo final : public SKEngio::Layer {
             pos.z = cos(t / 10.0f) * 40.0f;
             rp->camera->setPosition(pos);
 
-            //light->SetPosition(sin(t) * 10.0f, 5.0f, -3.0f);
-            light->SetPosition(-10.0f, 5.0f, -3.0f);
+            light->SetPosition(sin(t) * 10.0f, 5.0f, -3.0f);
             //update the transform matrices
             light->updateSelfAndChild();
             torus->updateSelfAndChild();
-            plane->updateSelfAndChild();
 
             glm::vec3 lPos = light->GetPosition();
             glm::vec3 lDiff = light->GetDiffuse();
             glm::mat4 lVPMat = light->getLightViewProjMatrix();
             torus->shader->SetLightUniforms(lPos, lDiff, lVPMat);
-
-            torus->shader->SetMaterialUniforms(torus->material);
             plane->shader->SetLightUniforms(lPos, lDiff, lVPMat);
-            plane->shader->SetMaterialUniforms(plane->material);
+
+            torus->shader->SetMaterialUniforms(torus->material);    //torus materials can be changed at runtime
 
         }
 
@@ -137,6 +136,8 @@ class EffectTwo final : public SKEngio::Layer {
             torus->render(rp);
             //plane->material->diffuseTexture = rp->depthMap;
             plane->render(rp);
+
+            light->renderGizmo(rp);
 
             //skybox is rendered as last not to waste fragments (see its render function for details)
             sky->render(rp->camera);

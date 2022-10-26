@@ -94,8 +94,20 @@ namespace SKEngio {
 
         GenerateFrameBO(WindowManager::get().width, WindowManager::get().height);
         GenerateShadowMapsBuffers();
+        GenerateGizmosShader();
 
         return true;   
+    }
+
+    void Renderer::GenerateGizmosShader() {
+        gizmoShader = std::make_unique<ShaderProgram>();
+        gizmoShader->LoadShader("./shaders/", "utility.vert", SKEngio::ShaderProgram::VERTEX);
+        gizmoShader->LoadShader("./shaders/", "utility.frag", SKEngio::ShaderProgram::FRAGMENT);
+        gizmoShader->CreateProgram();
+    }
+
+    ShaderProgram* Renderer::GetGizmoShader() {
+        return gizmoShader.get();
     }
 
     void Renderer::InitFulscreenQuad() {

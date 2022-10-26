@@ -32,6 +32,8 @@ namespace SKEngio {
 
             void AddScene(Scene* newScene);
 
+            ShaderProgram* GetGizmoShader();
+
             std::unique_ptr<RenderParams> renderParams;
 
             bool depthDebug = false;
@@ -48,11 +50,9 @@ namespace SKEngio {
             void ShadowMapPass();
             void GenerateFrameBO(unsigned int width, unsigned int height);
             void GenerateShadowMapsBuffers();
+            void GenerateGizmosShader();
             void HandleResize(int width, int height);
             void UpdateCurrentScene(RenderParams* rp);
-            //void SetPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-
-        	glm::mat4x4 mProjMatrix, mModelViewMatrix;
 
             std::unique_ptr<SceneStack> sceneStack;
 
@@ -61,6 +61,9 @@ namespace SKEngio {
 
             unsigned int debug_VBO{};
             unsigned int debug_VAO{};
+
+
+            std::unique_ptr<ShaderProgram> gizmoShader;
 
             //frame buffer object
             unsigned int FrameBO = -1;
