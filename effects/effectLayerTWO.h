@@ -1,11 +1,11 @@
 #pragma once
 
-#include <skengio/utils/object.h>
+#include <skengio/entities/entity.h>
 #include <skengio/utils/skybox.h>
-#include <skengio/utils/geometries/mesh.h>
-#include <skengio/utils/geometries/torus.h>
-#include <skengio/utils/geometries/box.h>
-#include <skengio/utils/geometries/plane.h>
+#include <skengio/entities/geometries/mesh.h>
+#include <skengio/entities/geometries/torus.h>
+#include <skengio/entities/geometries/box.h>
+#include <skengio/entities/geometries/plane.h>
 #include <skengio/utils/textureManager.h>
 #include <skengio/renderparams.h>
 #include <skengio/utils/texture.h>
@@ -16,8 +16,8 @@ class EffectTwo final : public SKEngio::Layer {
         glm::mat4 model = glm::mat4(1.0f);  //model matrix
 
         //SKEngio::Sphere* mesh;
-        SKEngio::Object* torus;
-        SKEngio::Object* plane;
+        SKEngio::Entity* torus;
+        SKEngio::Entity* plane;
         SKEngio::SKYBox* sky;
         SKEngio::Light* light;
 
@@ -36,7 +36,7 @@ class EffectTwo final : public SKEngio::Layer {
             };
             sky = new SKEngio::SKYBox(faces);
 
-            plane = new SKEngio::Object();
+            plane = new SKEngio::Entity();
             plane->mesh = new SKEngio::Plane();
             ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);  
             plane->mesh->buildInterleavedArray();
@@ -53,7 +53,7 @@ class EffectTwo final : public SKEngio::Layer {
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
             plane->castsShadows = false;
 
-            torus = new SKEngio::Object();
+            torus = new SKEngio::Entity();
             torus->mesh = new SKEngio::Torus();
             ( (SKEngio::Torus*)torus->mesh )->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->buildInterleavedArray();
@@ -69,7 +69,6 @@ class EffectTwo final : public SKEngio::Layer {
 
             //create a light with deafult colors
             light = new SKEngio::Light();
-            light->enableDebug();
 
             //move camera position and target, camera was set from renderer activeCamera
             activeCamera->setPosition(0.0f, 0.0f, 30.0f);
@@ -121,11 +120,14 @@ class EffectTwo final : public SKEngio::Layer {
             plane->shader->SetCameraUniforms(activeCamera);
 
             light->SetPosition(sin(t) * 10.0f, 5.0f, -3.0f);
-            light->setDebugCamera(activeCamera);
 
-            torus->shader->SetLightUniforms(light);
+            glm::vec3 lPos = light->GetPosition();
+            glm::vec3 lDiff = light->GetDiffuse();
+            glm::mat4 lVPMat = light->getLightViewProjMatrix();
+            torus->shader->SetLightUniforms(lPos, lDiff, lVPMat);
+
             torus->shader->SetMaterialUniforms(torus->material);
-            plane->shader->SetLightUniforms(light);
+            plane->shader->SetLightUniforms(lPos, lDiff, lVPMat);
             plane->shader->SetMaterialUniforms(plane->material);
 
         }
@@ -139,7 +141,6 @@ class EffectTwo final : public SKEngio::Layer {
             torus->render(rp);
             //plane->material->diffuseTexture = rp->depthMap;
             plane->render(rp);
-            light->drawDebug();
 
             //skybox is rendered as last not to waste fragments (see its render function for details)
             sky->render(activeCamera);

@@ -1,6 +1,6 @@
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
+//#define _CRTDBG_MAP_ALLOC
+//#include <stdlib.h>
+//#include <crtdbg.h>
 
 #include "skengio/application.h"
 #include "skengio/renderer.h"
@@ -63,7 +63,7 @@ int main()
     delete mylayerOne;
     delete mylayerTwo;
 
-    _CrtDumpMemoryLeaks();
+    //_CrtDumpMemoryLeaks();
 
     return 0;
 }

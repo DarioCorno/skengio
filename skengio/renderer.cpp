@@ -244,7 +244,7 @@ namespace SKEngio {
 
         // render scene from light's point of view
         shadowDebugShader->bind();
-        shadowDebugShader->SetLightUniforms(light);
+        shadowDebugShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix() );
         
         
         RenderPass curPass = renderParams->pass;

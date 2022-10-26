@@ -36,7 +36,9 @@ namespace SKEngio {
 
             bool depthDebug = false;
 
-        private:
+            Scene* scene;   //current active scene
+    
+    private:
 
             const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
@@ -53,7 +55,6 @@ namespace SKEngio {
         	glm::mat4x4 mProjMatrix, mModelViewMatrix;
 
             std::unique_ptr<SceneStack> sceneStack;
-            Scene* scene;   //current active scene
 
             unsigned int quad_VBO{};
             unsigned int quad_VAO{};

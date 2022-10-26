@@ -4,18 +4,17 @@
 #define SK_LIGHT_
 
 #include "glm/glm.hpp"
-#include "skengio/utils/geometries/box.h"
 #include "skengio/camera.h"
+#include "skengio/entities/entity.h"
+
 #include <memory>
 
 namespace SKEngio  {
 
-    class Object;
-
-    class Light {
+    class Light final : public Entity {
         public:
 
-            glm::vec3 lightPosition{ 0.0f, 14.0f, 0.0f };
+            //glm::vec3 lightPosition{ 0.0f, 14.0f, 0.0f };
             glm::vec3 lightDiffuseColor{ 0.71f, 0.65f, 0.55f };
 
             void SetPosition(float x, float y, float z);
@@ -24,15 +23,9 @@ namespace SKEngio  {
             glm::vec3 GetPosition();
             glm::vec3 GetDiffuse();
 
-            void enableDebug();
-            void setDebugCamera(Camera* cam);
-            void drawDebug();
-
             glm::mat4 getLightViewProjMatrix();
 
         private:
-            Object* lightdeb;
-            bool hasDebug = false;
 
     };
 

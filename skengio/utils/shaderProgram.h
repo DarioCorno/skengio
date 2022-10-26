@@ -10,9 +10,9 @@
 #define GLEW_STATIC
 #include "GLEW/glew.h"
 #include "skengio/camera.h"
-#include "skengio/light.h"
 
 namespace SKEngio {
+    
     //a simple class to load and compile shaders
     class ShaderProgram
     {
@@ -39,7 +39,7 @@ namespace SKEngio {
 
             void SetCameraUniforms(Camera* camera);
             void SetModelUniforms(const glm::mat4& modelMatrix);
-            void SetLightUniforms(Light* light);
+            void SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
             void SetMaterialUniforms(Material* mat);
 
             void SetViewMatrix(const glm::mat4& viewMatrix);

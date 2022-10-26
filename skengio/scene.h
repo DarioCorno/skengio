@@ -7,7 +7,7 @@
 
 #include <string>
 #include "renderParams.h"
-#include "skengio/light.h"
+#include "skengio/entities/light.h"
 #include "skengio/layer.h"
 
 #include <vector>

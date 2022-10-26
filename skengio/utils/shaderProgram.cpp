@@ -166,17 +166,15 @@ namespace SKEngio {
             glProgramUniformMatrix4fv(programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     }
 
-    void ShaderProgram::SetLightUniforms(Light* light) {
+    void ShaderProgram::SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj) {
         if(uniformLightPositionLocation != -1)
-            glProgramUniform3fv(programID, uniformLightPositionLocation, 1, glm::value_ptr(light->GetPosition()));
+            glProgramUniform3fv(programID, uniformLightPositionLocation, 1, glm::value_ptr( pos ));
 
         if(uniformLightDiffuseLocation != -1)
-            glProgramUniform3fv(programID, uniformLightDiffuseLocation, 1, glm::value_ptr(light->GetDiffuse()));
+            glProgramUniform3fv(programID, uniformLightDiffuseLocation, 1, glm::value_ptr( diffuse ));
 
         if (uniformLightViewProjLocation != -1)
-            glProgramUniform3fv(programID, uniformLightViewProjLocation, 1, glm::value_ptr(light->getLightViewProjMatrix()));
-
-        
+            glProgramUniformMatrix4fv(programID, uniformLightViewProjLocation, 1, GL_FALSE, glm::value_ptr( lightViewProj ));
     }
 
     void ShaderProgram::SetMaterialUniforms(Material* material) {

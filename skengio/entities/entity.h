@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SK_OBJECT_
-#define SK_OBJECT_
+#ifndef SK_ENTITY_
+#define SK_ENTITY_
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -8,31 +8,24 @@
 #include <skengio/renderParams.h>
 #include <skengio/utils/shaderProgram.h>
 #include "geometries/mesh.h"
+#include "skengio/utils/transform.h"
 
 namespace SKEngio {
 
-
-	class Object {
+	class Entity {
 		public:
 
-			Object() : 
-				model {glm::mat4(1.0f)},
+			Entity() : 
 				material {new Material()},
 				castsShadows {true}
 		    {
 			}
 
-			~Object() {
+			~Entity() {
 				delete mesh;
 				delete shader;
 				delete material;
 				delete cubemap;
-			}
-
-			void basicRender() {
-				shader->bind();
-				shader->SetModelUniforms(model);
-				mesh->draw();
 			}
 
 			void render(RenderParams* rp) {
@@ -52,40 +45,54 @@ namespace SKEngio {
 					shader->SetCubeTexture(cubemap->textureUnit);
 				}
 
-				shader->SetModelUniforms(model);
+				shader->SetModelUniforms( transform.getModelMatrix() );
 				mesh->draw();
 
 				if (material->diffuseTexture)
 					material->diffuseTexture->unbind();
+
 			}
 
 			void resetTransforms() {
-				model = glm::mat4(1.0f);
+				transform.resetTransforms();
 			}
 
 			void translate(float x, float y, float z) {
-				model = glm::translate(model, glm::vec3(x, y, z));
+				transform.Translate( glm::vec3(x, y, z));
 			}
 
 			void rotate(float angle, float x, float y, float z) {
-				model = glm::rotate(model, angle, glm::vec3(x, y, z));
+				transform.Rotate( angle, glm::vec3(x, y, z));
 			}
 
 			void scale(float x, float y, float z) {
-				model = glm::scale( model, glm::vec3(x, y, z) );
+				transform.Scale(  glm::vec3(x, y, z) );
 			}
 
 			void setCubemap(Texture* _cubemap) {
 				cubemap = _cubemap;
 			}
 
+			void setParent(Entity* _parent) {
+				parent = _parent;
+			}
+
+			template<typename... TArgs>
+			void addChild(TArgs&... args) {
+				childs.push_back(args...);
+				childs.back()->setParent( this );
+			}
+
 			Mesh* mesh{};
 			ShaderProgram* shader{};
-			glm::mat4 model;
+			Transform transform;
 			Material* material;
 			bool castsShadows;
 
 		private:
+
+			Entity* parent;
+			std::vector<Entity*> childs;
 			Texture* cubemap{};
 
 	};
