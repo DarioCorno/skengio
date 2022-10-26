@@ -61,6 +61,7 @@ namespace SKEngio {
     std::string ShaderProgram::LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle) {
         
         std::string strPathFilename = strPath + strFilename;
+        fileName = strPathFilename;
         std::ifstream shaderSource(strPathFilename.c_str());
         if (!shaderSource.is_open())
         {

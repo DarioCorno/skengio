@@ -28,6 +28,30 @@ namespace SKEngio {
 				delete cubemap;
 			}
 
+
+			//Update transform if it was changed
+			void updateSelfAndChild()
+			{
+				if (!transform.isDirty())
+					return;
+
+				forceUpdateSelfAndChild();
+			}
+
+			//Force update of transform even if local space don't change
+			void forceUpdateSelfAndChild()
+			{
+				if (parent)
+					transform.computeModelMatrix(parent->transform.getModelMatrix());
+				else
+					transform.computeModelMatrix();
+
+				for (auto&& child : childs)
+				{
+					child->forceUpdateSelfAndChild();
+				}
+			}
+
 			void render(RenderParams* rp) {
 
 				if ( (rp->pass == RenderPass::ShadowDepth) && (!castsShadows) )
@@ -45,12 +69,21 @@ namespace SKEngio {
 					shader->SetCubeTexture(cubemap->textureUnit);
 				}
 
+				shader->SetCameraUniforms(rp->camera);
 				shader->SetModelUniforms( transform.getModelMatrix() );
 				mesh->draw();
 
 				if (material->diffuseTexture)
 					material->diffuseTexture->unbind();
 
+				renderChilds(rp);
+
+			}
+
+			void renderChilds(RenderParams* rp) {
+				for (Entity* child : childs) {
+					child->render(rp);
+				}
 			}
 
 			void resetTransforms() {
@@ -58,15 +91,15 @@ namespace SKEngio {
 			}
 
 			void translate(float x, float y, float z) {
-				transform.Translate( glm::vec3(x, y, z));
+				transform.setLocalPosition( glm::vec3(x, y, z));
 			}
 
 			void rotate(float angle, float x, float y, float z) {
-				transform.Rotate( angle, glm::vec3(x, y, z));
+				transform.setLocalRotation( angle, glm::vec3(x, y, z));
 			}
 
 			void scale(float x, float y, float z) {
-				transform.Scale(  glm::vec3(x, y, z) );
+				transform.setLocalScale(  glm::vec3(x, y, z) );
 			}
 
 			void setCubemap(Texture* _cubemap) {

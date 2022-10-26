@@ -20,6 +20,7 @@ namespace SKEngio {
         bool drawUI = true;
         float time;
         Texture* depthMap;
+        Camera* camera;
     };
 }
 

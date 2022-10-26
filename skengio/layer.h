@@ -12,7 +12,7 @@ namespace SKEngio {
     class Layer {
         public:
         
-        Camera* activeCamera;
+        //Camera* activeCamera;
         
         Layer() = default;
 
@@ -29,17 +29,13 @@ namespace SKEngio {
         virtual void OnDrawGUI(RenderParams* rp);
         virtual void OnEvent(Event* e);
 
-        //void AddObject(Object* obj);
-
-        void setCamera(Camera* newCam) { activeCamera = newCam; }
+        //void setCamera(Camera* newCam) { activeCamera = newCam; }
 
         bool enabled = true;
         
         private:
 
         unsigned int id;
-
-        //std::list<Object*> objects;
 
     };
 }

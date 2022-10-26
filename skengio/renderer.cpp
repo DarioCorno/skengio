@@ -294,6 +294,7 @@ namespace SKEngio {
 
         //update and render all scenes
         scene->camera->UpdateViewport();
+        renderParams->camera = scene->camera;
         fboShader->SetCameraUniforms( scene->camera );       //set the camera data into fbo shader
         scene->UpdateAndDraw(renderParams.get());
 

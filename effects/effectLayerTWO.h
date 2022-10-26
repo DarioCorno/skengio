@@ -70,10 +70,6 @@ class EffectTwo final : public SKEngio::Layer {
             //create a light with deafult colors
             light = new SKEngio::Light();
 
-            //move camera position and target, camera was set from renderer activeCamera
-            activeCamera->setPosition(0.0f, 0.0f, 30.0f);
-            activeCamera->setTarget(0.0f, 0.0f, 0.0f);
-
         }
 
         void OnDetach() override {
@@ -106,20 +102,20 @@ class EffectTwo final : public SKEngio::Layer {
 
             float t = rp->time;
 
-            torus->resetTransforms();
-            torus->translate(0.0f, 0.0f, (sin(t / 3.0f) * 10.0f));
+            torus->translate(0.0f, 0.0f, (sin(t / 2.0f) * 10.0f));
             torus->rotate((float)(t * 50.0f), 0.5f, 0.5f, 0.0f);
 
-            glm::vec3 pos = activeCamera->position;
+            glm::vec3 pos = rp->camera->position;
             pos.x = sin(t / 10.0f) * 40.0f;
             pos.z = cos(t / 10.0f) * 40.0f;
-            activeCamera->setPosition(pos);
+            rp->camera->setPosition(pos);
 
-            //set the shader camera uniforms
-            torus->shader->SetCameraUniforms(activeCamera);
-            plane->shader->SetCameraUniforms(activeCamera);
-
-            light->SetPosition(sin(t) * 10.0f, 5.0f, -3.0f);
+            //light->SetPosition(sin(t) * 10.0f, 5.0f, -3.0f);
+            light->SetPosition(-10.0f, 5.0f, -3.0f);
+            //update the transform matrices
+            light->updateSelfAndChild();
+            torus->updateSelfAndChild();
+            plane->updateSelfAndChild();
 
             glm::vec3 lPos = light->GetPosition();
             glm::vec3 lDiff = light->GetDiffuse();
@@ -143,7 +139,7 @@ class EffectTwo final : public SKEngio::Layer {
             plane->render(rp);
 
             //skybox is rendered as last not to waste fragments (see its render function for details)
-            sky->render(activeCamera);
+            sky->render(rp->camera);
 
         }
 

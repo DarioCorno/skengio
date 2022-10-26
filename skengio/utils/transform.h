@@ -15,36 +15,96 @@ namespace SKEngio {
 	class Transform {
 	protected:
 
+		glm::vec3 position = glm::vec3( 0.0f, 0.0f, 0.0f );
+		glm::vec3 rotation = glm::vec3( 0.0f, 0.0f, 0.0f );
+		glm::vec3 scale = glm::vec3( 1.0f, 1.0f, 1.0f );
+
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 
+		bool dirty = true;
+
+	protected:
+
+		glm::mat4 getLocalModelMatrix()
+		{
+			const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+			const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+			const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+			// Y * X * Z
+			const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+			// translation * rotation * scale (also know as TRS matrix)
+			return glm::translate(glm::mat4(1.0f), position) * rotationMatrix * glm::scale(glm::mat4(1.0f), scale);
+		}
 
 	public:
 
+		void computeModelMatrix()
+		{
+			modelMatrix = getLocalModelMatrix();
+		}
+
+		void computeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
+		{
+			modelMatrix = parentGlobalModelMatrix * getLocalModelMatrix();
+		}
+
 		void resetTransforms() {
+			position = glm::vec3(0.0f, 0.0f, 0.0f);
+			rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+			scale = glm::vec3(1.0f, 1.0f, 1.0f);
 			modelMatrix = glm::mat4(1.0f);
+			dirty = true;
 		}
 
-		void Translate(const glm::vec3& newPosition)
+
+		void setLocalPosition(const glm::vec3& newPosition)
 		{
-			modelMatrix = glm::translate(modelMatrix, newPosition);
+			position = newPosition;
+			dirty = true;
 		}
 
-		void Rotate(const float angle, const glm::vec3& axis)
+		void setLocalRotation(const glm::vec3& newRotation)
 		{
-			modelMatrix = glm::rotate(modelMatrix, angle, axis);
+			rotation = newRotation;
+			dirty = true;
 		}
 
-		void Scale(const glm::vec3& newScale)
+		void setLocalRotation(const float angle, const glm::vec3& axes)
 		{
-			modelMatrix = glm::scale(modelMatrix, newScale);
+			rotation = angle * axes;
+			dirty = true;
 		}
 
-		const glm::vec3& getGlobalPosition() const
+		void setLocalScale(const glm::vec3& newScale)
 		{
-			return glm::vec3( modelMatrix[3] );
+			scale = newScale;
+			dirty = true;
 		}
 
-		const glm::mat4& getModelMatrix() const
+		const glm::vec3 getGlobalPosition() const
+		{
+			return glm::vec3( modelMatrix[3].x, modelMatrix[3].y, modelMatrix[3].z);
+		}
+
+		const glm::vec3 getLocalPosition() const
+		{
+			return position;
+		}
+
+
+		const glm::vec3 getLocalRotation() const
+		{
+			return rotation;
+		}
+
+		const glm::vec3 getLocalScale() const
+		{
+			return scale;
+		}
+
+		const glm::mat4 getModelMatrix() const
 		{
 			return modelMatrix;
 		}
@@ -53,7 +113,6 @@ namespace SKEngio {
 		{
 			return glm::vec3(  modelMatrix[0] );
 		}
-
 
 		glm::vec3 getUp() const
 		{
@@ -68,6 +127,10 @@ namespace SKEngio {
 		glm::vec3 getForward() const
 		{
 			return glm::vec3(  -modelMatrix[2] );
+		}
+
+		bool isDirty() {
+			return dirty;
 		}
 
 	};

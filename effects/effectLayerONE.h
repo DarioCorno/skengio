@@ -83,7 +83,7 @@ class EffectOne final : public SKEngio::Layer {
             ImGui::Text("Flash speed:");
             ImGui::SliderFloat("float", &fxparam, 0.1f, 20.0f);
             ImGui::Text("ShaderProg ID: %i", shaderProgram->programID);
-            ImGui::Text("Camera     ID: %s", activeCamera->id.c_str());
+            ImGui::Text("Camera     ID: %s", rp->camera->id.c_str());
             ImGui::End();                    
         }
 
@@ -100,8 +100,8 @@ class EffectOne final : public SKEngio::Layer {
             model = glm::rotate( model, (t * 10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
             //set the shader uniform matrices
-            glProgramUniformMatrix4fv( shaderProgram->programID, projMatrixLocation, 1, GL_FALSE, glm::value_ptr( activeCamera->getProjMatrix() ) );
-            glm::mat4 viewMat = activeCamera->getViewMatrix();
+            glProgramUniformMatrix4fv( shaderProgram->programID, projMatrixLocation, 1, GL_FALSE, glm::value_ptr( rp->camera->getProjMatrix() ) );
+            glm::mat4 viewMat = rp->camera->getViewMatrix();
             glProgramUniformMatrix4fv( shaderProgram->programID, viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMat) );
             glProgramUniformMatrix4fv( shaderProgram->programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model) );
         }

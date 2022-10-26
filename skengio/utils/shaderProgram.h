@@ -55,7 +55,7 @@ namespace SKEngio {
         private:
 
             std::string includeIndentifier = "#include ";
-
+            std::string fileName = "";
             std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle);      
 
             void getMatricesUniformsLocation();

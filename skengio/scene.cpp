@@ -78,7 +78,6 @@ namespace SKEngio {
         //update and render all scenes
         for(Layer* layer : layers) {
             if(layer->enabled) {
-                layer->setCamera( camera );
                 layer->OnUpdate(rp);
                 layer->OnDraw(rp);
             }
@@ -86,7 +85,6 @@ namespace SKEngio {
     }
 
     void Scene::PushLayer(Layer* layer) {
-        layer->setCamera( camera );
         layer->OnAttach();
         layers.push_back(layer);
     }
@@ -101,6 +99,9 @@ namespace SKEngio {
         camera =  new Camera(
             WindowManager::get().width,
             WindowManager::get().height, fov, std::move(camID) );
+
+        camera->setPosition(0.0f, 0.0f, 30.0f);
+        camera->setTarget(0.0f, 0.0f, 0.0f);
 
         return camera;
     }

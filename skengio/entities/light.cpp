@@ -3,7 +3,7 @@
 namespace SKEngio {
 
     void Light::SetPosition(float x, float y, float z) {
-        transform.Translate( glm::vec3( x, y, z ) );
+        transform.setLocalPosition( glm::vec3( x, y, z ) );
     }
 
     void Light::SetDiffuse(float r, float g, float b ) {
