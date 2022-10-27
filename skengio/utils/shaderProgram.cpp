@@ -13,6 +13,10 @@ namespace SKEngio {
         glDeleteProgram(programID);                   
     }
 
+    void ShaderProgram::OnDestroy() {
+
+    }
+
     void ShaderProgram::LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader) {
 
         GLuint handleShader = 0;

@@ -27,12 +27,13 @@ namespace SKEngio {
             void Draw();
 
             void OnEvent(Event* e);
+            void OnDestroy();
 
             SceneStack* GetSceneStack();
 
             void AddScene(Scene* newScene);
 
-            ShaderProgram* GetGizmoShader();
+            ShaderProgram* GizmoGetShader();
 
             std::unique_ptr<RenderParams> renderParams;
 

@@ -115,19 +115,19 @@ namespace SKEngio {
             Scene* scene0 = Renderer::get().GetSceneStack()->scenes[0];
             ImGui::PlotLines("dB", scene0->music->getFFT(), 512);
             ImGui::Text("Scenes");
+            //ImGui::Separator();
+            //for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
+            //    if ( ImGui::TreeNode( scn->dispName.c_str()) )
+            //    {
+            //        for(Layer* lyr : scn->layers ) {
+            //            std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
+            //            ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
+            //        }
+            //        ImGui::TreePop();
+            //    }
+            //}
             ImGui::Separator();
-            for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
-                if ( ImGui::TreeNode( scn->dispName.c_str()) )
-                {
-                    for(Layer* lyr : scn->layers ) {
-                        std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
-                        ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
-                    }
-                    ImGui::TreePop();
-                }
-            }
-            ImGui::Separator();
-            ImGui::Checkbox("Depth", &Renderer::get().depthDebug);
+            ImGui::Checkbox("Debug Depth", &Renderer::get().depthDebug);
             ImGui::Separator();
             ImGui::Checkbox("Shadows", &Renderer::get().renderParams->useShadows);
             ImGui::Separator();

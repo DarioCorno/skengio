@@ -29,7 +29,7 @@ namespace SKEngio {
         //WindowManager(WindowSpecs* windowSpecs);
         
         void Init(WindowSpecs* windowSpecs);
-        void Destroy();
+        void OnDestroy();
 
         // prevent copying object
         //WindowManager(const WindowManager&) = delete;

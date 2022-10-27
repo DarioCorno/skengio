@@ -7,8 +7,9 @@
 #include "skengio/logger.h"
 #include "skengio/window.h"
 #include "skengio/scene.h"
-#include "effects/effectLayerONE.h"
-#include "effects/effectLayerTWO.h"
+//#include "effects/effectLayerONE.h"
+//#include "effects/effectLayerTWO.h"
+#include "effects/sceneONE.h"
 
 #include <iostream>
 #include <sstream>
@@ -29,16 +30,9 @@ int main()
     SKEngio::Application app; // = new SKEngio::Application(&winSpecs, &errorCB);
     app.Initialize(&winSpecs, &errorCB);
 
-    //SKEngio::Renderer* rend = app.GetRenderer();
-    //if (!rend) {
-    //    SK_LOG("Cannot retrieve renderer");
-    //}
-    //rend->NewCamera(45.0f, "cam01");
-
-    SKEngio::Scene* scene = new SKEngio::Scene(1);
+    SKEngio::SceneONE* scene = new SKEngio::SceneONE();
     scene->SetName("Scena 01");
     scene->SetCamera(45.0f, "cam01");
-    //rend->AddScene(scene);
     SKEngio::Renderer::get().AddScene(scene);
 
     scene->music = new SKEngio::AudioSource();
@@ -46,22 +40,22 @@ int main()
     scene->music->setVolume(1000);
 
     //add a triangle layer  
-    EffectOne* mylayerOne = new EffectOne();
-    mylayerOne->SetId(0);
-    scene->PushLayer(mylayerOne);
+    //EffectOne* mylayerOne = new EffectOne();
+    //mylayerOne->SetId(0);
+    //scene->PushLayer(mylayerOne);
 
     //add a torus
-    EffectTwo* mylayerTwo = new EffectTwo();
-    mylayerTwo->SetId(1);
-    scene->PushLayer(mylayerTwo);
+    //EffectTwo* mylayerTwo = new EffectTwo();
+    //mylayerTwo->SetId(1);
+    //scene->PushLayer(mylayerTwo);
 
     //scene->music->play();
     app.Run();
 
     app.Destroy();
     delete scene;
-    delete mylayerOne;
-    delete mylayerTwo;
+    //delete mylayerOne;
+    //delete mylayerTwo;
 
     //_CrtDumpMemoryLeaks();
 

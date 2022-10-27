@@ -198,6 +198,7 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="effects\effectLayerONE.h" />
     <ClInclude Include="effects\effectLayerTWO.h" />
+    <ClInclude Include="effects\sceneONE.h" />
     <ClInclude Include="skengio\application.h" />
     <ClInclude Include="skengio\AudioSource.h" />
     <ClInclude Include="skengio\camera.h" />

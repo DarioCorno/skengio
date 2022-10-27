@@ -34,7 +34,7 @@ namespace SKEngio {
             ~ShaderProgram();
 
             void LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader);
-
+            void OnDestroy();
             void CreateProgram();
 
             void SetCameraUniforms(Camera* camera);

@@ -31,6 +31,14 @@ namespace SKEngio {
         GUIManager::get().InitGUI();
     }
 
+    void Renderer::OnDestroy() {
+        sceneStack->OnDestroy();
+        gizmoShader->OnDestroy();
+        fboShader->OnDestroy();
+        depthDebugShader->OnDestroy();
+        shadowDebugShader->OnDestroy();
+    }
+
     void Renderer::HandleResize(int width, int height) {
         
         for(Scene* scene : sceneStack->scenes) {
@@ -106,7 +114,7 @@ namespace SKEngio {
         gizmoShader->CreateProgram();
     }
 
-    ShaderProgram* Renderer::GetGizmoShader() {
+    ShaderProgram* Renderer::GizmoGetShader() {
         return gizmoShader.get();
     }
 
@@ -246,7 +254,7 @@ namespace SKEngio {
     }
 
     void Renderer::UpdateCurrentScene(RenderParams* rp) {
-        //will set the current scene according ot time and other params
+        //will set the current scene according to time and other params
         scene = sceneStack->scenes[0];
     }
 
@@ -269,7 +277,8 @@ namespace SKEngio {
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
-            scene->UpdateAndDraw(renderParams.get());
+            scene->OnUpdate(renderParams.get());
+            scene->OnDraw(renderParams.get());
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         DepthBOTexture->unbind();
@@ -280,7 +289,8 @@ namespace SKEngio {
 
         if (WindowManager::get().width == 0 || WindowManager::get().height == 0)
             return;
-
+        
+        //update current frame render params
         renderParams->time = glfwGetTime();
 
         UpdateCurrentScene( renderParams.get() );
@@ -304,11 +314,12 @@ namespace SKEngio {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-        //update and render all scenes
+        //update and render all active scenes
         scene->camera->UpdateViewport();
         renderParams->camera = scene->camera;
         fboShader->SetCameraUniforms( scene->camera );       //set the camera data into fbo shader
-        scene->UpdateAndDraw(renderParams.get());
+        scene->OnUpdate( renderParams.get() );
+        scene->OnDraw( renderParams.get());
 
         //disable the frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

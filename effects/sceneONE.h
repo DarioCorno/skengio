@@ -1,28 +1,29 @@
 #pragma once
 
-#include <skengio/entities/entity.h>
-#include <skengio/utils/skybox.h>
-#include <skengio/entities/geometries/mesh.h>
-#include <skengio/entities/geometries/torus.h>
-#include <skengio/entities/geometries/box.h>
-#include <skengio/entities/geometries/plane.h>
-#include <skengio/utils/textureManager.h>
-#include <skengio/renderparams.h>
-#include <skengio/utils/texture.h>
+#include <GLEW/glew.h>
+#include <GLFW/glfw3.h>
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
-class EffectTwo final : public SKEngio::Layer {
-    public:
+#include "skengio/scene.h"
+#include "skengio/entities/geometries/torus.h"
+#include "skengio/entities/geometries/plane.h"
+#include "skengio/utils/skybox.h"
+#include "skengio/logger.h"
+#include "skengio/renderer.h"
 
-        glm::mat4 model = glm::mat4(1.0f);  //model matrix
+namespace SKEngio {
 
-        //SKEngio::Sphere* mesh;
-        SKEngio::Entity* torus;
-        SKEngio::Entity* plane;
-        SKEngio::SKYBox* sky;
-        SKEngio::Light* light;
+	class SceneONE final : public Scene {
+
+		SKEngio::Entity* torus;
+		SKEngio::Entity* plane;
+		SKEngio::SKYBox* sky;
+		SKEngio::Light* light;
 
         void OnAttach() override {
-            SK_LOG("Attaching layer " << this->GetId() );
+            SK_LOG("Attaching scene " << GetName());
 
             //moved here for debug
             std::vector<std::string> faces
@@ -38,7 +39,7 @@ class EffectTwo final : public SKEngio::Layer {
 
             plane = new SKEngio::Entity();
             plane->mesh = new SKEngio::Plane();
-            ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);  
+            ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);
             plane->mesh->buildInterleavedArray();
             plane->mesh->createGLBuffers();
 
@@ -56,21 +57,21 @@ class EffectTwo final : public SKEngio::Layer {
 
             torus = new SKEngio::Entity();
             torus->mesh = new SKEngio::Torus();
-            ( (SKEngio::Torus*)torus->mesh )->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
+            ((SKEngio::Torus*)torus->mesh)->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->buildInterleavedArray();
             torus->mesh->createGLBuffers();
 
             torus->shader = new SKEngio::ShaderProgram();
-            torus->shader->LoadShader("./shaders/","basicshader.vert", SKEngio::ShaderProgram::VERTEX);
-            torus->shader->LoadShader("./shaders/","basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
+            torus->shader->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX);
+            torus->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
             torus->shader->CreateProgram();
 
             torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
-            torus->setCubemap(sky->cubemapTexture );
+            torus->setCubemap(sky->cubemapTexture);
 
             //create a light with deafult colors
             light = new SKEngio::Light();
-            light->initGizmo( SKEngio::Renderer::get().GizmoGetShader() );
+            light->initGizmo(SKEngio::Renderer::get().GizmoGetShader());
 
         }
 
@@ -80,13 +81,13 @@ class EffectTwo final : public SKEngio::Layer {
             delete light;
             delete sky;
 
-            SK_LOG("Destroying Layer " << this->GetId() );
+            SK_LOG("Destroying Layer " << this->GetName());
         }
 
         void OnDrawGUI(SKEngio::RenderParams* rp) override {
             ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
             ImGui::SetNextWindowBgAlpha(0.5f);
-            ImGui::Begin("Effect TWO");                
+            ImGui::Begin("Effect TWO");
             ImGui::Text("Ambient");
             ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(torus->material->materialAmbientColor));
             ImGui::Text("Diffuse");
@@ -144,5 +145,5 @@ class EffectTwo final : public SKEngio::Layer {
 
         }
 
-    
-};
+	};
+}

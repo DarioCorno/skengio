@@ -25,6 +25,7 @@ namespace SKEngio {
         void AddScene(Scene* scene);
 
         void OnEvent(Event* e);
+        void OnDestroy();
         
 		std::vector<Scene*>::iterator begin() { return scenes.begin(); }
 		std::vector<Scene*>::iterator end() { return scenes.end(); }

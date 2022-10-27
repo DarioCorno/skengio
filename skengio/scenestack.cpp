@@ -3,7 +3,11 @@
 
 namespace SKEngio {
 
-    SceneStack::~SceneStack() {
+	SceneStack::~SceneStack() {
+
+	}
+
+    void SceneStack::OnDestroy() {
 		for (Scene* scene : scenes) {
 			scene->OnDetach();
 		}

@@ -87,7 +87,7 @@ namespace SKEngio {
 
     }
 
-    void WindowManager::Destroy() {
+    void WindowManager::OnDestroy() {
         std::cout << "Destroying window" << std::endl;
         glfwDestroyWindow( get().window );
         glfwTerminate();

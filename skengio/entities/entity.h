@@ -13,6 +13,17 @@
 
 namespace SKEngio {
 
+	enum class EntityUpdateStatus {
+		Stopped,
+		Running,
+		Paused
+	};
+
+	enum class EntityDisplayType {
+		Drawable,
+		Invisible
+	};
+
 	class Entity {
 		public:
 
@@ -33,6 +44,9 @@ namespace SKEngio {
 			//Update transform if it was changed
 			void updateSelfAndChild()
 			{
+				if (updateStatus != EntityUpdateStatus::Running)
+					return;
+
 				if (!transform.isDirty())
 					return;
 
@@ -64,6 +78,9 @@ namespace SKEngio {
 			}
 
 			void render(RenderParams* rp) {
+
+				if (displayType == EntityDisplayType::Invisible)
+					return;
 
 				if ( (rp->pass == RenderPass::ShadowDepth) && (!castsShadows) )
 					return;
@@ -145,6 +162,8 @@ namespace SKEngio {
 			Transform transform;
 			Material* material;
 			bool castsShadows;
+			EntityDisplayType displayType = EntityDisplayType::Drawable;
+			EntityUpdateStatus updateStatus = EntityUpdateStatus::Running;
 
 
 		private:
