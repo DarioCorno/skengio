@@ -116,16 +116,16 @@ namespace SKEngio {
             ImGui::PlotLines("dB", scene0->music->getFFT(), 512);
             ImGui::Text("Scenes");
             //ImGui::Separator();
-            //for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
-            //    if ( ImGui::TreeNode( scn->dispName.c_str()) )
-            //    {
-            //        for(Layer* lyr : scn->layers ) {
-            //            std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
-            //            ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
-            //        }
-            //        ImGui::TreePop();
-            //    }
-            //}
+            for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
+                if ( ImGui::TreeNode( scn->dispName.c_str()) )
+                {
+                    //for(Layer* lyr : scn->layers ) {
+                    //    std::string lyrName = "Layer " + std::to_string( lyr->GetId() );
+                    //    ImGui::Checkbox( lyrName.c_str() , &lyr->enabled );
+                    //}
+                    ImGui::TreePop();
+                }
+            }
             ImGui::Separator();
             ImGui::Checkbox("Debug Depth", &Renderer::get().depthDebug);
             ImGui::Separator();

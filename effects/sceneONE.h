@@ -37,7 +37,7 @@ namespace SKEngio {
             };
             sky = new SKEngio::SKYBox(faces);
 
-            plane = new SKEngio::Entity();
+            plane = NewEntity();
             plane->mesh = new SKEngio::Plane();
             ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);
             plane->mesh->buildInterleavedArray();
@@ -55,7 +55,7 @@ namespace SKEngio {
             plane->updateSelfAndChild();    //planeis still, non need to update transforms
             plane->shader->SetMaterialUniforms(plane->material); //plane material is static
 
-            torus = new SKEngio::Entity();
+            torus = NewEntity();
             torus->mesh = new SKEngio::Torus();
             ((SKEngio::Torus*)torus->mesh)->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->buildInterleavedArray();
@@ -69,19 +69,17 @@ namespace SKEngio {
             torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
             torus->setCubemap(sky->cubemapTexture);
 
-            //create a light with deafult colors
-            light = new SKEngio::Light();
-            light->initGizmo(SKEngio::Renderer::get().GizmoGetShader());
+            //create a light with defaults
+            light = NewLight();
+            light->initGizmo( SKEngio::Renderer::get().GizmoGetShader() );
 
         }
 
         void OnDetach() override {
-            delete torus;
-            delete plane;
-            delete light;
+
             delete sky;
 
-            SK_LOG("Destroying Layer " << this->GetName());
+            SK_LOG("Destroying Scene " << this->GetName());
         }
 
         void OnDrawGUI(SKEngio::RenderParams* rp) override {
@@ -129,16 +127,18 @@ namespace SKEngio {
         }
 
         void OnDraw(SKEngio::RenderParams* rp) override {
+            Scene::OnDraw(rp);
 
-            glEnable(GL_TEXTURE_2D);
-            glEnable(GL_DEPTH_TEST);
-
-
-            torus->render(rp);
-            //plane->material->diffuseTexture = rp->depthMap;
-            plane->render(rp);
-
-            light->renderGizmo(rp);
+            //return;
+            //
+            //glEnable(GL_TEXTURE_2D);
+            //glEnable(GL_DEPTH_TEST);
+            //
+            //
+            //torus->render(rp);
+            //plane->render(rp);
+            //
+            //light->renderGizmo(rp);
 
             //skybox is rendered as last not to waste fragments (see its render function for details)
             sky->render(rp->camera);

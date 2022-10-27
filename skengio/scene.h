@@ -49,7 +49,8 @@ namespace SKEngio {
         //void PushLayer(Layer* layer);
 
         Camera* SetCamera(float fov, std::string camID);
-        Light* AddLight();
+        Light* NewLight();
+        Entity* NewEntity();
 
         void handleResize(int width, int height);
 
@@ -58,7 +59,7 @@ namespace SKEngio {
 
         Camera* camera = nullptr;
         std::vector<Light*> lights;
-        //std::vector<Layer*> layers;
+        std::vector<Entity*> entities;
 
     };
 

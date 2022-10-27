@@ -20,6 +20,19 @@ namespace SKEngio {
         //runs when detached (destroyed too)
         delete camera;
         delete music;
+
+        //detach and destroy all entities
+        for (Entity* ent : entities) {
+            ent->OnDetach();
+            delete ent;
+        }
+
+        //detach and delete all lights
+        for (Light* lt : lights) {
+            lt->OnDetach();
+            delete lt;
+        }
+
         SK_LOG("Detaching scene: " << dispName);
     }    
 
@@ -43,9 +56,9 @@ namespace SKEngio {
             }
         }
 
-        //pass the event to layers
-        //for (Layer* layer : layers) {
-        //    layer->OnEvent(e);
+        //pass the event to entities (I would say no, the fx scene manages events)?
+        //for (Entity* ent : entities) {
+        //    ent->OnEvent(e);
         //}
 
     }
@@ -68,13 +81,6 @@ namespace SKEngio {
 
         music->updateFFT();
 
-        //update and render all scenes
-        //for(Layer* layer : layers) {
-        //    if(layer->enabled) {
-        //        layer->OnUpdate(rp);
-        //        layer->OnDraw(rp);
-        //    }
-        //}        
     }
 
 
@@ -82,16 +88,33 @@ namespace SKEngio {
 
         if (!enabled)
             return;
+
+        //render all entities
+        for (Entity* ent : entities) {
+            ent->render(rp);
+        }
+
+        //render all lights
+        for (Light* lt : lights) {
+            lt->renderGizmo(rp);
+        }
+
     }
     //void Scene::PushLayer(Layer* layer) {
     //    layer->OnAttach();
     //    layers.push_back(layer);
     //}
 
-    Light* Scene::AddLight() {
+    Light* Scene::NewLight() {
         Light* newL = new Light();
         lights.push_back(newL);
         return newL;
+    }
+
+    Entity* Scene::NewEntity() {
+        Entity* newE = new Entity();
+        entities.push_back(newE);
+        return newE;
     }
 
     Camera* Scene::SetCamera(float fov, std::string camID) {

@@ -29,7 +29,8 @@ namespace SKEngio {
 
 			Entity() : 
 				material {new Material()},
-				castsShadows {true}
+				castsShadows {true},
+				displayType {EntityDisplayType::Drawable}
 		    {
 			}
 
@@ -40,6 +41,21 @@ namespace SKEngio {
 				delete cubemap;
 			}
 
+			void OnUpdate() {
+
+			}
+
+			void OnDetach() {
+
+			}
+
+			void setInvisible() {
+				displayType = EntityDisplayType::Invisible;
+			}
+
+			void setVisible() {
+				displayType = EntityDisplayType::Drawable;
+			}
 
 			//Update transform if it was changed
 			void updateSelfAndChild()
