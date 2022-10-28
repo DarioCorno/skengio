@@ -23,8 +23,8 @@ namespace SKEngio {
     glm::mat4 Light::getLightViewProjMatrix() {
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        float near_plane = 0.1f, far_plane = 60.5f;
-        lightProjection = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f, near_plane, far_plane);
+        float near_plane = 0.1f, far_plane = 40.0f;
+        lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, near_plane, far_plane);
         lightView = glm::lookAt(transform.getGlobalPosition(), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
         return lightSpaceMatrix;

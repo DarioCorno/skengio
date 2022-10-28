@@ -97,7 +97,7 @@ namespace SKEngio {
         if (rp->pass == RenderPass::Final) {
             //render all lights
             for (Light* lt : lights) {
-                lt->renderGizmo(rp);
+                lt->renderGizmo(rp, lt->GetDiffuse() );
             }
         }
 

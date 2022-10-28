@@ -83,11 +83,12 @@ namespace SKEngio {
 				}
 			}
 
-			void renderGizmo(RenderParams* rp) {
+			void renderGizmo(RenderParams* rp, glm::vec3 color) {
 				if (hasGizmo) {
 					gizmo->shader->bind();
 					gizmo->shader->SetCameraUniforms(rp->camera);
 					gizmo->shader->SetModelUniforms(transform.getModelMatrix());
+					gizmo->shader->SetVec3("utilityColor", color);
 					gizmo->mesh->draw();
 					gizmo->shader->unbind();
 				}
@@ -115,8 +116,10 @@ namespace SKEngio {
 					}
 
 					shader->SetCameraUniforms(rp->camera);
-
 					shader->SetModelUniforms(transform.getModelMatrix());
+					//to correctly render the shadows the entity shader needs to know where the light is
+					// see https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+					//shader->SetLightUniforms(rp->light->GetPosition(), rp->light->GetDiffuse(), rp->light->getLightViewProjMatrix());
 				}
 				else {
 					//a different shader from this entity shader, used for "effects"
@@ -129,7 +132,7 @@ namespace SKEngio {
 					//if (material->diffuseTexture)
 					//	material->diffuseTexture->unbind();
 
-					renderGizmo(rp);
+					renderGizmo(rp, glm::vec3(1.0f, 1.0f, 1.0f) );
 				}
 
 				renderChilds(rp);
@@ -180,6 +183,7 @@ namespace SKEngio {
 				gizmo->mesh->buildInterleavedArray();
 				gizmo->mesh->createGLBuffers();
 				gizmo->shader = gShader;
+				gizmo->shader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f) );	//set a default color
 				hasGizmo = true;
 			}
 

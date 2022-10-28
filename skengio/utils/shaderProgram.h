@@ -12,7 +12,12 @@
 #include "skengio/camera.h"
 
 namespace SKEngio {
-    
+
+    struct ShaderDefine {
+        std::string defineName = "";
+        std::string defineValue = "";
+    };
+
     //a simple class to load and compile shaders
     class ShaderProgram
     {
@@ -34,6 +39,7 @@ namespace SKEngio {
             ~ShaderProgram();
 
             void LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader);
+            void LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader, std::list<ShaderDefine> defines);
             void OnDestroy();
             void CreateProgram();
 
@@ -41,6 +47,7 @@ namespace SKEngio {
             void SetFarNearUniforms(float near, float far);
             void SetModelUniforms(const glm::mat4& modelMatrix);
             void SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
+            void SetLightUniforms(int lightIdx, const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
             void SetMaterialUniforms(Material* mat);
 
             void SetViewMatrix(const glm::mat4& viewMatrix);
@@ -50,14 +57,28 @@ namespace SKEngio {
             void SetDepthTexture(int textureID);
 
             void bind();
-
             void unbind();
+
+            //generic setFunctions
+            void SetBool(const std::string& name, bool value);
+            void SetInt(const std::string& name, int value);
+            void SetFloat(const std::string& name, float value);
+            void SetVec2(const std::string& name, const glm::vec2& value);
+            void SetVec2(const std::string& name, float x, float y);
+            void SetVec3(const std::string& name, const glm::vec3& value);
+            void SetVec3(const std::string& name, float x, float y, float z);
+            void SetVec4(const std::string& name, const glm::vec4& value);
+            void SetVec4(const std::string& name, float x, float y, float z, float w);
+            void SetMat2(const std::string& name, const glm::mat2& mat);
+            void SetMat3(const std::string& name, const glm::mat3& mat);
+            void SetMat4(const std::string& name, const glm::mat4& mat);
+
 
         private:
 
             std::string includeIndentifier = "#include ";
             std::string fileName = "";
-            std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle);      
+            std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle, std::list<ShaderDefine> defines);
 
             void getMatricesUniformsLocation();
             void getCameraUniformsLocation();

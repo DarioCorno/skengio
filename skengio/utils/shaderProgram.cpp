@@ -16,8 +16,13 @@ namespace SKEngio {
     void ShaderProgram::OnDestroy() {
 
     }
-
     void ShaderProgram::LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader) {
+        std::list<ShaderDefine> defines;
+        defines.clear();
+        LoadShader(strPath, strFileName, typeShader, defines);
+    }
+
+    void ShaderProgram::LoadShader(const std::string& strPath, const std::string& strFileName, SHADERTYPE typeShader, std::list<ShaderDefine> defines) {
 
         GLuint handleShader = 0;
         GLint status;
@@ -32,10 +37,11 @@ namespace SKEngio {
         }
 
         //load the shader file
-        std::string fullSource = LoadShaderFile(strPath, strFileName, handleShader);
+        std::string fullSource = LoadShaderFile(strPath, strFileName, handleShader, defines);        
+
         if(fullSource.length() > 0)
         {
-            const char *data = fullSource.c_str();
+            const char* data = fullSource.c_str();
             glShaderSource(handleShader, 1, &data , nullptr);
 
             //now compile the shader
@@ -62,7 +68,7 @@ namespace SKEngio {
         }
     }
 
-    std::string ShaderProgram::LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle) {
+    std::string ShaderProgram::LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle, std::list<ShaderDefine> defines) {
         
         std::string strPathFilename = strPath + strFilename;
         fileName = strPathFilename;
@@ -96,12 +102,19 @@ namespace SKEngio {
 				// Remove the include identifier, this will cause the path to remain
 				lineBuffer.erase(0, includeIndentifier.size());
 
-				fullSourceCode += LoadShaderFile(strPath, lineBuffer, iShaderHandle);
+				fullSourceCode += LoadShaderFile(strPath, lineBuffer, iShaderHandle, defines);
 
 				// Do not add this line to the shader source code, as the include
 				// path would generate a compilation issue in the final source code
 				continue;
 			}
+
+            //replace all define values
+            for (ShaderDefine sdef : defines) {
+                if (lineBuffer.find( "#willdefine " + sdef.defineName) != std::string::npos) {
+                    lineBuffer = "#define " + sdef.defineName + " " + sdef.defineValue;
+                }
+            }
 
 			fullSourceCode += lineBuffer + '\n';
 		}
@@ -321,5 +334,60 @@ namespace SKEngio {
         }
     }
 
-
+    void ShaderProgram::SetBool(const std::string& name, bool value) 
+    {
+        glProgramUniform1i(programID, glGetUniformLocation(programID, name.c_str()), (int)value);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetInt(const std::string& name, int value) 
+    {
+        glProgramUniform1i(programID, glGetUniformLocation(programID, name.c_str()), value);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetFloat(const std::string& name, float value) 
+    {
+        glProgramUniform1f(programID, glGetUniformLocation(programID, name.c_str()), value);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetVec2(const std::string& name, const glm::vec2& value) 
+    {
+        glProgramUniform2fv(programID, glGetUniformLocation(programID, name.c_str()), 1, &value[0]);
+    }
+    void ShaderProgram::SetVec2(const std::string& name, float x, float y) 
+    {
+        glProgramUniform2f(programID, glGetUniformLocation(programID, name.c_str()), x, y);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetVec3(const std::string& name, const glm::vec3& value) 
+    {
+        glProgramUniform3fv(programID, glGetUniformLocation(programID, name.c_str()), 1, &value[0]);
+    }
+    void ShaderProgram::SetVec3(const std::string& name, float x, float y, float z) 
+    {
+        glProgramUniform3f(programID, glGetUniformLocation(programID, name.c_str()), x, y, z);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetVec4(const std::string& name, const glm::vec4& value) 
+    {
+        glProgramUniform4fv(programID, glGetUniformLocation(programID, name.c_str()), 1, &value[0]);
+    }
+    void ShaderProgram::SetVec4(const std::string& name, float x, float y, float z, float w) 
+    {
+        glProgramUniform4f(programID, glGetUniformLocation(programID, name.c_str()), x, y, z, w);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetMat2(const std::string& name, const glm::mat2& mat) 
+    {
+        glProgramUniformMatrix2fv(programID, glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetMat3(const std::string& name, const glm::mat3& mat) 
+    {
+        glProgramUniformMatrix3fv(programID, glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    }
+    // ------------------------------------------------------------------------
+    void ShaderProgram::SetMat4(const std::string& name, const glm::mat4& mat) 
+    {
+        glProgramUniformMatrix4fv(programID, glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    }
 }

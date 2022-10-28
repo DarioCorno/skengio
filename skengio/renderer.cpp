@@ -374,7 +374,7 @@ namespace SKEngio {
         if (useShadows) {
             depthDebugShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
             depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
-            depthDebugShader->SetFarNearUniforms(0.1f, 60.0f);
+            depthDebugShader->SetFarNearUniforms(0.1f, 40.0f);
             depthDebugShader->bind();
             //ShadowMap_Texture->bind();
 

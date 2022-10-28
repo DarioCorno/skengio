@@ -7,11 +7,13 @@ layout (location = 3) in vec2 aText;
 uniform mat4 projMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
+uniform mat4 lightViewProjMatrix;
 
 out vec4 ourColor;
 out vec2 texCoord;
 out vec3 Normal;
 out vec3 FragPos;
+out vec4 FragPosLightSpace;
 
 void main()
 {

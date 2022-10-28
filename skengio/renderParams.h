@@ -4,6 +4,7 @@
 #define SK_RENDERPARAMS_
 
 #include "utils/texture.h"
+//#include "skengio/entities/light.h"
 #include "skengio/utils/shaderprogram.h"
 
 namespace SKEngio {
@@ -21,6 +22,7 @@ namespace SKEngio {
         float time;
         Texture* depthMap;
         Camera* camera;
+        //Light* light;
         ShaderProgram* passShader;
     };
 }

@@ -21,6 +21,7 @@ namespace SKEngio {
 		SKEngio::Entity* plane;
 		SKEngio::SKYBox* sky;
 		SKEngio::Light* light;
+        SKEngio::Light* light2;
 
         void OnAttach() override {
             SK_LOG("Attaching scene " << GetName());
@@ -43,9 +44,20 @@ namespace SKEngio {
             plane->mesh->buildInterleavedArray();
             plane->mesh->createGLBuffers();
 
+            //create a light with defaults and defines for shaders
+            light = NewLight();
+            light->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
+            light2 = NewLight();
+            light2->SetDiffuse(1.0f, 0.0f, 0.0f);
+            light2->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
+
+            std::list<ShaderDefine> defines;
+            ShaderDefine z_pos = { "NUM_POINT_LIGHTS", "2" };
+            defines.push_back(z_pos);
+
             plane->shader = new SKEngio::ShaderProgram();
             plane->shader->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX);
-            plane->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
+            plane->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
             plane->shader->CreateProgram();
 
             plane->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
@@ -63,15 +75,11 @@ namespace SKEngio {
 
             torus->shader = new SKEngio::ShaderProgram();
             torus->shader->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX);
-            torus->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT);
+            torus->shader->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
             torus->shader->CreateProgram();
 
             torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
             torus->setCubemap(sky->cubemapTexture);
-
-            //create a light with defaults
-            light = NewLight();
-            light->initGizmo( SKEngio::Renderer::get().GizmoGetShader() );
 
         }
 
@@ -112,15 +120,28 @@ namespace SKEngio {
             rp->camera->setPosition(pos);
 
             light->SetPosition(sin(t) * 10.0f, 15.0f, -3.0f);
+            light2->SetPosition(cos(t) * 14.0f, 6.0f, sin(t) * 14.0f);
+
             //update the transform matrices (plane is fixed)
             light->updateSelfAndChild();
+            light2->updateSelfAndChild();
             torus->updateSelfAndChild();
 
             glm::vec3 lPos = light->GetPosition();
             glm::vec3 lDiff = light->GetDiffuse();
             glm::mat4 lVPMat = light->getLightViewProjMatrix();
-            torus->shader->SetLightUniforms(lPos, lDiff, lVPMat);
-            plane->shader->SetLightUniforms(lPos, lDiff, lVPMat);
+            torus->shader->SetVec3("pointLights[0].lightPosition", lPos);
+            torus->shader->SetVec3("pointLights[0].lightDiffuse", lDiff);
+            plane->shader->SetVec3("pointLights[0].lightPosition", lPos);
+            plane->shader->SetVec3("pointLights[0].lightDiffuse", lDiff);
+
+            glm::vec3 l2Pos = light2->GetPosition();
+            glm::vec3 l2Diff = light2->GetDiffuse();
+            glm::mat4 l2VPMat = light2->getLightViewProjMatrix();
+            torus->shader->SetVec3("pointLights[1].lightPosition", l2Pos);
+            torus->shader->SetVec3("pointLights[1].lightDiffuse", l2Diff);
+            plane->shader->SetVec3("pointLights[1].lightPosition", l2Pos);
+            plane->shader->SetVec3("pointLights[1].lightDiffuse", l2Diff);
 
             torus->shader->SetMaterialUniforms(torus->material);    //torus materials can be changed at runtime
 
@@ -128,17 +149,6 @@ namespace SKEngio {
 
         void OnDraw(SKEngio::RenderParams* rp) override {
             Scene::OnDraw(rp);
-
-            //return;
-            //
-            //glEnable(GL_TEXTURE_2D);
-            //glEnable(GL_DEPTH_TEST);
-            //
-            //
-            //torus->render(rp);
-            //plane->render(rp);
-            //
-            //light->renderGizmo(rp);
 
             //skybox is rendered as last not to waste fragments (see its render function for details)
             sky->render(rp->camera);
