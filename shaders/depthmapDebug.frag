@@ -4,11 +4,11 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D depthTexture;
-uniform float camNearPlane;
-uniform float camFarPlane;
+uniform float nearPlane;
+uniform float farPlane;
 
-float near_plane = camNearPlane;
-float far_plane = camFarPlane;
+float near_plane = nearPlane;
+float far_plane = farPlane;
 
 //include the linearize depth function
 #include LinearizeDepth.glsl

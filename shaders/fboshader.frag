@@ -1,8 +1,8 @@
 #version 330 core
 uniform sampler2D depthTexture; // depth buffer
 uniform sampler2D diffuseTexture; // render buffer
-uniform float camNearPlane;
-uniform float camFarPlane;
+uniform float nearPlane;
+uniform float farPlane;
 uniform vec3 camViewPos;
 uniform vec3 camTargetPos;
 uniform float camFOV;
@@ -15,8 +15,8 @@ out vec4 color;
 
 #define PI 3.1415926
 
-float znear = camNearPlane; // camera clipping near plane
-float zfar = camFarPlane; // camera clipping far plane
+float znear = nearPlane; // camera clipping near plane
+float zfar = farPlane; // camera clipping far plane
 vec2 iResolution = vec2(1024, 768); // screen resolution
 float focalLength = camFOV; // camera focal length
 float focalDepth = distance(camViewPos,camTargetPos); // camera focal depth

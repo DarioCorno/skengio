@@ -38,6 +38,7 @@ namespace SKEngio {
             std::unique_ptr<RenderParams> renderParams;
 
             bool depthDebug = false;
+            bool useShadows = false;
 
             Scene* scene;   //current active scene
     
@@ -67,18 +68,19 @@ namespace SKEngio {
             std::unique_ptr<ShaderProgram> gizmoShader;
 
             //frame buffer object
-            unsigned int FrameBO = -1;
+            unsigned int Final_FBO = -1;
             Texture* FrameBOtexture;
             std::unique_ptr<ShaderProgram> fboShader;
 
             //render buffer for depth
             unsigned int DepthRBO{};
             Texture* DepthBOTexture;
-            std::unique_ptr<ShaderProgram> depthDebugShader;
+            std::unique_ptr<ShaderProgram> depthDebugShader;    
 
             unsigned int ShadowMap_FBO{};
+            unsigned int ShadowMap_RBO{};
             Texture* ShadowMap_Texture;
-            std::unique_ptr<ShaderProgram> shadowDebugShader;
+            ShaderProgram* shadowMapShader;
 
     };
 }

@@ -94,9 +94,11 @@ namespace SKEngio {
             ent->render(rp);
         }
 
-        //render all lights
-        for (Light* lt : lights) {
-            lt->renderGizmo(rp);
+        if (rp->pass == RenderPass::Final) {
+            //render all lights
+            for (Light* lt : lights) {
+                lt->renderGizmo(rp);
+            }
         }
 
     }

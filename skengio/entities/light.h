@@ -25,7 +25,6 @@ namespace SKEngio  {
 
             glm::mat4 getLightViewProjMatrix();
 
-
         private:
 
     };

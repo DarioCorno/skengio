@@ -101,26 +101,36 @@ namespace SKEngio {
 				if ( (rp->pass == RenderPass::ShadowDepth) && (!castsShadows) )
 					return;
 
-				shader->bind();
+				if (rp->pass == RenderPass::Final) {
+					shader->bind();
 
-				if (material->diffuseTexture) {
-					material->diffuseTexture->bind();
-					shader->SetDiffTexture(material->diffuseTexture->textureUnit);
+					if (material->diffuseTexture) {
+						//useless as the textureId is in the shader material->diffuseTexture->bind();
+						shader->SetDiffTexture(material->diffuseTexture->textureUnit);
+					}
+
+					if (cubemap != nullptr) {
+						//cubemap->bind();
+						shader->SetCubeTexture(cubemap->textureUnit);
+					}
+
+					shader->SetCameraUniforms(rp->camera);
+
+					shader->SetModelUniforms(transform.getModelMatrix());
 				}
-
-				if (cubemap != nullptr) {
-					cubemap->bind();
-					shader->SetCubeTexture(cubemap->textureUnit);
+				else {
+					//a different shader from this entity shader, used for "effects"
+					rp->passShader->SetModelUniforms(transform.getModelMatrix());
 				}
-
-				shader->SetCameraUniforms(rp->camera);
-				shader->SetModelUniforms( transform.getModelMatrix() );
+				
 				mesh->draw();
 
-				if (material->diffuseTexture)
-					material->diffuseTexture->unbind();
+				if (rp->pass == RenderPass::Final) {
+					//if (material->diffuseTexture)
+					//	material->diffuseTexture->unbind();
 
-				renderGizmo(rp);
+					renderGizmo(rp);
+				}
 
 				renderChilds(rp);
 

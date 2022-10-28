@@ -129,7 +129,7 @@ namespace SKEngio {
             ImGui::Separator();
             ImGui::Checkbox("Debug Depth", &Renderer::get().depthDebug);
             ImGui::Separator();
-            ImGui::Checkbox("Shadows", &Renderer::get().renderParams->useShadows);
+            ImGui::Checkbox("Shadows", &Renderer::get().useShadows);
             ImGui::Separator();
             ImGui::Checkbox( "Show Log", &logVisible );
             

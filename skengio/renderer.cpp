@@ -36,7 +36,8 @@ namespace SKEngio {
         gizmoShader->OnDestroy();
         fboShader->OnDestroy();
         depthDebugShader->OnDestroy();
-        shadowDebugShader->OnDestroy();
+        shadowMapShader->OnDestroy();
+        delete shadowMapShader;
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -170,24 +171,29 @@ namespace SKEngio {
 
 
     void Renderer::GenerateShadowMapsBuffers() {
+
         glGenFramebuffers(1, &ShadowMap_FBO);
 
         ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
-
-        //thell the FBO where to write
         glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
+        }
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        //shader for debugging depth
-        shadowDebugShader = std::make_unique<ShaderProgram>();
-        shadowDebugShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
-        shadowDebugShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
-        shadowDebugShader->CreateProgram();
+        //shader for rendering depth shadows (uses light matrix instead of camera ones)
+        //this debug is done with depthmapDebug
+        shadowMapShader = new ShaderProgram();
+        shadowMapShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
+        shadowMapShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
+        shadowMapShader->CreateProgram();
 
-        shadowDebugShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
+        //dafuq is this? shadowMapShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
 
     }
 
@@ -197,10 +203,10 @@ namespace SKEngio {
             glDeleteTextures(1, &FrameBOtexture->textureID);
 
         //frame buffer object for fx ("container" of many render buffers
-        glGenFramebuffers(1, &FrameBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
+        glGenFramebuffers(1, &Final_FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, Final_FBO);
 
-       FrameBOtexture = TextureManager::get().CreateFrameBufferTexture(WindowManager::get().width, WindowManager::get().height);
+        FrameBOtexture = TextureManager::get().CreateFrameBufferTexture(WindowManager::get().width, WindowManager::get().height);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FrameBOtexture->textureID, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -231,6 +237,7 @@ namespace SKEngio {
             SK_LOG_ERR("ERROR Creating Depth Render Buffer Object");
         }
         
+        //only used for rendering the debug quad
         depthDebugShader = std::make_unique<ShaderProgram>();
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.vert", SKEngio::ShaderProgram::VERTEX);
         depthDebugShader->LoadShader("./shaders/", "depthmapDebug.frag", SKEngio::ShaderProgram::FRAGMENT);
@@ -254,7 +261,7 @@ namespace SKEngio {
     }
 
     void Renderer::UpdateCurrentScene(RenderParams* rp) {
-        //will set the current scene according to time and other params
+        //will set the current scene according to time and other params, now scene 0 for testing
         scene = sceneStack->scenes[0];
     }
 
@@ -262,27 +269,24 @@ namespace SKEngio {
 
         Light* light = scene->lights[0];
 
-        // render scene from light's point of view
-        shadowDebugShader->bind();
-        shadowDebugShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix() );
-        
-        
-        RenderPass curPass = renderParams->pass;
-        renderParams->pass = RenderPass::ShadowDepth;
+        // render scene from light's point of view using the shadowMap shader
+        shadowMapShader->bind();
+        shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix() );                
+        renderParams->passShader = shadowMapShader;
 
-        //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        glClearDepth(1.0);
+        glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT);
-        DepthBOTexture->bind();
+        glEnable(GL_DEPTH_TEST);
+        ShadowMap_Texture->bind();
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
             scene->OnUpdate(renderParams.get());
             scene->OnDraw(renderParams.get());
         }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        DepthBOTexture->unbind();
-        renderParams->pass = curPass;
+        ShadowMap_Texture->unbind();
     }
 
     void Renderer::Draw() {
@@ -295,12 +299,18 @@ namespace SKEngio {
 
         UpdateCurrentScene( renderParams.get() );
 
-        if(renderParams->useShadows)
+        if (useShadows) {
+            //enable the final frame buffer object
+            glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+            renderParams->pass = RenderPass::ShadowDepth;
             ShadowMapPass();
+            renderParams->pass = RenderPass::Final;
+            //enable the final frame buffer object
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
 
-        //enable the frame buffer object
-        glBindFramebuffer(GL_FRAMEBUFFER, FrameBO);
-        
+        //enable the final frame buffer object
+        glBindFramebuffer(GL_FRAMEBUFFER, Final_FBO);
 
         //deafult rendering settings
         glDepthMask(GL_TRUE);
@@ -314,10 +324,9 @@ namespace SKEngio {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-        //update and render all active scenes
+        //update and render active scene
         scene->camera->UpdateViewport();
         renderParams->camera = scene->camera;
-        fboShader->SetCameraUniforms( scene->camera );       //set the camera data into fbo shader
         scene->OnUpdate( renderParams.get() );
         scene->OnDraw( renderParams.get());
 
@@ -335,7 +344,8 @@ namespace SKEngio {
         glEnable(GL_TEXTURE_2D);
 
         fboShader->bind();
-        FrameBOtexture->bind();
+        fboShader->SetCameraUniforms(scene->camera);       //set the camera data into fbo shader
+        //FrameBOtexture->bind();
 
         glBindVertexArray(quad_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -343,34 +353,37 @@ namespace SKEngio {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         fboShader->unbind();
-        FrameBOtexture->unbind();
+        //FrameBOtexture->unbind();
         //---END rendering frame buffer quad
 
 
         if (depthDebug) {
+            depthDebugShader->SetDepthTexture(DepthBOTexture->textureUnit);
             depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
             depthDebugShader->bind();
-            DepthBOTexture->bind();
+            //DepthBOTexture->bind();
 
             glBindVertexArray(debug_VAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             depthDebugShader->unbind();
-            DepthBOTexture->unbind();
+            //DepthBOTexture->unbind();
         }
 
-        if (renderParams->useShadows) {
-            shadowDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
-            shadowDebugShader->bind();
-            ShadowMap_Texture->bind();
+        if (useShadows) {
+            depthDebugShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
+            depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
+            depthDebugShader->SetFarNearUniforms(0.1f, 60.0f);
+            depthDebugShader->bind();
+            //ShadowMap_Texture->bind();
 
             glBindVertexArray(debug_VAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
-            shadowDebugShader->unbind();
-            ShadowMap_Texture->unbind();
+            depthDebugShader->unbind();
+            //ShadowMap_Texture->unbind();
         }
 
         GLenum err = glGetError();

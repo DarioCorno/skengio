@@ -166,6 +166,15 @@ namespace SKEngio {
 
     }
 
+
+    void ShaderProgram::SetFarNearUniforms(float near, float far) {
+        if (nearPlaneLocation != -1)
+            glProgramUniform1f(programID, nearPlaneLocation, near);
+
+        if (farPlaneLocation != -1)
+            glProgramUniform1f(programID, farPlaneLocation, far);
+    }
+
     void ShaderProgram::SetModelUniforms(const glm::mat4& modelMatrix) {
         if(modelMatrixLocation != -1)
             glProgramUniformMatrix4fv(programID, modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
@@ -252,7 +261,6 @@ namespace SKEngio {
         nearPlaneLocation = glGetUniformLocation(programID, CAMERA_NEAR_PLANE_UNIFORM_NAME);
         farPlaneLocation = glGetUniformLocation(programID, CAMERA_FAR_PLANE_UNIFORM_NAME);
         fovLocation = glGetUniformLocation(programID, CAMERA_FOV_UNIFORM_NAME);
-
     }
 
     void ShaderProgram::getLightUniformsLocation() {
