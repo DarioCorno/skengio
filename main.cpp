@@ -39,23 +39,11 @@ int main()
     scene->music->loadStream("moby_elekfunk.mp3", SKEngio::AudioType::Stream);
     scene->music->setVolume(1000);
 
-    //add a triangle layer  
-    //EffectOne* mylayerOne = new EffectOne();
-    //mylayerOne->SetId(0);
-    //scene->PushLayer(mylayerOne);
-
-    //add a torus
-    //EffectTwo* mylayerTwo = new EffectTwo();
-    //mylayerTwo->SetId(1);
-    //scene->PushLayer(mylayerTwo);
-
     //scene->music->play();
     app.Run();
 
     app.Destroy();
     delete scene;
-    //delete mylayerOne;
-    //delete mylayerTwo;
 
     //_CrtDumpMemoryLeaks();
 

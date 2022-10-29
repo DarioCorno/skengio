@@ -93,7 +93,6 @@ namespace SKEngio {
             if(iter == sharedIndices.end())
             {
                 addVertex(v[0], v[1], v[2]);
-                addColor(1.0f, 0.0f, 1.0f, 0.2f);
                 addNormal(n[0], n[1], n[2]);
                 addTexCoord(t[0], t[1]);
                 index = texCoords.size() / 2 - 1;
@@ -108,7 +107,6 @@ namespace SKEngio {
         else
         {
             addVertex(v[0], v[1], v[2]);
-            addColor(1.0f, 0.0f, 1.0f, 0.2f);
             addNormal(n[0], n[1], n[2]);
             addTexCoord(t[0], t[1]);
             index = texCoords.size() / 2 - 1;
@@ -236,76 +234,62 @@ namespace SKEngio {
         //    05  06  07  08  09        //
         // add 14 non-shared vertices first (index from 0 to 13)
         addVertex(tmpVertices[0], tmpVertices[1], tmpVertices[2]);      // v0 (top)
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, 1);
         addTexCoord(S_STEP, 0);
 
         addVertex(tmpVertices[0], tmpVertices[1], tmpVertices[2]);      // v1
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, 1);
         addTexCoord(S_STEP * 3, 0);
 
         addVertex(tmpVertices[0], tmpVertices[1], tmpVertices[2]);      // v2
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, 1);
         addTexCoord(S_STEP * 5, 0);
 
         addVertex(tmpVertices[0], tmpVertices[1], tmpVertices[2]);      // v3
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, 1);
         addTexCoord(S_STEP * 7, 0);
 
         addVertex(tmpVertices[0], tmpVertices[1], tmpVertices[2]);      // v4
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, 1);
         addTexCoord(S_STEP * 9, 0);
 
         addVertex(tmpVertices[33], tmpVertices[34], tmpVertices[35]);   // v5 (bottom)
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, -1);
         addTexCoord(S_STEP * 2, T_STEP * 3);
 
         addVertex(tmpVertices[33], tmpVertices[34], tmpVertices[35]);   // v6
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, -1);
         addTexCoord(S_STEP * 4, T_STEP * 3);
 
         addVertex(tmpVertices[33], tmpVertices[34], tmpVertices[35]);   // v7
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, -1);
         addTexCoord(S_STEP * 6, T_STEP * 3);
 
         addVertex(tmpVertices[33], tmpVertices[34], tmpVertices[35]);   // v8
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, -1);
         addTexCoord(S_STEP * 8, T_STEP * 3);
 
         addVertex(tmpVertices[33], tmpVertices[34], tmpVertices[35]);   // v9
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(0, 0, -1);
         addTexCoord(S_STEP * 10, T_STEP * 3);
 
         v[0] = tmpVertices[3];  v[1] = tmpVertices[4];  v[2] = tmpVertices[5];  // v10 (left)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(0, T_STEP);
 
         addVertex(v[0], v[1], v[2]);                                            // v11 (right)
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 10, T_STEP);
 
         v[0] = tmpVertices[18]; v[1] = tmpVertices[19]; v[2] = tmpVertices[20]; // v12 (left)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP, T_STEP * 2);
 
         addVertex(v[0], v[1], v[2]);                                            // v13 (right)
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 11, T_STEP * 2);
 
@@ -313,7 +297,6 @@ namespace SKEngio {
         v[0] = tmpVertices[6];  v[1] = tmpVertices[7];  v[2] = tmpVertices[8];  // v14 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 2, T_STEP);
         sharedIndices[std::make_pair(S_STEP * 2, T_STEP)] = texCoords.size() / 2 - 1;
@@ -321,7 +304,6 @@ namespace SKEngio {
         v[0] = tmpVertices[9];  v[1] = tmpVertices[10]; v[2] = tmpVertices[11]; // v15 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 4, T_STEP);
         sharedIndices[std::make_pair(S_STEP * 4, T_STEP)] = texCoords.size() / 2 - 1;
@@ -330,7 +312,6 @@ namespace SKEngio {
         scale = computeScaleForLength(v, 1);
         n[0] = v[0] * scale;    n[1] = v[1] * scale;    n[2] = v[2] * scale;
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 6, T_STEP);
         sharedIndices[std::make_pair(S_STEP * 6, T_STEP)] = texCoords.size() / 2 - 1;
@@ -338,7 +319,6 @@ namespace SKEngio {
         v[0] = tmpVertices[15]; v[1] = tmpVertices[16]; v[2] = tmpVertices[17]; // v17 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 8, T_STEP);
         sharedIndices[std::make_pair(S_STEP * 8, T_STEP)] = texCoords.size() / 2 - 1;
@@ -346,7 +326,6 @@ namespace SKEngio {
         v[0] = tmpVertices[21]; v[1] = tmpVertices[22]; v[2] = tmpVertices[23]; // v18 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 3, T_STEP * 2);
         sharedIndices[std::make_pair(S_STEP * 3, T_STEP * 2)] = texCoords.size() / 2 - 1;
@@ -354,7 +333,6 @@ namespace SKEngio {
         v[0] = tmpVertices[24]; v[1] = tmpVertices[25]; v[2] = tmpVertices[26]; // v19 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 5, T_STEP * 2);
         sharedIndices[std::make_pair(S_STEP * 5, T_STEP * 2)] = texCoords.size() / 2 - 1;
@@ -362,7 +340,6 @@ namespace SKEngio {
         v[0] = tmpVertices[27]; v[1] = tmpVertices[28]; v[2] = tmpVertices[29]; // v20 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 7, T_STEP * 2);
         sharedIndices[std::make_pair(S_STEP * 7, T_STEP * 2)] = texCoords.size() / 2 - 1;
@@ -370,7 +347,6 @@ namespace SKEngio {
         v[0] = tmpVertices[30]; v[1] = tmpVertices[31]; v[2] = tmpVertices[32]; // v21 (shared)
         computeVertexNormal(v, n);
         addVertex(v[0], v[1], v[2]);
-        addColor(1.0f, 0.0f, 1.0f, 0.2f);
         addNormal(n[0], n[1], n[2]);
         addTexCoord(S_STEP * 9, T_STEP * 2);
         sharedIndices[std::make_pair(S_STEP * 9, T_STEP * 2)] = texCoords.size() / 2 - 1;

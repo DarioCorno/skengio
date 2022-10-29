@@ -41,7 +41,6 @@ namespace SKEngio {
             plane = NewEntity();
             plane->mesh = new SKEngio::Plane();
             ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);
-            plane->mesh->buildInterleavedArray();
             plane->mesh->createGLBuffers();
 
             //create a light with defaults and defines for shaders
@@ -64,13 +63,12 @@ namespace SKEngio {
             plane->translate(0.0f, -8.0f, 0.0f);
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
             plane->castsShadows = false;
-            plane->updateSelfAndChild();    //planeis still, non need to update transforms
+            plane->updateSelfAndChild();    //plane is still, no need to update transforms
             plane->shader->SetMaterialUniforms(plane->material); //plane material is static
 
             torus = NewEntity();
             torus->mesh = new SKEngio::Torus();
             ((SKEngio::Torus*)torus->mesh)->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
-            torus->mesh->buildInterleavedArray();
             torus->mesh->createGLBuffers();
 
             torus->shader = new SKEngio::ShaderProgram();

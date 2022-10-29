@@ -106,12 +106,10 @@ namespace SKEngio {
 					shader->bind();
 
 					if (material->diffuseTexture) {
-						//useless as the textureId is in the shader material->diffuseTexture->bind();
 						shader->SetDiffTexture(material->diffuseTexture->textureUnit);
 					}
 
 					if (cubemap != nullptr) {
-						//cubemap->bind();
 						shader->SetCubeTexture(cubemap->textureUnit);
 					}
 
@@ -129,9 +127,6 @@ namespace SKEngio {
 				mesh->draw();
 
 				if (rp->pass == RenderPass::Final) {
-					//if (material->diffuseTexture)
-					//	material->diffuseTexture->unbind();
-
 					renderGizmo(rp, glm::vec3(1.0f, 1.0f, 1.0f) );
 				}
 
@@ -176,11 +171,9 @@ namespace SKEngio {
 			}
 
 			void initGizmo(ShaderProgram* gShader) {
-				//should all this be in Entity?
 				gizmo = new Entity();
 				gizmo->mesh = new Box();
 				((SKEngio::Box*)gizmo->mesh)->Generate(1.0f, 1.0f, 1.0f, 1, 1, 1);
-				gizmo->mesh->buildInterleavedArray();
 				gizmo->mesh->createGLBuffers();
 				gizmo->shader = gShader;
 				gizmo->shader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f) );	//set a default color

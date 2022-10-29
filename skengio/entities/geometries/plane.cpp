@@ -23,7 +23,6 @@ namespace SKEngio {
 				float x = ix * segment_width - width_half;
 
 				addVertex(x, -y, 0.0f);
-				addColor(1.0f, 1.0f, 1.0f, 1.0f);
 				addNormal(0.0f, 0.0f, 1.0f);
 
 				addTexCoord(ix / (float)gridX, 1.0f - (iy / (float)gridY) );

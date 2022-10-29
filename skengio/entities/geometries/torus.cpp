@@ -22,7 +22,6 @@ namespace SKEngio {
                 float z = tubeR * sin(v);
                 glm::vec3 vertex(x, y, z);
                 addVertex(x, y, z);
-                addColor(1.0f, 1.0f, 1.0f, 1.0f);
 
                 // normal
                 glm::vec3 center(mainR * cos(u), mainR * sin(u), 0.0f);

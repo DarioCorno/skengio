@@ -52,7 +52,6 @@ namespace SKEngio {
 
 				// now apply vector to vertex buffer
 				addVertex(vector.x, vector.y, vector.z);
-				addColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 				// set values to correct vector component
 				vector[u] = 0.0f;
