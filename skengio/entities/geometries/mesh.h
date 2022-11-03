@@ -77,7 +77,6 @@ namespace SKEngio {
         void updateBatchBufferData();
         void createBatchGLBuffers();
 
-
     };
 
 }

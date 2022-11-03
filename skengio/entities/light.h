@@ -6,6 +6,9 @@
 #include "glm/glm.hpp"
 #include "skengio/camera.h"
 #include "skengio/entities/entity.h"
+#include "skengio/utils/texture.h"
+#include "skengio/utils/shaderProgram.h"
+#include "skengio/utils/textureManager.h"
 
 #include <memory>
 
@@ -16,6 +19,8 @@ namespace SKEngio  {
 
             //glm::vec3 lightPosition{ 0.0f, 14.0f, 0.0f };
             glm::vec3 lightDiffuseColor{ 0.71f, 0.65f, 0.55f };
+            
+            void OnDetach();
 
             void SetPosition(float x, float y, float z);
             void SetDiffuse(float r, float g, float b);
@@ -25,7 +30,19 @@ namespace SKEngio  {
 
             glm::mat4 getLightViewProjMatrix();
 
+            void GenerateShadowMapBuffer(unsigned int shadowMapWidth, unsigned int shadowMapHeight);
+            void BeginShadowMapRender();
+            void EndShadowMapRender();
+            Texture* GetShadowTexture();
+
         private:
+
+            bool hasShadowMapBuffer = false;
+            unsigned int shadowMapWidth = 1024;
+            unsigned int shadowMapHeight = 1024;
+            unsigned int ShadowMap_FBO{};
+            unsigned int ShadowMap_RBO{};
+            Texture* ShadowMap_Texture;
 
     };
 

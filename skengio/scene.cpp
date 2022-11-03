@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "skengio/window.h"
+#include "materialsManager.h"
 
 namespace SKEngio {
 
@@ -78,6 +79,31 @@ namespace SKEngio {
         
         if(!enabled) 
             return;
+
+
+        int lIdx = 0;
+        for (Light* light : lights) {
+            //update transform
+            light->updateSelfAndChild();
+
+            glm::vec3 lPos = light->GetPosition();
+            glm::vec3 lDiff = light->GetDiffuse();
+            glm::mat4 lVPMat = light->getLightViewProjMatrix();
+
+            for (Entity* ent : entities) {
+                //update transform
+                ent->updateSelfAndChild();
+
+                //update lights to ent materials
+                ShaderProgram* entShader = ent->material->GetShader();
+                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightPosition", lPos);
+                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
+            }
+            lIdx++;
+        }
+
+
+
 
         music->updateFFT();
 

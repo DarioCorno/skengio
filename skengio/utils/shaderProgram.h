@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include <skengio/material.h>
-
 #define GLEW_STATIC
 #include "GLEW/glew.h"
 #include "skengio/camera.h"
@@ -48,7 +46,7 @@ namespace SKEngio {
             void SetModelUniforms(const glm::mat4& modelMatrix);
             void SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
             void SetLightUniforms(int lightIdx, const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
-            void SetMaterialUniforms(Material* mat);
+            void SetMaterialUniforms(glm::vec3 diffuse, glm::vec3 ambient, glm::vec3 specular, float shininess, float reflectivity);
 
             void SetViewMatrix(const glm::mat4& viewMatrix);
 

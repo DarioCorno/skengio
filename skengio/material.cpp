@@ -2,6 +2,63 @@
 
 namespace SKEngio {
 
+    Material::Material() {
+        shader = new ShaderProgram();
+    }
+
+    Material::~Material() {
+    }
+
+    void Material::OnDestroy() {
+        shader->OnDestroy();
+        delete shader;
+    }
+
+    void Material::bind() {
+        shader->bind();
+        shader->SetMaterialUniforms(materialDiffuseColor, materialAmbientColor, materialSpecularColor, materialShininess, materialReflectivity);
+
+        if(diffuseTexture != nullptr)
+            shader->SetDiffTexture(diffuseTexture->textureUnit);
+
+        if (cubemapTexture != nullptr) {
+            shader->SetCubeTexture(cubemapTexture->textureUnit);
+        }
+    }
+
+    void Material::unbind() {
+        shader->unbind();
+    }
+
+    ShaderProgram* Material::GetShader() {
+        return shader;
+    }
+
+    void Material::SetShader(ShaderProgram* _shader) {
+        if (shader == _shader)
+            return;
+
+        if (shader != nullptr) {
+            shader->OnDestroy();
+            delete shader;
+        }
+
+        shader = _shader;
+
+    }
+
+    void Material::LoadShader(const std::string& strPath, const std::string& strFileName, ShaderProgram::SHADERTYPE typeShader) {
+        shader->LoadShader(strPath, strFileName, typeShader);
+    }
+
+    void Material::LoadShader(const std::string& strPath, const std::string& strFileName, ShaderProgram::SHADERTYPE typeShader, std::list<ShaderDefine> defines) {
+        shader->LoadShader(strPath, strFileName, typeShader, defines);
+    }
+
+    void Material::CreateProgram() {
+        shader->CreateProgram();
+    }
+
     void Material::SetAmbient(float r, float g, float b) {
         materialAmbientColor = glm::vec3( r, g, b);
     }
@@ -40,6 +97,10 @@ namespace SKEngio {
 
     float Material::GetReflectivity() const {
         return materialReflectivity;
+    }
+
+    void Material::SetCubemap(Texture* _cubemap) {
+        cubemapTexture = _cubemap;
     }
 
 }

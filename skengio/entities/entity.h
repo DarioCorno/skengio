@@ -6,10 +6,10 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <skengio/material.h>
 #include <skengio/renderParams.h>
-#include <skengio/utils/shaderProgram.h>
 #include "geometries/mesh.h"
 #include "skengio/utils/transform.h"
 #include "skengio/entities/geometries/box.h"
+#include "skengio/materialsManager.h"
 
 namespace SKEngio {
 
@@ -27,18 +27,17 @@ namespace SKEngio {
 	class Entity {
 		public:
 
-			Entity() : 
-				material {new Material()},
-				castsShadows {true},
-				displayType {EntityDisplayType::Drawable}
+			Entity()
 		    {
+				castsShadows = true;
+				displayType = EntityDisplayType::Drawable;
+				material = MaterialsManager::get().NewMaterial();
+
 			}
 
 			~Entity() {
 				delete mesh;
-				delete shader;
 				delete material;
-				delete cubemap;
 			}
 
 			void OnUpdate() {
@@ -85,16 +84,18 @@ namespace SKEngio {
 
 			void renderGizmo(RenderParams* rp, glm::vec3 color) {
 				if (hasGizmo) {
-					gizmo->shader->bind();
-					gizmo->shader->SetCameraUniforms(rp->camera);
-					gizmo->shader->SetModelUniforms(transform.getModelMatrix());
-					gizmo->shader->SetVec3("utilityColor", color);
+					gizmo->material->bind(); //->shader->bind();
+					ShaderProgram* sp = gizmo->material->GetShader();
+					sp->SetCameraUniforms(rp->camera);
+					sp->SetModelUniforms(transform.getModelMatrix());
+					sp->SetVec3("utilityColor", color);
 					gizmo->mesh->draw();
-					gizmo->shader->unbind();
+					gizmo->material->unbind();
 				}
 			}
 
 			void render(RenderParams* rp) {
+				ShaderProgram* matShader = material->GetShader();
 
 				if (displayType == EntityDisplayType::Invisible)
 					return;
@@ -103,18 +104,10 @@ namespace SKEngio {
 					return;
 
 				if (rp->pass == RenderPass::Final) {
-					shader->bind();
+					material->bind();
 
-					if (material->diffuseTexture) {
-						shader->SetDiffTexture(material->diffuseTexture->textureUnit);
-					}
-
-					if (cubemap != nullptr) {
-						shader->SetCubeTexture(cubemap->textureUnit);
-					}
-
-					shader->SetCameraUniforms(rp->camera);
-					shader->SetModelUniforms(transform.getModelMatrix());
+					matShader->SetCameraUniforms(rp->camera);
+					matShader->SetModelUniforms(transform.getModelMatrix());
 					//to correctly render the shadows the entity shader needs to know where the light is
 					// see https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 					//shader->SetLightUniforms(rp->light->GetPosition(), rp->light->GetDiffuse(), rp->light->getLightViewProjMatrix());
@@ -156,10 +149,6 @@ namespace SKEngio {
 				transform.setLocalScale(  glm::vec3(x, y, z) );
 			}
 
-			void setCubemap(Texture* _cubemap) {
-				cubemap = _cubemap;
-			}
-
 			void setParent(Entity* _parent) {
 				parent = _parent;
 			}
@@ -175,13 +164,13 @@ namespace SKEngio {
 				gizmo->mesh = new Box();
 				((SKEngio::Box*)gizmo->mesh)->Generate(1.0f, 1.0f, 1.0f, 1, 1, 1);
 				gizmo->mesh->createGLBuffers();
-				gizmo->shader = gShader;
-				gizmo->shader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f) );	//set a default color
+				gShader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f));
+				gizmo->material->SetShader(gShader);
 				hasGizmo = true;
 			}
 
 			Mesh* mesh{};
-			ShaderProgram* shader{};
+			//ShaderProgram* shader{};
 			Transform transform;
 			Material* material;
 			bool castsShadows;
@@ -193,7 +182,6 @@ namespace SKEngio {
 
 			Entity* parent;
 			std::vector<Entity*> childs;
-			Texture* cubemap{};
 
 			bool hasGizmo = false;
 			Entity* gizmo;

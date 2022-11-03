@@ -4,6 +4,10 @@
 
 namespace SKEngio {
 
+    void Light::OnDetach() {
+        Entity::OnDetach();
+    }
+
     void Light::SetPosition(float x, float y, float z) {
         transform.setLocalPosition( glm::vec3( x, y, z ) );
     }
@@ -28,6 +32,51 @@ namespace SKEngio {
         lightView = glm::lookAt(transform.getGlobalPosition(), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
         return lightSpaceMatrix;
+    }
+
+    void Light::GenerateShadowMapBuffer(unsigned int sMapWidth, unsigned int sMapHeight) {
+
+        shadowMapWidth = sMapWidth;
+        shadowMapHeight = sMapHeight;
+
+        glGenFramebuffers(1, &ShadowMap_FBO);
+
+        ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(shadowMapWidth, shadowMapHeight);
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        hasShadowMapBuffer = true;
+
+    }
+
+    void Light::BeginShadowMapRender() {
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+
+        // render scene from light's point of view using the shadowMap shader
+
+        glViewport(0, 0, shadowMapWidth, shadowMapHeight);
+        glClearDepth(1.0);
+        glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        ShadowMap_Texture->bind();
+    }
+
+    Texture* Light::GetShadowTexture() {
+        return ShadowMap_Texture;
+    }
+
+    void Light::EndShadowMapRender() {
+        ShadowMap_Texture->unbind();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
 

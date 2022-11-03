@@ -51,7 +51,8 @@ namespace SKEngio {
             void DrawUI();
             void ShadowMapPass();
             void GenerateFrameBO(unsigned int width, unsigned int height);
-            void GenerateShadowMapsBuffers();
+            //void GenerateShadowMapsBuffers();
+            void LoadShadowMapShader();
             void GenerateGizmosShader();
             void HandleResize(int width, int height);
             void UpdateCurrentScene(RenderParams* rp);
@@ -77,9 +78,9 @@ namespace SKEngio {
             Texture* DepthBOTexture;
             std::unique_ptr<ShaderProgram> depthDebugShader;    
 
-            unsigned int ShadowMap_FBO{};
-            unsigned int ShadowMap_RBO{};
-            Texture* ShadowMap_Texture;
+            //unsigned int ShadowMap_FBO{};
+            //unsigned int ShadowMap_RBO{};
+            //Texture* ShadowMap_Texture;
             ShaderProgram* shadowMapShader;
 
     };

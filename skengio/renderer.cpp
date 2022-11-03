@@ -36,8 +36,6 @@ namespace SKEngio {
         gizmoShader->OnDestroy();
         fboShader->OnDestroy();
         depthDebugShader->OnDestroy();
-        shadowMapShader->OnDestroy();
-        delete shadowMapShader;
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -102,7 +100,9 @@ namespace SKEngio {
         InitDebugQuad();
 
         GenerateFrameBO(WindowManager::get().width, WindowManager::get().height);
-        GenerateShadowMapsBuffers();
+        //GenerateShadowMapsBuffers();
+        //used to render objects from light point of view
+        LoadShadowMapShader();
         GenerateGizmosShader();
 
         return true;   
@@ -169,33 +169,41 @@ namespace SKEngio {
 
     }
 
-
-    void Renderer::GenerateShadowMapsBuffers() {
-
-        glGenFramebuffers(1, &ShadowMap_FBO);
-
-        ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
-        }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+    void Renderer::LoadShadowMapShader() {
         //shader for rendering depth shadows (uses light matrix instead of camera ones)
         //this debug is done with depthmapDebug
         shadowMapShader = new ShaderProgram();
         shadowMapShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
         shadowMapShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
         shadowMapShader->CreateProgram();
-
-        //dafuq is this? shadowMapShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
-
     }
+
+    //void Renderer::GenerateShadowMapsBuffers() {
+    //
+    //    glGenFramebuffers(1, &ShadowMap_FBO);
+    //
+    //    ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
+    //    glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+    //    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+    //    glDrawBuffer(GL_NONE);
+    //    glReadBuffer(GL_NONE);
+    //
+    //    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    //        SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
+    //    }
+    //
+    //    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //
+    //    //shader for rendering depth shadows (uses light matrix instead of camera ones)
+    //    //this debug is done with depthmapDebug
+    //    shadowMapShader = new ShaderProgram();
+    //    shadowMapShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
+    //    shadowMapShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
+    //    shadowMapShader->CreateProgram();
+    //
+    //    //dafuq is this? shadowMapShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
+    //
+    //}
 
     void Renderer::GenerateFrameBO(unsigned int width, unsigned int height) {
 
@@ -269,24 +277,24 @@ namespace SKEngio {
 
         Light* light = scene->lights[0];
 
-        // render scene from light's point of view using the shadowMap shader
+        //bind the generic depth buffer shader (objects are rendered with a super simple shader)
         shadowMapShader->bind();
-        shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix() );                
+        shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix());
+
+        light->BeginShadowMapRender();
+
+        //set the light's shadow shader (needs to render depth only objects)
+        //this is identical for all shadow renderers, so it could be in renderer, not shadow
         renderParams->passShader = shadowMapShader;
 
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glClearDepth(1.0);
-        glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-        ShadowMap_Texture->bind();
         //update and render all scenes
         for (Scene* scene : sceneStack->scenes) {
             //TODO: should manage double update per frame in case of shadowPass
             scene->OnUpdate(renderParams.get());
             scene->OnDraw(renderParams.get());
         }
-        ShadowMap_Texture->unbind();
+
+        light->EndShadowMapRender();
     }
 
     void Renderer::Draw() {
@@ -297,16 +305,14 @@ namespace SKEngio {
         //update current frame render params
         renderParams->time = glfwGetTime();
 
+        //retrieves the current scena ccording to timeline (to be implemented)
         UpdateCurrentScene( renderParams.get() );
 
+        //this must be done AFTER scene->update (now the rendering happens twice)
         if (useShadows) {
-            //enable the final frame buffer object
-            glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
             renderParams->pass = RenderPass::ShadowDepth;
             ShadowMapPass();
             renderParams->pass = RenderPass::Final;
-            //enable the final frame buffer object
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
         //enable the final frame buffer object
@@ -372,7 +378,8 @@ namespace SKEngio {
         }
 
         if (useShadows) {
-            depthDebugShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
+            Light* light = scene->lights[0];
+            depthDebugShader->SetDepthTexture(light->GetShadowTexture()->textureUnit);
             depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
             depthDebugShader->SetFarNearUniforms(0.1f, 40.0f);
             depthDebugShader->bind();

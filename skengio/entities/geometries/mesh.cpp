@@ -7,6 +7,7 @@
 #include <iostream>
 
 namespace SKEngio {
+
     Mesh::~Mesh() {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);

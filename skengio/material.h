@@ -6,10 +6,19 @@
 #include "glm/glm.hpp"
 
 #include "utils/texture.h"
+#include "utils/shaderProgram.h"
 
 namespace SKEngio  {
     class Material {
     public:
+
+        int materialID = -1;
+
+        Material();
+
+        ~Material();
+
+        void OnDestroy();
 
         glm::vec3 materialAmbientColor{ 0.5f, 0.5f, 0.5f };
         glm::vec3 materialDiffuseColor{ 0.7f, 0.7f, 0.7f };
@@ -17,7 +26,17 @@ namespace SKEngio  {
         float materialShininess = 32.0f;
         float materialReflectivity = 0.25f;
 
-        Texture* diffuseTexture;
+        Texture* diffuseTexture = nullptr;
+        Texture* specularTexture = nullptr;
+        Texture* normalTexture = nullptr;
+        Texture* cubemapTexture = nullptr;
+
+        void bind();
+        void unbind();
+        ShaderProgram* GetShader();
+        void SetShader(ShaderProgram* _shader);
+
+        void SetCubemap(Texture* _cubemap);
 
         void SetAmbient(float r, float g, float b);
         void SetDiffuse(float r, float g, float b);
@@ -30,6 +49,13 @@ namespace SKEngio  {
         const glm::vec3& GetSpecular() const;
         float GetShininess() const;
         float GetReflectivity() const;
+
+        void LoadShader(const std::string& strPath, const std::string& strFileName, ShaderProgram::SHADERTYPE typeShader);
+        void LoadShader(const std::string& strPath, const std::string& strFileName, ShaderProgram::SHADERTYPE typeShader, std::list<ShaderDefine> defines);
+        void CreateProgram();
+
+    private:
+        ShaderProgram* shader = nullptr;
 
 
     };

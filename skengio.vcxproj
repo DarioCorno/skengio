@@ -173,6 +173,7 @@
     <ClCompile Include="skengio\layer.cpp" />
     <ClCompile Include="skengio\logger.cpp" />
     <ClCompile Include="skengio\material.cpp" />
+    <ClCompile Include="skengio\materialsManager.cpp" />
     <ClCompile Include="skengio\renderer.cpp" />
     <ClCompile Include="skengio\scene.cpp" />
     <ClCompile Include="skengio\scenestack.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="skengio\light.h" />
     <ClInclude Include="skengio\logger.h" />
     <ClInclude Include="skengio\material.h" />
+    <ClInclude Include="skengio\materialsManager.h" />
     <ClInclude Include="skengio\renderer.h" />
     <ClInclude Include="skengio\renderParams.h" />
     <ClInclude Include="skengio\scene.h" />

@@ -204,21 +204,21 @@ namespace SKEngio {
             glProgramUniformMatrix4fv(programID, uniformLightViewProjLocation, 1, GL_FALSE, glm::value_ptr( lightViewProj ));
     }
 
-    void ShaderProgram::SetMaterialUniforms(Material* material) {
+    void ShaderProgram::SetMaterialUniforms(glm::vec3 diffuse, glm::vec3 ambient, glm::vec3 specular, float shininess, float reflectivity) {
         if (uniformMaterialDiffuseLocation != -1)
-            glProgramUniform3fv(programID, uniformMaterialDiffuseLocation, 1, glm::value_ptr(material->GetDiffuse()));
+            glProgramUniform3fv(programID, uniformMaterialDiffuseLocation, 1, glm::value_ptr( diffuse ));
 
         if (uniformMaterialAmbientLocation != -1)
-            glProgramUniform3fv(programID, uniformMaterialAmbientLocation, 1, glm::value_ptr(material->GetAmbient()));
+            glProgramUniform3fv(programID, uniformMaterialAmbientLocation, 1, glm::value_ptr( ambient ));
 
         if (uniformMaterialSpecularLocation != -1)
-            glProgramUniform3fv(programID, uniformMaterialSpecularLocation, 1, glm::value_ptr(material->GetSpecular()));
+            glProgramUniform3fv(programID, uniformMaterialSpecularLocation, 1, glm::value_ptr( specular ));
 
         if (uniformMaterialShininessLocation != -1)
-            glProgramUniform1f(programID, uniformMaterialShininessLocation, material->GetShininess() );
+            glProgramUniform1f(programID, uniformMaterialShininessLocation, shininess );
 
         if (uniformMaterialReflectivityLocation != -1)
-            glProgramUniform1f(programID, uniformMaterialReflectivityLocation, material->GetReflectivity());
+            glProgramUniform1f(programID, uniformMaterialReflectivityLocation, reflectivity );
 
     }
 
