@@ -28,22 +28,26 @@ namespace SKEngio {
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
         float near_plane = 0.1f, far_plane = 40.0f;
-        lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, near_plane, far_plane);
+        lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
         lightView = glm::lookAt(transform.getGlobalPosition(), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
         return lightSpaceMatrix;
     }
 
-    void Light::GenerateShadowMapBuffer(unsigned int sMapWidth, unsigned int sMapHeight) {
+    void Light::GenerateShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
 
         shadowMapWidth = sMapWidth;
         shadowMapHeight = sMapHeight;
 
-        glGenFramebuffers(1, &ShadowMap_FBO);
-
         ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(shadowMapWidth, shadowMapHeight);
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+        //bind the renderer buffer used for shadow depth
+        ShadowMap_FBOID = shadowMapFBO;
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
+        
+        //attach this texture to the current (binded) frame buffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+
+        //disable writes to color buffer
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
 
@@ -51,23 +55,27 @@ namespace SKEngio {
             SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
         }
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         hasShadowMapBuffer = true;
 
     }
 
     void Light::BeginShadowMapRender() {
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+        //bind the frame buffer
+        //glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
+
+        ShadowMap_Texture->bind();
+
+        //attach this light texture to the shadowmapFBO
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
 
         // render scene from light's point of view using the shadowMap shader
-
         glViewport(0, 0, shadowMapWidth, shadowMapHeight);
         glClearDepth(1.0);
         glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        ShadowMap_Texture->bind();
     }
 
     Texture* Light::GetShadowTexture() {
@@ -76,7 +84,7 @@ namespace SKEngio {
 
     void Light::EndShadowMapRender() {
         ShadowMap_Texture->unbind();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
 

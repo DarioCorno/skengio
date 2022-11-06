@@ -7,6 +7,9 @@
 //};
 
 struct PointLight {
+
+    int enabled;
+
     vec3 lightPosition;
     
     float constantAtt;
@@ -14,6 +17,9 @@ struct PointLight {
     float quadraticAtt;
 	
     vec3 lightDiffuse;
+
+    mat4 lightViewProjMatrix;
+    sampler2D depthMap;
 };
 
 //struct SpotLight {

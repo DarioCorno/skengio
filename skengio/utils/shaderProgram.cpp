@@ -94,6 +94,8 @@ namespace SKEngio {
 
 
 		std::string lineBuffer;
+        int foundDefines = 0;
+        int setDefines = 0;
 		while (std::getline(file, lineBuffer))
 		{
 			// Look for the new shader include identifier
@@ -110,9 +112,11 @@ namespace SKEngio {
 			}
 
             //replace all define values
+            foundDefines += ((lineBuffer.find("#willdefine") != std::string::npos) ? 1 : 0);
             for (ShaderDefine sdef : defines) {
                 if (lineBuffer.find( "#willdefine " + sdef.defineName) != std::string::npos) {
                     lineBuffer = "#define " + sdef.defineName + " " + sdef.defineValue;
+                    setDefines += 1;
                 }
             }
 
@@ -120,6 +124,10 @@ namespace SKEngio {
 		}
 
         file.close();
+
+        if (foundDefines != setDefines) {
+            SK_LOG_ERR("WARNING! Defines mismatch in " << strPathFilename.c_str());
+        }
 
         return fullSourceCode;
 
@@ -390,4 +398,5 @@ namespace SKEngio {
     {
         glProgramUniformMatrix4fv(programID, glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
+
 }

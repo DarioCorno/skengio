@@ -44,19 +44,21 @@ namespace SKEngio {
 
             //create a light with defaults and defines for shaders
             light = NewLight();
-            light->SetDiffuse(0.5f, 0.5f, 0.5f);
+            light->SetDiffuse(0.8f, 0.8f, 0.8f);
             light->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
-            light->GenerateShadowMapBuffer(1024, 1024);
+            light->GenerateShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 
             light2 = NewLight();
-            light2->SetDiffuse(0.5f, 0.0f, 0.0f);
+            light2->SetDiffuse(0.8f, 0.8f, 0.8f);
             light2->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
+            light2->GenerateShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 
+            //next shaders contain a #willdefine directive, it will be filled with those values
             std::list<ShaderDefine> defines;
-            ShaderDefine z_pos = { "NUM_POINT_LIGHTS", "2" };
+            ShaderDefine z_pos = { "NUM_POINT_LIGHTS", std::to_string( lights.size() ) };
             defines.push_back(z_pos);
 
-            plane->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX);
+            plane->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX, defines);
             plane->material->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
             plane->material->CreateProgram();
 
@@ -72,7 +74,7 @@ namespace SKEngio {
             ((SKEngio::Torus*)torus->mesh)->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->createGLBuffers();
 
-            torus->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX);
+            torus->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX, defines);
             torus->material->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
             torus->material->CreateProgram();
 
@@ -85,13 +87,15 @@ namespace SKEngio {
 
             delete sky;
 
+            Scene::OnDetach();
+
             SK_LOG("Destroying Scene " << this->GetName());
         }
 
         void OnDrawGUI(SKEngio::RenderParams* rp) override {
             ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
             ImGui::SetNextWindowBgAlpha(0.5f);
-            ImGui::Begin("Effect TWO");
+            ImGui::Begin("Material 01");
             ImGui::Text("Ambient");
             ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(torus->material->materialAmbientColor));
             ImGui::Text("Diffuse");
@@ -114,11 +118,12 @@ namespace SKEngio {
 
             glm::vec3 pos = rp->camera->position;
             pos.x = sin(t / 10.0f) * 50.0f;
+            pos.y = 10.0f;
             pos.z = cos(t / 10.0f) * 50.0f;
             rp->camera->setPosition(pos);
 
             light->SetPosition(sin(t) * 10.0f, 15.0f, -3.0f);
-            light2->SetPosition(cos(t) * 14.0f, 6.0f, sin(t) * 14.0f);
+            light2->SetPosition(cos(t) * 14.0f, 12.0f, sin(t) * 14.0f);
 
 
             Scene::OnUpdate(rp);

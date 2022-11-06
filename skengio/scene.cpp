@@ -80,6 +80,10 @@ namespace SKEngio {
         if(!enabled) 
             return;
 
+        for (Entity* ent : entities) {
+            //update transforms
+            ent->updateSelfAndChild();
+        }
 
         int lIdx = 0;
         for (Light* light : lights) {
@@ -89,15 +93,18 @@ namespace SKEngio {
             glm::vec3 lPos = light->GetPosition();
             glm::vec3 lDiff = light->GetDiffuse();
             glm::mat4 lVPMat = light->getLightViewProjMatrix();
+            unsigned int lDepthMap = light->GetShadowTexture()->textureUnit;
 
+            //set light data for every entity
             for (Entity* ent : entities) {
-                //update transform
-                ent->updateSelfAndChild();
-
                 //update lights to ent materials
                 ShaderProgram* entShader = ent->material->GetShader();
+                entShader->SetMat4("lightViewProjMatrix[" + std::to_string(lIdx) + "]", lVPMat);
+                entShader->SetBool("pointLights[" + std::to_string(lIdx) + "].enabled", light->enabled);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightPosition", lPos);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
+                entShader->SetInt("pointLights[" + std::to_string(lIdx) + "].depthMap", lDepthMap);
+                entShader->SetMat4("pointLights[" + std::to_string(lIdx) + "].lightViewProjMatrix", lVPMat);
             }
             lIdx++;
         }
@@ -123,7 +130,8 @@ namespace SKEngio {
         if (rp->pass == RenderPass::Final) {
             //render all lights
             for (Light* lt : lights) {
-                lt->renderGizmo(rp, lt->GetDiffuse() );
+                if(lt->enabled)
+                    lt->renderGizmo(rp, lt->GetDiffuse() );
             }
         }
 

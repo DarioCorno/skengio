@@ -30,17 +30,19 @@ namespace SKEngio  {
 
             glm::mat4 getLightViewProjMatrix();
 
-            void GenerateShadowMapBuffer(unsigned int shadowMapWidth, unsigned int shadowMapHeight);
+            void GenerateShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int shadowMapWidth, const unsigned int shadowMapHeight);
             void BeginShadowMapRender();
             void EndShadowMapRender();
             Texture* GetShadowTexture();
+
+            bool enabled = true;
 
         private:
 
             bool hasShadowMapBuffer = false;
             unsigned int shadowMapWidth = 1024;
             unsigned int shadowMapHeight = 1024;
-            unsigned int ShadowMap_FBO{};
+            unsigned int ShadowMap_FBOID{};
             unsigned int ShadowMap_RBO{};
             Texture* ShadowMap_Texture;
 

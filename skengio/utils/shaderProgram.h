@@ -71,7 +71,6 @@ namespace SKEngio {
             void SetMat3(const std::string& name, const glm::mat3& mat);
             void SetMat4(const std::string& name, const glm::mat4& mat);
 
-
         private:
 
             std::string includeIndentifier = "#include ";

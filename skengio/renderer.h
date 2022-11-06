@@ -34,11 +34,12 @@ namespace SKEngio {
             void AddScene(Scene* newScene);
 
             ShaderProgram* GizmoGetShader();
+            unsigned int GetShadowMapFBOID();
 
             std::unique_ptr<RenderParams> renderParams;
 
             bool depthDebug = false;
-            bool useShadows = false;
+            bool useShadows = true;
 
             Scene* scene;   //current active scene
     
@@ -51,11 +52,11 @@ namespace SKEngio {
             void DrawUI();
             void ShadowMapPass();
             void GenerateFrameBO(unsigned int width, unsigned int height);
-            //void GenerateShadowMapsBuffers();
+            void GenerateShadowMapsBO();
             void LoadShadowMapShader();
             void GenerateGizmosShader();
             void HandleResize(int width, int height);
-            void UpdateCurrentScene(RenderParams* rp);
+            void SetCurrentScene(RenderParams* rp);
 
             std::unique_ptr<SceneStack> sceneStack;
 
@@ -81,6 +82,7 @@ namespace SKEngio {
             //unsigned int ShadowMap_FBO{};
             //unsigned int ShadowMap_RBO{};
             //Texture* ShadowMap_Texture;
+            unsigned int ShadowMap_FBO{};
             ShaderProgram* shadowMapShader;
 
     };

@@ -36,6 +36,10 @@ namespace SKEngio {
         gizmoShader->OnDestroy();
         fboShader->OnDestroy();
         depthDebugShader->OnDestroy();
+
+        glDeleteFramebuffers(1, &Final_FBO);
+        glDeleteFramebuffers(1, &Final_FBO);
+        glDeleteFramebuffers(1, &ShadowMap_FBO);
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -43,9 +47,6 @@ namespace SKEngio {
         for(Scene* scene : sceneStack->scenes) {
             scene->handleResize(width, height);
         }
-
-        //buggy as fuck 
-        //GenerateFrameBO(width, height);
 
     }
 
@@ -100,7 +101,7 @@ namespace SKEngio {
         InitDebugQuad();
 
         GenerateFrameBO(WindowManager::get().width, WindowManager::get().height);
-        //GenerateShadowMapsBuffers();
+        GenerateShadowMapsBO();
         //used to render objects from light point of view
         LoadShadowMapShader();
         GenerateGizmosShader();
@@ -178,32 +179,11 @@ namespace SKEngio {
         shadowMapShader->CreateProgram();
     }
 
-    //void Renderer::GenerateShadowMapsBuffers() {
-    //
-    //    glGenFramebuffers(1, &ShadowMap_FBO);
-    //
-    //    ShadowMap_Texture = TextureManager::get().CreateShadowMapTexture(SHADOW_WIDTH, SHADOW_HEIGHT);
-    //    glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
-    //    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
-    //    glDrawBuffer(GL_NONE);
-    //    glReadBuffer(GL_NONE);
-    //
-    //    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    //        SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
-    //    }
-    //
-    //    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //
-    //    //shader for rendering depth shadows (uses light matrix instead of camera ones)
-    //    //this debug is done with depthmapDebug
-    //    shadowMapShader = new ShaderProgram();
-    //    shadowMapShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
-    //    shadowMapShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
-    //    shadowMapShader->CreateProgram();
-    //
-    //    //dafuq is this? shadowMapShader->SetDepthTexture(ShadowMap_Texture->textureUnit);
-    //
-    //}
+    void Renderer::GenerateShadowMapsBO() {
+    
+        glGenFramebuffers(1, &ShadowMap_FBO);
+    
+    }
 
     void Renderer::GenerateFrameBO(unsigned int width, unsigned int height) {
 
@@ -268,33 +248,43 @@ namespace SKEngio {
         GUIManager::get().DrawEnd();
     }
 
-    void Renderer::UpdateCurrentScene(RenderParams* rp) {
+    void Renderer::SetCurrentScene(RenderParams* rp) {
         //will set the current scene according to time and other params, now scene 0 for testing
-        scene = sceneStack->scenes[0];
+        scene = sceneStack->scenes[0];    
+    }
+
+    unsigned int Renderer::GetShadowMapFBOID() {
+        return ShadowMap_FBO;
     }
 
     void Renderer::ShadowMapPass() {
 
-        Light* light = scene->lights[0];
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
 
-        //bind the generic depth buffer shader (objects are rendered with a super simple shader)
-        shadowMapShader->bind();
-        shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix());
+        for (Light* light : scene->lights) {
 
-        light->BeginShadowMapRender();
+            //bind the generic depth buffer shader (objects are rendered with a super simple shader)
+            shadowMapShader->bind();
+            //set the light projection in the generic depth shader
+            shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix());
 
-        //set the light's shadow shader (needs to render depth only objects)
-        //this is identical for all shadow renderers, so it could be in renderer, not shadow
-        renderParams->passShader = shadowMapShader;
+            //bind buffers and other params
+            light->BeginShadowMapRender();
 
-        //update and render all scenes
-        for (Scene* scene : sceneStack->scenes) {
-            //TODO: should manage double update per frame in case of shadowPass
-            scene->OnUpdate(renderParams.get());
-            scene->OnDraw(renderParams.get());
+            //set the light's shadow shader (needs to render depth only objects)
+            //this is identical for all shadow renderers, so it could be a renderer class member
+            renderParams->passShader = shadowMapShader;
+
+            //render all scenes
+            for (Scene* scene : sceneStack->scenes) {
+                scene->OnDraw(renderParams.get());
+            }
+
+            light->EndShadowMapRender();
+
         }
 
-        light->EndShadowMapRender();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void Renderer::Draw() {
@@ -305,8 +295,13 @@ namespace SKEngio {
         //update current frame render params
         renderParams->time = glfwGetTime();
 
-        //retrieves the current scena ccording to timeline (to be implemented)
-        UpdateCurrentScene( renderParams.get() );
+        //retrieves the current scene according to timeline (to be implemented)
+        SetCurrentScene( renderParams.get() );
+
+        //update current scene
+        scene->camera->UpdateViewport();
+        renderParams->camera = scene->camera;
+        scene->OnUpdate(renderParams.get());
 
         //this must be done AFTER scene->update (now the rendering happens twice)
         if (useShadows) {
@@ -330,10 +325,11 @@ namespace SKEngio {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-        //update and render active scene
+        //--- RENDER active scene
+        //set the camera back, maybe we did some different projections
         scene->camera->UpdateViewport();
         renderParams->camera = scene->camera;
-        scene->OnUpdate( renderParams.get() );
+        //scene->OnUpdate( renderParams.get() );
         scene->OnDraw( renderParams.get());
 
         //disable the frame buffer
