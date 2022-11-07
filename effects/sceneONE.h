@@ -44,12 +44,15 @@ namespace SKEngio {
 
             //create a light with defaults and defines for shaders
             light = NewLight();
-            light->SetDiffuse(0.8f, 0.8f, 0.8f);
+            light->SetDiffuse(0.7f, 0.6f, 0.5f);
+            light->SetSpecular(0.8f, 0.8f, 0.8f);
+            //light->SetAmbient(0.8f, 0.8f, 0.8f);
             light->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
             light->GenerateShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 
             light2 = NewLight();
-            light2->SetDiffuse(0.8f, 0.8f, 0.8f);
+            light2->SetDiffuse(0.6f, 0.2f, 0.2f);
+            light2->SetSpecular(0.8f, 0.3f, 0.3f);
             light2->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
             light2->GenerateShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 

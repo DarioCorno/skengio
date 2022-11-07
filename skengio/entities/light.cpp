@@ -16,6 +16,14 @@ namespace SKEngio {
         lightDiffuseColor = glm::vec3( r, g, b );
     }
 
+    void Light::SetSpecular(float r, float g, float b) {
+        lightSpecularColor = glm::vec3(r, g, b);
+    }
+
+    void Light::SetAmbient(float r, float g, float b) {
+        lightAmbientColor = glm::vec3(r, g, b);
+    }
+
     glm::vec3 Light::GetPosition() {
         return transform.getGlobalPosition();
     }
@@ -24,11 +32,21 @@ namespace SKEngio {
         return lightDiffuseColor;
     }
 
+    glm::vec3 Light::GetAmbient() {
+        return lightAmbientColor;
+    }
+
+    glm::vec3 Light::GetSpecular() {
+        return lightSpecularColor;
+    }
+
     glm::mat4 Light::getLightViewProjMatrix() {
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        float near_plane = 0.1f, far_plane = 40.0f;
-        lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
+        //this must be scene bounding box
+        float near_plane = 0.1f, far_plane = 100.0f;
+        //size of projection should be scene bounding box
+        lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, near_plane, far_plane);
         lightView = glm::lookAt(transform.getGlobalPosition(), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
         return lightSpaceMatrix;

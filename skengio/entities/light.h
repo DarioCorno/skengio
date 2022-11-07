@@ -17,16 +17,21 @@ namespace SKEngio  {
     class Light final : public Entity {
         public:
 
-            //glm::vec3 lightPosition{ 0.0f, 14.0f, 0.0f };
-            glm::vec3 lightDiffuseColor{ 0.71f, 0.65f, 0.55f };
-            
+            glm::vec3 lightAmbientColor{ 0.5f, 0.5f, 0.5f };
+            glm::vec3 lightDiffuseColor{ 0.8f, 0.8f, 0.8f };
+            glm::vec3 lightSpecularColor{ 0.8f, 0.8f, 0.8f };
+
             void OnDetach();
 
             void SetPosition(float x, float y, float z);
             void SetDiffuse(float r, float g, float b);
+            void SetSpecular(float r, float g, float b);
+            void SetAmbient(float r, float g, float b);
 
             glm::vec3 GetPosition();
             glm::vec3 GetDiffuse();
+            glm::vec3 GetAmbient();
+            glm::vec3 GetSpecular();
 
             glm::mat4 getLightViewProjMatrix();
 

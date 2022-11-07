@@ -25,41 +25,39 @@ void main()
     for(int i = 0; i < NUM_POINT_LIGHTS; i++) {
         if(pointLights[i].enabled == 1) {
 
-            vec3 projCoords = FragPosLightSpace[i].xyz / FragPosLightSpace[i].w;
-            projCoords = projCoords * 0.5 + 0.5;
-            float closestDepth = texture(pointLights[i].depthMap, projCoords.xy).r; 
-            float currentDepth = projCoords.z;
-            float inShadow = currentDepth > closestDepth ? 1.0 : 0.0;  
-
             // ambient
-            vec3 ambient = pointLights[i].lightDiffuse * materialAmbient;
+            vec4 ambient = vec4(pointLights[i].lightAmbient * materialAmbient, 1.0);
   	
             // diffuse calculation
             vec3 norm = normalize(Normal);
             vec3 lightDir = normalize(pointLights[i].lightPosition - FragPos);
             float angle = max(dot(norm, lightDir), 0.0);
-            vec3 diffuse = (angle * materialDiffuse) * pointLights[i].lightDiffuse;
+            vec4 diffuse = vec4((angle * materialDiffuse) * pointLights[i].lightDiffuse, 1.0);
 
             //specular
             vec3 viewDir = normalize(camViewPos - FragPos);
             vec3 reflectDir = reflect(-lightDir, norm);  
             float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-            vec3 specular = pointLights[i].lightDiffuse * (spec * materialSpecular);  
+            vec4 specular = vec4(pointLights[i].lightSpecular * (spec * materialSpecular), 1.0);  
     
-            if(inShadow > 0) {
-                diffuse = vec3(0.0);
-                specular = vec3(0.0);
-                ambient = vec3(0.0);
-            }
-
-            lresult += (ambient * ( diffuse + specular));
-
             //cube reflections
             vec3 refVec = reflect(lightDir, norm);
-            vec4 refTex = texture(cubeTexture, refVec);
-            vec4 difTex = texture(difTexture, texCoord);
+            vec4 refTex = texture(cubeTexture, refVec) * materialReflectivity;
+            vec4 difTex = texture(difTexture, texCoord) * (1.0 - materialReflectivity);
 
-            finalFrag += vec4(lresult, 1.0) * ((difTex * (1.0 - materialReflectivity)) + (refTex * materialReflectivity));
+            //shadow
+            vec3 projCoords = FragPosLightSpace[i].xyz / FragPosLightSpace[i].w;
+            projCoords = projCoords * 0.5 + 0.5;
+            float closestDepth = texture(pointLights[i].depthMap, projCoords.xy).r; 
+            float currentDepth = projCoords.z;
+            float bias = max(0.05 * (1.0 - dot(norm, lightDir)), 0.005);  
+            float shadow = (currentDepth - bias > closestDepth) ? 1.0 : 0.0;  
+
+
+
+            finalFrag += ((ambient * difTex) + (diffuse * difTex) + (diffuse * refTex) + specular) * (1.0 - shadow);
+
+            //finalFrag += vec4(lresult, 1.0) * (difTex + refTex) * (1.0 - shadow);
         }
     }
 

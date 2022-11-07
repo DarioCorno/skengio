@@ -20,11 +20,11 @@ namespace SKEngio  {
 
         void OnDestroy();
 
-        glm::vec3 materialAmbientColor{ 0.4f, 0.4f, 0.4f };
+        glm::vec3 materialAmbientColor{ 0.6f, 0.6f, 0.6f };
         glm::vec3 materialDiffuseColor{ 0.6f, 0.6f, 0.6f };
         glm::vec3 materialSpecularColor{ 1.0f, 1.0f, 1.0f };
-        float materialShininess = 32.0f;
-        float materialReflectivity = 0.25f;
+        float materialShininess = 80.0f;
+        float materialReflectivity = 0.55f;
 
         Texture* diffuseTexture = nullptr;
         Texture* specularTexture = nullptr;

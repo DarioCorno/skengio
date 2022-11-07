@@ -306,7 +306,9 @@ namespace SKEngio {
         //this must be done AFTER scene->update (now the rendering happens twice)
         if (useShadows) {
             renderParams->pass = RenderPass::ShadowDepth;
+            glCullFace(GL_FRONT);
             ShadowMapPass();
+            glCullFace(GL_BACK);
             renderParams->pass = RenderPass::Final;
         }
 
@@ -377,7 +379,8 @@ namespace SKEngio {
             Light* light = scene->lights[0];
             depthDebugShader->SetDepthTexture(light->GetShadowTexture()->textureUnit);
             depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader
-            depthDebugShader->SetFarNearUniforms(0.1f, 40.0f);
+            //this must be scene bounding box
+            depthDebugShader->SetFarNearUniforms(0.1f, 100.0f);
             depthDebugShader->bind();
             //ShadowMap_Texture->bind();
 

@@ -92,6 +92,8 @@ namespace SKEngio {
 
             glm::vec3 lPos = light->GetPosition();
             glm::vec3 lDiff = light->GetDiffuse();
+            glm::vec3 lAmb = light->GetAmbient();
+            glm::vec3 lSpec = light->GetSpecular();
             glm::mat4 lVPMat = light->getLightViewProjMatrix();
             unsigned int lDepthMap = light->GetShadowTexture()->textureUnit;
 
@@ -103,6 +105,8 @@ namespace SKEngio {
                 entShader->SetBool("pointLights[" + std::to_string(lIdx) + "].enabled", light->enabled);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightPosition", lPos);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
+                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightAmbient", lAmb);
+                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightSpecular", lSpec);
                 entShader->SetInt("pointLights[" + std::to_string(lIdx) + "].depthMap", lDepthMap);
                 entShader->SetMat4("pointLights[" + std::to_string(lIdx) + "].lightViewProjMatrix", lVPMat);
             }

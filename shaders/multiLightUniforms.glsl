@@ -17,6 +17,8 @@ struct PointLight {
     float quadraticAtt;
 	
     vec3 lightDiffuse;
+    vec3 lightAmbient;
+    vec3 lightSpecular;
 
     mat4 lightViewProjMatrix;
     sampler2D depthMap;
