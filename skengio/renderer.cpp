@@ -263,24 +263,28 @@ namespace SKEngio {
 
         for (Light* light : scene->lights) {
 
-            //bind the generic depth buffer shader (objects are rendered with a super simple shader)
-            shadowMapShader->bind();
-            //set the light projection in the generic depth shader
-            shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix());
+            if (light->castShadows) {
 
-            //bind buffers and other params
-            light->BeginShadowMapRender();
+                //bind the generic depth buffer shader (objects are rendered with a super simple shader)
+                shadowMapShader->bind();
+                //set the light projection in the generic depth shader
+                shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix());
 
-            //set the light's shadow shader (needs to render depth only objects)
-            //this is identical for all shadow renderers, so it could be a renderer class member
-            renderParams->passShader = shadowMapShader;
+                //bind buffers and other params
+                light->BeginShadowMapRender();
 
-            //render all scenes
-            for (Scene* scene : sceneStack->scenes) {
-                scene->OnDraw(renderParams.get());
+                //set the light's shadow shader (needs to render depth only objects)
+                //this is identical for all shadow renderers, so it could be a renderer class member
+                renderParams->passShader = shadowMapShader;
+
+                //render all scenes
+                for (Scene* scene : sceneStack->scenes) {
+                    scene->OnDraw(renderParams.get());
+                }
+
+                light->EndShadowMapRender();
+
             }
-
-            light->EndShadowMapRender();
 
         }
 

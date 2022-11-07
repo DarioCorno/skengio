@@ -53,6 +53,7 @@ namespace SKEngio {
             light2 = NewLight();
             light2->SetDiffuse(0.6f, 0.2f, 0.2f);
             light2->SetSpecular(0.8f, 0.3f, 0.3f);
+            light2->castShadows = false;
             light2->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
             light2->GenerateShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 

@@ -41,6 +41,7 @@ namespace SKEngio  {
             Texture* GetShadowTexture();
 
             bool enabled = true;
+            bool castShadows = true;
 
         private:
 

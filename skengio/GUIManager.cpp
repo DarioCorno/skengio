@@ -119,12 +119,18 @@ namespace SKEngio {
             for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
                 if ( ImGui::TreeNode( scn->dispName.c_str()) )
                 {
-                    ImGui::Text("Lights");
-                    unsigned int lIdx = 0;
-                    for(Light* light : scn->lights ) {
-                        std::string lyrName = "Light " + std::to_string( lIdx );
-                        ImGui::Checkbox( lyrName.c_str() , &light->enabled );
-                        lIdx++;
+                    if (ImGui::TreeNode("Lights")) {
+                        unsigned int lIdx = 0;
+                        for (Light* light : scn->lights) {
+                            std::string ltName = "Light " + std::to_string(lIdx);
+                            ImGui::Text(ltName.c_str());
+                            ImGui::PushID(lIdx);
+                            ImGui::Checkbox("Enabled", &light->enabled);
+                            ImGui::Checkbox("Cast Shadows", &light->castShadows);
+                            ImGui::PopID();
+                            lIdx++;
+                        }
+                        ImGui::TreePop();
                     }
                     ImGui::TreePop();
                 }

@@ -103,6 +103,7 @@ namespace SKEngio {
                 ShaderProgram* entShader = ent->material->GetShader();
                 entShader->SetMat4("lightViewProjMatrix[" + std::to_string(lIdx) + "]", lVPMat);
                 entShader->SetBool("pointLights[" + std::to_string(lIdx) + "].enabled", light->enabled);
+                entShader->SetBool("pointLights[" + std::to_string(lIdx) + "].castShadows", light->castShadows);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightPosition", lPos);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightAmbient", lAmb);

@@ -9,6 +9,7 @@
 struct PointLight {
 
     int enabled;
+    int castShadows;
 
     vec3 lightPosition;
     
