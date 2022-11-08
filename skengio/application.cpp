@@ -4,6 +4,10 @@
 #include "logger.h"
 #include "renderer.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 static void keyCB (GLFWwindow * window, int key, int scancode, int action, int mods) {
     SKEngio::Application* app = reinterpret_cast<SKEngio::Application *>(glfwGetWindowUserPointer(window));
     if (app)
@@ -18,6 +22,11 @@ static void resizeCB(GLFWwindow* window, int iWidth, int iHeight)
 }
 
 static void mouseButtonCB(GLFWwindow* window, int button, int action, int mods) {
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddMouseButtonEvent(button, action);
+    if (io.WantCaptureMouse)
+        return;
+
     SKEngio::Application* app = reinterpret_cast<SKEngio::Application *>(glfwGetWindowUserPointer(window));
     if (app)
         app->HandleMouseButtonEvent(button, action, mods);
@@ -25,6 +34,12 @@ static void mouseButtonCB(GLFWwindow* window, int button, int action, int mods) 
 
 static void mouseMoveCB(GLFWwindow* window, double xPos, double yPos)
 {
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddMousePosEvent(xPos, yPos);
+
+    if (io.WantCaptureMouse)
+        return;
+
     SKEngio::Application* app = reinterpret_cast<SKEngio::Application *>(glfwGetWindowUserPointer(window));
     if (app)
         app->HandleMouseMoveEvent(xPos, yPos);

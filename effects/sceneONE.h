@@ -101,17 +101,19 @@ namespace SKEngio {
         void OnDrawGUI(SKEngio::RenderParams* rp) override {
             ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
             ImGui::SetNextWindowBgAlpha(0.5f);
-            ImGui::Begin("Material 01");
-            ImGui::Text("Ambient");
-            ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(torus->material->materialAmbientColor));
-            ImGui::Text("Diffuse");
-            ImGui::ColorEdit3("diffuse", (float*)glm::value_ptr(torus->material->materialDiffuseColor));
-            ImGui::Text("Specular:");
-            ImGui::ColorEdit3("specular", (float*)glm::value_ptr(torus->material->materialSpecularColor));
-            ImGui::Text("Shininess:");
-            ImGui::SliderFloat("shininess", &torus->material->materialShininess, 0.0, 128.0);
-            ImGui::Text("Reflectivity:");
-            ImGui::SliderFloat("reflectivity", &torus->material->materialReflectivity, 0.0f, 1.0f);
+            GUIManager::get().DrawMaterialParams("Torus Mat", torus->material);
+
+            //ImGui::Begin("Material 01");
+            //ImGui::Text("Ambient");
+            //ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(torus->material->materialAmbientColor));
+            //ImGui::Text("Diffuse");
+            //ImGui::ColorEdit3("diffuse", (float*)glm::value_ptr(torus->material->materialDiffuseColor));
+            //ImGui::Text("Specular:");
+            //ImGui::ColorEdit3("specular", (float*)glm::value_ptr(torus->material->materialSpecularColor));
+            //ImGui::Text("Shininess:");
+            //ImGui::SliderFloat("shininess", &torus->material->materialShininess, 0.0, 128.0);
+            //ImGui::Text("Reflectivity:");
+            //ImGui::SliderFloat("reflectivity", &torus->material->materialReflectivity, 0.0f, 1.0f);
             ImGui::End();
         }
 

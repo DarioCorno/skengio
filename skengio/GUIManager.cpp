@@ -14,7 +14,6 @@
 #include "renderer.h"
 #include "scene.h"
 
-
 namespace SKEngio {
     //GUIManager::GUIManager() {
     //    //parentRenderer = parentR;
@@ -51,6 +50,20 @@ namespace SKEngio {
 
         glfwGetWindowSize( WindowManager::get().window, &winWidth, &winHeight);
 
+    }
+
+    void GUIManager::DrawMaterialParams(const std::string matName, Material* material) {
+        ImGui::Begin("Material 01");
+        ImGui::Text("Ambient");
+        ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(material->materialAmbientColor));
+        ImGui::Text("Diffuse");
+        ImGui::ColorEdit3("diffuse", (float*)glm::value_ptr(material->materialDiffuseColor));
+        ImGui::Text("Specular:");
+        ImGui::ColorEdit3("specular", (float*)glm::value_ptr(material->materialSpecularColor));
+        ImGui::Text("Shininess:");
+        ImGui::SliderFloat("shininess", &material->materialShininess, 0.0, 128.0);
+        ImGui::Text("Reflectivity:");
+        ImGui::SliderFloat("reflectivity", &material->materialReflectivity, 0.0f, 1.0f);
     }
 
     void GUIManager::Destroy() {

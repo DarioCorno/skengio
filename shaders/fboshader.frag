@@ -17,7 +17,7 @@ out vec4 color;
 
 float znear = nearPlane; // camera clipping near plane
 float zfar = farPlane; // camera clipping far plane
-vec2 iResolution = vec2(1024, 768); // screen resolution
+vec2 iResolution = textureSize(diffuseTexture, 0); //vec2(1024, 768); // screen resolution
 float focalLength = camFOV; // camera focal length
 float focalDepth = distance(camViewPos,camTargetPos); // camera focal depth
 float fstop = 0.7; // camera fstop

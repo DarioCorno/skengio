@@ -10,6 +10,7 @@
 #include "event.h"
 #include "skengio/utils/singleton.h"
 #include "skengio/layer.h"
+#include "material.h"
 
 namespace SKEngio {
     class Renderer;
@@ -26,6 +27,8 @@ namespace SKEngio {
             void DrawSwapBuffers();
 
             void OnEvent(Event* e);
+
+            void DrawMaterialParams(const std::string matName, Material* material);
 
         private:
             int winWidth, winHeight;
