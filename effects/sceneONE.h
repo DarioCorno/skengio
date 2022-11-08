@@ -67,7 +67,7 @@ namespace SKEngio {
             plane->material->CreateProgram();
 
             plane->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
-            plane->translate(0.0f, -8.0f, 0.0f);
+            plane->translate(0.0f, 0.0f, 0.0f);
             plane->rotate(-90.0f, 1.0f, 0.0f, 0.0f);
             plane->castsShadows = false;
             plane->updateSelfAndChild();    //plane is still, no need to update transforms in the main loop
@@ -83,6 +83,8 @@ namespace SKEngio {
             torus->material->CreateProgram();
 
             torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
+            torus->material->specularTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
+            torus->material->useSpecularTexture = 1;
             torus->material->SetCubemap(sky->cubemapTexture);
 
         }
@@ -117,12 +119,12 @@ namespace SKEngio {
 
             float t = rp->time;
 
-            torus->translate(0.0f, 0.0f, (sin(t / 2.0f) * 10.0f));
+            torus->translate(0.0f, 8.0f, (sin(t / 2.0f) * 10.0f));
             torus->rotate((float)(t * 50.0f), 0.5f, 0.5f, 0.0f);
 
             glm::vec3 pos = rp->camera->position;
             pos.x = sin(t / 10.0f) * 50.0f;
-            pos.y = 10.0f;
+            pos.y = 30.0f;
             pos.z = cos(t / 10.0f) * 50.0f;
             rp->camera->setPosition(pos);
 

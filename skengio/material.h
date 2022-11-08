@@ -26,6 +26,8 @@ namespace SKEngio  {
         float materialShininess = 80.0f;
         float materialReflectivity = 0.55f;
 
+        int useSpecularTexture = 0;
+
         Texture* diffuseTexture = nullptr;
         Texture* specularTexture = nullptr;
         Texture* normalTexture = nullptr;

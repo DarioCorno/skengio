@@ -168,9 +168,6 @@ namespace SKEngio {
             fov, 
             std::move(camID) );
 
-        camera->setPosition(0.0f, 0.0f, 30.0f);
-        camera->setTarget(0.0f, 0.0f, 0.0f);
-
         return camera;
     }
 

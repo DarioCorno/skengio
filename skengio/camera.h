@@ -4,6 +4,7 @@
 #define SK_CAMERA_
 
 #include "glm/glm.hpp"
+#include "glm/gtx/quaternion.hpp"
 
 #include <string>
 
@@ -31,11 +32,6 @@ namespace SKEngio {
             glm::vec3 target;
             glm::vec3 upVector;
             glm::vec3 rightVector;
-            glm::vec3 worldUpVector;
-
-            // euler Angles
-            float yaw;
-            float pitch;
 
             float fieldOfView = 45.0f;
             unsigned int width;
@@ -57,13 +53,17 @@ namespace SKEngio {
 
             void moveForward(float distance);
 
-            glm::mat4 getViewMatrix() const;
-            glm::mat4 getProjMatrix() const;
+            glm::mat4 getViewMatrix();
+            glm::mat4 getProjMatrix();
 
             glm::vec3 getDirection() const;
 
             void handleResize(unsigned int w, unsigned int h);
             void UpdateViewport();
+
+        private:
+            bool isDirty = true;
+            void UpdateUpVector();
 
     };
 }

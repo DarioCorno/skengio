@@ -21,9 +21,13 @@ namespace SKEngio {
         if(diffuseTexture != nullptr)
             shader->SetDiffTexture(diffuseTexture->textureUnit);
 
-        if (cubemapTexture != nullptr) {
+        if (specularTexture != nullptr) 
+            shader->SetSpecularTexture(specularTexture->textureUnit);
+
+        shader->EnableSpecularTexture(useSpecularTexture);
+
+        if (cubemapTexture != nullptr)
             shader->SetCubeTexture(cubemapTexture->textureUnit);
-        }
     }
 
     void Material::unbind() {

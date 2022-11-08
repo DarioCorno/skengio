@@ -39,7 +39,7 @@ namespace SKEngio {
             std::unique_ptr<RenderParams> renderParams;
 
             bool depthDebug = false;
-            bool useShadows = true;
+            bool shadowsDebug = true;
 
             Scene* scene;   //current active scene
     

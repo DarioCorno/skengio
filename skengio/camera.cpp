@@ -10,7 +10,7 @@ namespace SKEngio {
 
     Camera::Camera(unsigned int w, unsigned int h, float fov, std::string camID) :
         id{std::move(camID)},
-        position{0.0f, 0.0f, 3.0f},
+        position{0.0f, 30.0f, 30.0f},
         target{0.0f, 0.0f, 0.0f},
         upVector{0.0f, 1.0f, 0.0f},
         fieldOfView{fov},
@@ -24,26 +24,43 @@ namespace SKEngio {
 
     void Camera::setPosition(const glm::vec3& newPos) {
         position = newPos;
+        isDirty = true;
     }
 
     void Camera::setPosition(float x, float y, float z) {
         position = glm::vec3( x, y, z );
+        isDirty = true;
     }
 
     void Camera::setTarget(float x, float y, float z) {
         target = glm::vec3(x, y, z);
+        isDirty = true;
     }
 
     void Camera::setTarget(const glm::vec3& newTarget) {
         target = newTarget;
+        isDirty = true;
     }
 
-    glm::mat4 Camera::getViewMatrix() const {
-        return glm::lookAt( position, target, upVector );
+    glm::mat4 Camera::getViewMatrix() {
+        if (isDirty) {
+            UpdateUpVector();
+            viewMatrix = glm::lookAt(position, target, upVector);
+        }
+
+        return viewMatrix;
     }
 
-    glm::mat4 Camera::getProjMatrix() const {
-        return glm::perspective(fieldOfView, (float)width / (float)height, nearPlane, farPlane);
+    void Camera::UpdateUpVector() {
+        glm::vec3 direction = glm::normalize(target - position);
+        glm::vec3 right = glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        upVector = glm::normalize( glm::cross(right, direction) );
+    }
+
+    glm::mat4 Camera::getProjMatrix() {
+        return projMatrix; // = glm::perspective(fieldOfView, (float)width / (float)height, nearPlane, farPlane);
+
     }
 
     glm::vec3 Camera::getDirection() const {
@@ -54,11 +71,13 @@ namespace SKEngio {
         glm::vec3 dir = getDirection();
         target = target + (dir * distance);
         position = position + (dir * distance);
+        isDirty = true;
     }
 
     void Camera::translate(float x, float y, float z) {
         position += glm::vec3( x,y,z);
         target += glm::vec3(x, y, z);
+        isDirty = true;
     }
 
     void Camera::handleResize(unsigned int w, unsigned int h) {

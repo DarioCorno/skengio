@@ -46,8 +46,6 @@ namespace SKEngio {
         virtual void OnUpdate(RenderParams* rp);
         virtual void OnDraw(RenderParams* rp);
 
-        //void PushLayer(Layer* layer);
-
         Camera* SetCamera(float fov, std::string camID);
         Light* NewLight();
         Entity* NewEntity();

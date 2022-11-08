@@ -46,13 +46,16 @@ namespace SKEngio {
             void SetModelUniforms(const glm::mat4& modelMatrix);
             void SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
             void SetLightUniforms(int lightIdx, const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
-            void SetMaterialUniforms(glm::vec3 diffuse, glm::vec3 ambient, glm::vec3 specular, float shininess, float reflectivity);
+            void SetMaterialUniforms(const glm::vec3 diffuse, const glm::vec3 ambient, const glm::vec3 specular, const float shininess, const float reflectivity);
 
             void SetViewMatrix(const glm::mat4& viewMatrix);
 
-            void SetDiffTexture(int textureID);
-            void SetCubeTexture(int textureID);
-            void SetDepthTexture(int textureID);
+            void SetDiffTexture(const int textureUnit);
+            void SetCubeTexture(const int textureUnit);
+            void SetDepthTexture(const int textureUnit);
+
+            void SetSpecularTexture(const int textureUnit);
+            void EnableSpecularTexture(const int useSpecular);
 
             void bind();
             void unbind();
@@ -74,7 +77,7 @@ namespace SKEngio {
         private:
 
             std::string includeIndentifier = "#include ";
-            std::string fileName = "";
+            std::list<std::string> fileNames;
             std::string LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle, std::list<ShaderDefine> defines);
 
             void getMatricesUniformsLocation();
@@ -118,6 +121,8 @@ namespace SKEngio {
 
             //textures location
             int textureDiffuseLocation = -1;
+            int textureUseSpecularLocation = -1;
+            int textureSpecularLocation = -1;
             int textureCubeLocation = -1;
             int textureDepthLocation = -1;
 

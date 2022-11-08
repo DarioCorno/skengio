@@ -10,7 +10,8 @@ namespace SKEngio {
 
     ShaderProgram::~ShaderProgram() {
         SK_LOG("Unloading Shader Program (ID: " << programID << ")" );
-        glDeleteProgram(programID);                   
+        glDeleteProgram(programID);    
+        fileNames.clear();
     }
 
     void ShaderProgram::OnDestroy() {
@@ -71,7 +72,7 @@ namespace SKEngio {
     std::string ShaderProgram::LoadShaderFile(const std::string& strPath, const std::string& strFilename, GLuint iShaderHandle, std::list<ShaderDefine> defines) {
         
         std::string strPathFilename = strPath + strFilename;
-        fileName = strPathFilename;
+        fileNames.push_back(strPathFilename);
         std::ifstream shaderSource(strPathFilename.c_str());
         if (!shaderSource.is_open())
         {
@@ -212,7 +213,7 @@ namespace SKEngio {
             glProgramUniformMatrix4fv(programID, uniformLightViewProjLocation, 1, GL_FALSE, glm::value_ptr( lightViewProj ));
     }
 
-    void ShaderProgram::SetMaterialUniforms(glm::vec3 diffuse, glm::vec3 ambient, glm::vec3 specular, float shininess, float reflectivity) {
+    void ShaderProgram::SetMaterialUniforms(const glm::vec3 diffuse, const glm::vec3 ambient, const glm::vec3 specular, const float shininess, const float reflectivity) {
         if (uniformMaterialDiffuseLocation != -1)
             glProgramUniform3fv(programID, uniformMaterialDiffuseLocation, 1, glm::value_ptr( diffuse ));
 
@@ -236,18 +237,30 @@ namespace SKEngio {
         }
     }
 
-    void ShaderProgram::SetDiffTexture(int textureID) {
+    void ShaderProgram::SetDiffTexture(const int textureUnit) {
         if (textureDiffuseLocation != -1) {
-            glProgramUniform1i(programID, textureDiffuseLocation, textureID);
+            glProgramUniform1i(programID, textureDiffuseLocation, textureUnit);
         }
     }
 
-    void ShaderProgram::SetCubeTexture(int textureID) {
+    void ShaderProgram::SetSpecularTexture(const int textureUnit) {
+        if (textureSpecularLocation != -1) {
+            glProgramUniform1i(programID, textureSpecularLocation, textureUnit);
+        }
+    }
+
+    void ShaderProgram::EnableSpecularTexture(const int useSpecular) {
+        if (textureUseSpecularLocation != -1) {
+            glProgramUniform1i(programID, textureUseSpecularLocation, useSpecular);
+        }
+    }
+
+    void ShaderProgram::SetCubeTexture(const int textureUnit) {
         if (!isBind)
             bind();
 
         if (textureCubeLocation != -1) {
-            glProgramUniform1i(programID, textureCubeLocation, textureID);
+            glProgramUniform1i(programID, textureCubeLocation, textureUnit);
         }
     }
 
@@ -264,6 +277,8 @@ namespace SKEngio {
         textureDiffuseLocation = glGetUniformLocation(programID, TEXTURE_DIFFUSE_UNIFORM_NAME);
         textureCubeLocation = glGetUniformLocation(programID, TEXTURE_CUBEMAP_UNIFORM_NAME);
         textureDepthLocation = glGetUniformLocation(programID, TEXTURE_DEPTH_UNIFORM_NAME);
+        textureSpecularLocation = glGetUniformLocation(programID, TEXTURE_SPECULAR_UNIFORM_NAME);
+        textureUseSpecularLocation = glGetUniformLocation(programID, TEXTURE_USE_SPECULAR_UNIFORM_NAME);
     }
 
 

@@ -297,24 +297,21 @@ namespace SKEngio {
             return;
         
         //update current frame render params
-        renderParams->time = glfwGetTime();
+        renderParams->NewFrame();
 
         //retrieves the current scene according to timeline (to be implemented)
         SetCurrentScene( renderParams.get() );
 
         //update current scene
-        scene->camera->UpdateViewport();
         renderParams->camera = scene->camera;
         scene->OnUpdate(renderParams.get());
 
         //this must be done AFTER scene->update (now the rendering happens twice)
-        if (useShadows) {
-            renderParams->pass = RenderPass::ShadowDepth;
-            glCullFace(GL_FRONT);
-            ShadowMapPass();
-            glCullFace(GL_BACK);
-            renderParams->pass = RenderPass::Final;
-        }
+        renderParams->pass = RenderPass::ShadowDepth;
+        glCullFace(GL_FRONT);
+        ShadowMapPass();
+        glCullFace(GL_BACK);
+        renderParams->pass = RenderPass::Final;
 
         //enable the final frame buffer object
         glBindFramebuffer(GL_FRAMEBUFFER, Final_FBO);
@@ -379,7 +376,7 @@ namespace SKEngio {
             //DepthBOTexture->unbind();
         }
 
-        if (useShadows) {
+        if (shadowsDebug) {
             Light* light = scene->lights[0];
             depthDebugShader->SetDepthTexture(light->GetShadowTexture()->textureUnit);
             depthDebugShader->SetCameraUniforms(scene->camera);       //set the camera data into depth rbo shader

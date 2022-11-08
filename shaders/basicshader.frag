@@ -7,8 +7,6 @@ out vec4 FragColor;
 
 #include materialuniforms.glsl
 
-uniform sampler2D difTexture;
-uniform samplerCube cubeTexture;
 uniform vec3 camViewPos;
 
 in vec2 texCoord;
@@ -38,7 +36,12 @@ void main()
             vec3 viewDir = normalize(camViewPos - FragPos);
             vec3 reflectDir = reflect(-lightDir, norm);  
             float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-            vec4 specular = vec4(pointLights[i].lightSpecular * (spec * materialSpecular), 1.0);  
+            vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+            if(useSpecularTexture == 1) {
+                specular = vec4(pointLights[i].lightSpecular * (spec * texture(specTexture, texCoord).r ), 1.0);  
+            } else {
+                specular = vec4(pointLights[i].lightSpecular * (spec * materialSpecular), 1.0);  
+            }
     
             //cube reflections
             vec3 refVec = reflect(lightDir, norm);
@@ -64,7 +67,7 @@ void main()
                         shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
                     }    
                 }
-                shadow /= 9.0;  //points we sampled -1,1 hor and vert 
+                shadow /= 9.0;  //points we sampled -1,1 on x, -1,1 on y (9 pixels) 
             }
 
 
