@@ -57,6 +57,52 @@ namespace SKEngio {
             }
         }
 
+        if (e->type == EventType::MouseMove) {
+            xMouseDelta = e->xPos - xMousePos;
+            yMouseDelta = e->yPos - yMousePos;
+
+            xMousePos = e->xPos;
+            yMousePos = e->yPos;
+
+            if (lMousePressed) {
+                //update camera rotation
+                camera->rotate(xMouseDelta, yMouseDelta);
+            }
+
+            if (rMousePressed) {
+                camera->strafe(-xMouseDelta);
+                camera->rise(yMouseDelta);
+            }
+
+            if (mMousePressed) {
+                camera->moveForward(yMouseDelta);
+            }
+
+        }
+
+        if (e->type == EventType::MousePress) {
+            if(e->button == 0)
+                lMousePressed = true;
+
+            if (e->button == 1)
+                rMousePressed = true;
+
+            if (e->button == 2)
+                mMousePressed = true;
+        }
+
+        if (e->type == EventType::MouseRelease) {
+            if (e->button == 0)
+                lMousePressed = false;
+
+            if (e->button == 1)
+                rMousePressed = false;
+
+            if (e->button == 2)
+                mMousePressed = false;
+
+        }
+
         //pass the event to entities (I would say no, the fx scene manages events)?
         //for (Entity* ent : entities) {
         //    ent->OnEvent(e);

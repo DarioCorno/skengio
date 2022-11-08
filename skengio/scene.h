@@ -58,6 +58,14 @@ namespace SKEngio {
         Camera* camera = nullptr;
         std::vector<Light*> lights;
         std::vector<Entity*> entities;
+    private:
+        float xMousePos = 0;
+        float yMousePos = 0;
+        float xMouseDelta = 0;
+        float yMouseDelta = 0;
+        bool lMousePressed = false;
+        bool rMousePressed = false;
+        bool mMousePressed = false;
 
     };
 

@@ -42,20 +42,55 @@ namespace SKEngio {
         isDirty = true;
     }
 
+    //rotate around the world Y axis and world Z axis
+    void Camera::rotate(const float hRotDelta, const float vRotDelta) {
+        glm::vec3 direction(target - position);
+        float distance = glm::length(direction);
+        glm::normalize(direction);
+
+        glm::mat4 rotMat(1.0f);
+
+        rotMat = glm::rotate(rotMat, glm::degrees(hRotDelta / camSpeedMult), glm::vec3(0.0f, 1.0f, 0.0f));
+        rotMat = glm::rotate(rotMat, glm::degrees(vRotDelta / camSpeedMult), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        glm::vec3 newDir = glm::normalize( glm::vec3(rotMat * glm::vec4(direction,1.0f) ) );
+        newDir *= distance;
+
+        target = position + newDir;
+
+        UpdateUpRightVector();
+
+        isDirty = true;
+    }
+
+    void Camera::strafe(const float xDelta) {
+        position += (rightVector * (xDelta / (camSpeedMult / 2.0f)));
+        target += (rightVector * (xDelta / (camSpeedMult / 2.0f)));
+        isDirty = true;
+    }
+
+    void Camera::rise(const float yDelta) {
+        position += (upVector * (yDelta / (camSpeedMult / 2.0f)));
+        target += (upVector * (yDelta / (camSpeedMult / 2.0f)));
+        isDirty = true;
+    }
+
+
     glm::mat4 Camera::getViewMatrix() {
         if (isDirty) {
-            UpdateUpVector();
+            UpdateUpRightVector();
             viewMatrix = glm::lookAt(position, target, upVector);
         }
 
         return viewMatrix;
     }
 
-    void Camera::UpdateUpVector() {
+    void Camera::UpdateUpRightVector() {
         glm::vec3 direction = glm::normalize(target - position);
         glm::vec3 right = glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f));
 
         upVector = glm::normalize( glm::cross(right, direction) );
+        rightVector = glm::normalize(right);
     }
 
     glm::mat4 Camera::getProjMatrix() {

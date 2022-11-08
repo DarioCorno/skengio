@@ -122,11 +122,11 @@ namespace SKEngio {
             torus->translate(0.0f, 8.0f, (sin(t / 2.0f) * 10.0f));
             torus->rotate((float)(t * 50.0f), 0.5f, 0.5f, 0.0f);
 
-            glm::vec3 pos = rp->camera->position;
-            pos.x = sin(t / 10.0f) * 50.0f;
-            pos.y = 30.0f;
-            pos.z = cos(t / 10.0f) * 50.0f;
-            rp->camera->setPosition(pos);
+            //glm::vec3 pos = rp->camera->position;
+            //pos.x = sin(t / 10.0f) * 50.0f;
+            //pos.y = 30.0f;
+            //pos.z = cos(t / 10.0f) * 50.0f;
+            //rp->camera->setPosition(pos);
 
             light->SetPosition(sin(t) * 10.0f, 15.0f, -3.0f);
             light2->SetPosition(cos(t) * 14.0f, 12.0f, sin(t) * 14.0f);

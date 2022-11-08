@@ -39,6 +39,8 @@ namespace SKEngio {
             float nearPlane;
             float farPlane;
 
+            float camSpeedMult = 150.0f;
+
             glm::mat4 viewMatrix;
             glm::mat4 projMatrix;
 
@@ -52,6 +54,9 @@ namespace SKEngio {
             void setPosition(const glm::vec3& newPos);
 
             void moveForward(float distance);
+            void rotate(const float hRotDelta, const float vRotDelta);
+            void strafe(const float xDelta);
+            void rise(const float yDelta);
 
             glm::mat4 getViewMatrix();
             glm::mat4 getProjMatrix();
@@ -63,7 +68,7 @@ namespace SKEngio {
 
         private:
             bool isDirty = true;
-            void UpdateUpVector();
+            void UpdateUpRightVector();
 
     };
 }
