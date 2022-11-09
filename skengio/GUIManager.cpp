@@ -17,6 +17,7 @@
 
 #define RIGHT_PANEL_WIDTH 250
 #define BOTTOM_PANEL_HEIGHT 150
+#define GUI_TEXTURE_SIZE std::round(RIGHT_PANEL_WIDTH / 2.0f)
 
 namespace SKEngio {
     //GUIManager::GUIManager() {
@@ -149,6 +150,8 @@ namespace SKEngio {
                             ImGui::PushID(guiIdx);
                             ImGui::Checkbox("Enabled", &light->enabled);
                             ImGui::Checkbox("Cast Shadows", &light->castShadows);
+                            if(light->castShadows && light->enabled)
+                                ImGui::Image((void*)(intptr_t)light->GetShadowTexture()->textureID, ImVec2(GUI_TEXTURE_SIZE, GUI_TEXTURE_SIZE));
                             ImGui::PopID();
                             guiIdx++;
                         }
