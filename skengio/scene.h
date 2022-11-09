@@ -48,7 +48,7 @@ namespace SKEngio {
 
         Camera* SetCamera(float fov, std::string camID);
         Light* NewLight();
-        Entity* NewEntity();
+        Entity* NewEntity(std::string id);
 
         void handleResize(int width, int height);
 

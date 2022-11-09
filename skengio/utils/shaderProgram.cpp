@@ -213,6 +213,17 @@ namespace SKEngio {
             glProgramUniformMatrix4fv(programID, uniformLightViewProjLocation, 1, GL_FALSE, glm::value_ptr( lightViewProj ));
     }
 
+    void ShaderProgram::SetLightAttenuationUniforms(const float constantAtt, const float linearAtt, const float quadraticAtt) {
+        if (uniformLightConstantLocation != -1)
+            glProgramUniform1f(programID, uniformLightConstantLocation, constantAtt);
+
+        if (uniformLightLinearLocation != -1)
+            glProgramUniform1f(programID, uniformLightLinearLocation, linearAtt);
+
+        if (uniformLightQuadraticLocation != -1)
+            glProgramUniform1f(programID, uniformLightQuadraticLocation, quadraticAtt);
+    }
+
     void ShaderProgram::SetMaterialUniforms(const glm::vec3 diffuse, const glm::vec3 ambient, const glm::vec3 specular, const float shininess, const float reflectivity) {
         if (uniformMaterialDiffuseLocation != -1)
             glProgramUniform3fv(programID, uniformMaterialDiffuseLocation, 1, glm::value_ptr( diffuse ));

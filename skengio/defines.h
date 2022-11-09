@@ -16,18 +16,18 @@
 #define LIGHT_VIEWPROJMATRIX_UNIFORM_NAME "lightViewProjMatrix"
 
 //TEXTURE DEFINES
-#define TEXTURE_DIFFUSE_UNIFORM_NAME	"difTexture"
-#define TEXTURE_CUBEMAP_UNIFORM_NAME	"cubeTexture"
-#define TEXTURE_DEPTH_UNIFORM_NAME		"depthTexture"
-#define TEXTURE_SPECULAR_UNIFORM_NAME	"specTexture"
-#define TEXTURE_USE_SPECULAR_UNIFORM_NAME "useSpecularTexture"
+#define TEXTURE_DIFFUSE_UNIFORM_NAME	"material.difTexture"
+#define TEXTURE_CUBEMAP_UNIFORM_NAME	"material.cubeTexture"
+#define TEXTURE_DEPTH_UNIFORM_NAME		"material.depthTexture"
+#define TEXTURE_SPECULAR_UNIFORM_NAME	"material.specTexture"
+#define TEXTURE_USE_SPECULAR_UNIFORM_NAME "material.useSpecularTexture"
 
 //MATERIAL UNIFORM DEFINES
-#define MATERIAL_AMBIENT_UNIFORM_NAME "materialAmbient"
-#define MATERIAL_DIFFUSE_UNIFORM_NAME "materialDiffuse"
-#define MATERIAL_SPECULAR_UNIFORM_NAME "materialSpecular"
-#define MATERIAL_SHININESS_UNIFORM_NAME "materialShininess"
-#define MATERIAL_REFLECTIVITY_UNIFORM_NAME "materialReflectivity"
+#define MATERIAL_AMBIENT_UNIFORM_NAME "material.ambient"
+#define MATERIAL_DIFFUSE_UNIFORM_NAME "material.diffuse"
+#define MATERIAL_SPECULAR_UNIFORM_NAME "material.specular"
+#define MATERIAL_SHININESS_UNIFORM_NAME "material.shininess"
+#define MATERIAL_REFLECTIVITY_UNIFORM_NAME "material.reflectivity"
 
 //CAMERA UNIFORM DEFINES
 #define CAMERA_VIEWPOS_UNIFORM_NAME "camViewPos"

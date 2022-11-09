@@ -38,7 +38,7 @@ namespace SKEngio {
             };
             sky = new SKEngio::SKYBox(faces);
 
-            plane = NewEntity();
+            plane = NewEntity("Plane");
             plane->mesh = new SKEngio::Plane();
             ((SKEngio::Plane*)plane->mesh)->Generate(40.0f, 40.0f, 4, 4);
 
@@ -73,7 +73,7 @@ namespace SKEngio {
             plane->updateSelfAndChild();    //plane is still, no need to update transforms in the main loop
             plane->material->bind(); //plane material is static
 
-            torus = NewEntity();
+            torus = NewEntity("Torus");
             torus->mesh = new SKEngio::Torus();
             ((SKEngio::Torus*)torus->mesh)->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->createGLBuffers();
@@ -99,9 +99,10 @@ namespace SKEngio {
         }
 
         void OnDrawGUI(SKEngio::RenderParams* rp) override {
-            ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-            ImGui::SetNextWindowBgAlpha(0.5f);
-            GUIManager::get().DrawMaterialParams("Torus Mat", torus->material);
+            //ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
+            //ImGui::SetNextWindowBgAlpha(0.5f);
+            
+            //GUIManager::get().DrawMaterialParams("Torus Mat", torus->material);
 
             //ImGui::Begin("Material 01");
             //ImGui::Text("Ambient");
@@ -114,7 +115,7 @@ namespace SKEngio {
             //ImGui::SliderFloat("shininess", &torus->material->materialShininess, 0.0, 128.0);
             //ImGui::Text("Reflectivity:");
             //ImGui::SliderFloat("reflectivity", &torus->material->materialReflectivity, 0.0f, 1.0f);
-            ImGui::End();
+            //ImGui::End();
         }
 
         void OnUpdate(SKEngio::RenderParams* rp) override {

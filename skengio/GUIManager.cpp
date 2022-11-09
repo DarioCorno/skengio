@@ -14,6 +14,10 @@
 #include "renderer.h"
 #include "scene.h"
 
+
+#define RIGHT_PANEL_WIDTH 250
+#define BOTTOM_PANEL_HEIGHT 150
+
 namespace SKEngio {
     //GUIManager::GUIManager() {
     //    //parentRenderer = parentR;
@@ -53,7 +57,10 @@ namespace SKEngio {
     }
 
     void GUIManager::DrawMaterialParams(const std::string matName, Material* material) {
-        ImGui::Begin("Material 01");
+        ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(400, 250), 1);
+        ImGui::SetNextWindowBgAlpha(0.5f);
+        ImGui::Begin(matName.c_str() );
         ImGui::Text("Ambient");
         ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(material->materialAmbientColor));
         ImGui::Text("Diffuse");
@@ -64,6 +71,8 @@ namespace SKEngio {
         ImGui::SliderFloat("shininess", &material->materialShininess, 0.0, 128.0);
         ImGui::Text("Reflectivity:");
         ImGui::SliderFloat("reflectivity", &material->materialReflectivity, 0.0f, 1.0f);
+        ImGui::End();
+
     }
 
     void GUIManager::Destroy() {
@@ -96,8 +105,8 @@ namespace SKEngio {
 
             if(logVisible) {
                 Logger& log = SKEngio::Logger::getInstance();
-                ImGui::SetNextWindowPos(ImVec2(0, winHeight - 150), 1 );
-                ImGui::SetNextWindowSize(ImVec2(winWidth, 150), 1 );
+                ImGui::SetNextWindowPos(ImVec2(0, winHeight - BOTTOM_PANEL_HEIGHT), 1 );
+                ImGui::SetNextWindowSize(ImVec2(winWidth, BOTTOM_PANEL_HEIGHT), 1 );
                 ImGui::SetNextWindowBgAlpha(0.2f);
                 ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
                 ImGui::Begin("Application Log", nullptr, log_window_flags);
@@ -117,8 +126,8 @@ namespace SKEngio {
             }
 
             //scenes rows
-            ImGui::SetNextWindowPos(ImVec2(winWidth - 200, 0), 1 );
-            ImGui::SetNextWindowSize(ImVec2(200, winHeight - ((logVisible) ? 150 : 0)), 1 );
+            ImGui::SetNextWindowPos(ImVec2(winWidth - RIGHT_PANEL_WIDTH, 0), 1 );
+            ImGui::SetNextWindowSize(ImVec2(RIGHT_PANEL_WIDTH, winHeight - ((logVisible) ? BOTTOM_PANEL_HEIGHT : 0)), 1 );
             ImGui::SetNextWindowBgAlpha(0.2f);
             ImGuiWindowFlags log_window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
             ImGui::Begin("Settings", nullptr, log_window_flags);
@@ -132,20 +141,43 @@ namespace SKEngio {
             for(Scene* scn : Renderer::get().GetSceneStack()->scenes) {
                 if ( ImGui::TreeNode( scn->dispName.c_str()) )
                 {
+                    unsigned int guiIdx = 0;
                     if (ImGui::TreeNode("Lights")) {
-                        unsigned int lIdx = 0;
                         for (Light* light : scn->lights) {
-                            std::string ltName = "Light " + std::to_string(lIdx);
+                            std::string ltName = "Light " + std::to_string(guiIdx);
                             ImGui::Text(ltName.c_str());
-                            ImGui::PushID(lIdx);
+                            ImGui::PushID(guiIdx);
                             ImGui::Checkbox("Enabled", &light->enabled);
                             ImGui::Checkbox("Cast Shadows", &light->castShadows);
                             ImGui::PopID();
-                            lIdx++;
+                            guiIdx++;
                         }
                         ImGui::TreePop();
                     }
+
+                    if (ImGui::TreeNode("Entities")) {
+                        for (Entity* ent : scn->entities) {
+                            ImGui::Text(ent->id.c_str());
+                            ImGui::PushID(guiIdx);
+                            //ImGui::Checkbox("Enabled", &light->enabled);
+                            //ImGui::Checkbox("Cast Shadows", &light->castShadows);
+                            std::string mId = "Material " + std::to_string(ent->material->materialID);
+                            if ( ImGui::Button(mId.c_str()) ) {
+                                if (curEditMaterial == nullptr) {
+                                    curEditMaterial = ent->material;
+                                }
+                                else {
+                                    curEditMaterial = nullptr;
+                                }
+                            }
+                            ImGui::PopID();
+                            guiIdx++;
+                        }
+                        ImGui::TreePop();
+                    }
+
                     ImGui::TreePop();
+
                 }
             }
             ImGui::Separator();
@@ -157,7 +189,10 @@ namespace SKEngio {
             
             ImGui::End();
 
-
+            if (curEditMaterial != nullptr) {
+                std::string mId = "Material " + std::to_string(curEditMaterial->materialID);
+                DrawMaterialParams(mId, curEditMaterial);
+            }
     }
 
     void GUIManager::DrawEnd() {

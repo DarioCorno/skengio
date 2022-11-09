@@ -34,6 +34,9 @@ namespace SKEngio {
             int winWidth, winHeight;
             const char* glsl_version = "#version 130";  //GLSL used by ImGui
             bool logVisible = false;
+
+            Material* curEditMaterial = nullptr;
+
     };
 }
 

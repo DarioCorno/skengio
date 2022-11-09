@@ -32,12 +32,15 @@ namespace SKEngio {
 				castsShadows = true;
 				displayType = EntityDisplayType::Drawable;
 				material = MaterialsManager::get().NewMaterial();
-
 			}
 
 			~Entity() {
 				delete mesh;
 				delete material;
+			}
+
+			void SetID(std::string _id) {
+				id = _id;
 			}
 
 			void OnUpdate() {
@@ -161,6 +164,7 @@ namespace SKEngio {
 
 			void initGizmo(ShaderProgram* gShader) {
 				gizmo = new Entity();
+				gizmo->SetID("gizmo");
 				gizmo->mesh = new Box();
 				((SKEngio::Box*)gizmo->mesh)->Generate(1.0f, 1.0f, 1.0f, 1, 1, 1);
 				gizmo->mesh->createGLBuffers();
@@ -168,6 +172,8 @@ namespace SKEngio {
 				gizmo->material->SetShader(gShader);
 				hasGizmo = true;
 			}
+
+			std::string id;
 
 			Mesh* mesh{};
 			//ShaderProgram* shader{};
@@ -179,7 +185,6 @@ namespace SKEngio {
 
 
 		private:
-
 			Entity* parent;
 			std::vector<Entity*> childs;
 

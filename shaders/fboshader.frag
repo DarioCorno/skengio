@@ -13,6 +13,7 @@ in vec2 TexCoords; // uv coords
 in vec2 pos;
 out vec4 color;
 
+#define USE_DOF 0
 #define PI 3.1415926
 
 float znear = nearPlane; // camera clipping near plane
@@ -30,7 +31,6 @@ float fringe = 0.0; // bokeh chromatic aberration / fringing,
 
 vec2 vUv = TexCoords;
 
-// constants TODO should be const-qualified
 vec2 texel = vec2(1.0/iResolution.x,1.0/iResolution.y);
 float dbsize = 1.25; // depth blur size
 const float CoC = 0.03; //circle of confusion size in mm (35mm film = 0.03mm)
@@ -115,41 +115,49 @@ float linearize(float depth) {
 
 void main(void)
 {
-	float depth = linearize(bdepth(vUv.xy));
 
-	float f = focalLength; // focal length in mm,
-	float d = focalDepth*1000.0; // focal plane in mm,
-	float o = depth*1000.0; // depth in mm,
+	vec3 col;
 
-	float a = (o*f)/(o-f);
-	float b = (d*f)/(d-f);
-	float c = (d-f)/(d*fstop*CoC);
+	if(USE_DOF == 1) {
+		float depth = linearize(bdepth(vUv.xy));
 
-	float blur = clamp(abs(a-b)*c,0.0,1.0);
+		float f = focalLength; // focal length in mm,
+		float d = focalDepth*1000.0; // focal plane in mm,
+		float o = depth*1000.0; // depth in mm,
 
-	// calculation of pattern for dithering
-	vec2 noise = rand(vUv.xy)*dithering*blur;
+		float a = (o*f)/(o-f);
+		float b = (d*f)/(d-f);
+		float c = (d-f)/(d*fstop*CoC);
 
-	// getting blur x and y step factor
-	float w = (1.0/iResolution.x)*blur*maxblur+noise.x;
-	float h = (1.0/iResolution.y)*blur*maxblur+noise.y;
+		float blur = clamp(abs(a-b)*c,0.0,1.0);
 
-	// calculation of final color,
-	vec3 col = texture2D(diffuseTexture, vUv.xy).rgb;
+		// calculation of pattern for dithering
+		vec2 noise = rand(vUv.xy)*dithering*blur;
 
-	if ( blur >= 0.05 ) {
-		float s = 1.0;
-		int ringsamples;
+		// getting blur x and y step factor
+		float w = (1.0/iResolution.x)*blur*maxblur+noise.x;
+		float h = (1.0/iResolution.y)*blur*maxblur+noise.y;
 
-		for (int i = 1; i <= rings; i++) {
-			ringsamples = i * samples;
+		// calculation of final color,
+		col = texture2D(diffuseTexture, vUv.xy).rgb;
 
-			for (int j = 0 ; j < maxringsamples ; j++) {
-				if (j >= ringsamples) break;
-				s += gather(float(i), float(j), ringsamples, col, w, h, blur);
+		if ( blur >= 0.05 ) {
+			float s = 1.0;
+			int ringsamples;
+
+			for (int i = 1; i <= rings; i++) {
+				ringsamples = i * samples;
+
+				for (int j = 0 ; j < maxringsamples ; j++) {
+					if (j >= ringsamples) break;
+					s += gather(float(i), float(j), ringsamples, col, w, h, blur);
+				}
 			}
+			col /= s; //divide by sample count
 		}
-		col /= s; //divide by sample count
+
+	} else {
+		col = texture2D(diffuseTexture, TexCoords).rgb;
 	}
 
 	color = vec4(col,1.0);

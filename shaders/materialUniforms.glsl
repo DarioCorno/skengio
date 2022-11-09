@@ -1,10 +1,13 @@
-uniform vec3 materialAmbient;
-uniform vec3 materialDiffuse;
-uniform vec3 materialSpecular;
-uniform float materialShininess;
-uniform float materialReflectivity;
-uniform sampler2D difTexture;
-uniform int useSpecularTexture;
-uniform sampler2D specTexture;
-uniform samplerCube cubeTexture;
+struct Material {
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+	float reflectivity;
+	sampler2D difTexture;
+	int useSpecularTexture;
+	sampler2D specTexture;
+	samplerCube cubeTexture;
+};
 
+uniform Material material;

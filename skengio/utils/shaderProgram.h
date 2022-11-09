@@ -46,6 +46,7 @@ namespace SKEngio {
             void SetModelUniforms(const glm::mat4& modelMatrix);
             void SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
             void SetLightUniforms(int lightIdx, const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
+            void SetLightAttenuationUniforms(const float constantAtt, const float linearAtt, const float quadraticAtt);
             void SetMaterialUniforms(const glm::vec3 diffuse, const glm::vec3 ambient, const glm::vec3 specular, const float shininess, const float reflectivity);
 
             void SetViewMatrix(const glm::mat4& viewMatrix);
@@ -111,6 +112,10 @@ namespace SKEngio {
             int uniformLightViewProjLocation = -1;  //view projection for shadow maps depth rendering
             int uniformLightNearLocation = -1;
             int uniformLightFarLocation = -1;
+
+            int uniformLightConstantLocation = -1;
+            int uniformLightLinearLocation = -1;
+            int uniformLightQuadraticLocation = -1;
 
             //standard material uniforms
             int uniformMaterialAmbientLocation = -1;

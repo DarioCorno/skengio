@@ -21,6 +21,10 @@ namespace SKEngio  {
             glm::vec3 lightDiffuseColor{ 0.8f, 0.8f, 0.8f };
             glm::vec3 lightSpecularColor{ 0.8f, 0.8f, 0.8f };
 
+            float constantAttenuation = 0.5f; //1.0f;
+            float linearAttenuation = 0.04f; //0.09f;
+            float quadraticAttenuation = 0.01f; //0.032f;
+
             void OnDetach();
 
             void SetPosition(float x, float y, float z);

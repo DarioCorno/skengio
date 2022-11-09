@@ -156,6 +156,9 @@ namespace SKEngio {
                 entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightSpecular", lSpec);
                 entShader->SetInt("pointLights[" + std::to_string(lIdx) + "].depthMap", lDepthMap);
                 entShader->SetMat4("pointLights[" + std::to_string(lIdx) + "].lightViewProjMatrix", lVPMat);
+                entShader->SetFloat("pointLights[" + std::to_string(lIdx) + "].constantAtt", light->constantAttenuation);
+                entShader->SetFloat("pointLights[" + std::to_string(lIdx) + "].linearAtt", light->linearAttenuation);
+                entShader->SetFloat("pointLights[" + std::to_string(lIdx) + "].quadraticAtt", light->quadraticAttenuation);
             }
             lIdx++;
         }
@@ -187,10 +190,6 @@ namespace SKEngio {
         }
 
     }
-    //void Scene::PushLayer(Layer* layer) {
-    //    layer->OnAttach();
-    //    layers.push_back(layer);
-    //}
 
     Light* Scene::NewLight() {
         Light* newL = new Light();
@@ -198,8 +197,9 @@ namespace SKEngio {
         return newL;
     }
 
-    Entity* Scene::NewEntity() {
+    Entity* Scene::NewEntity(std::string id) {
         Entity* newE = new Entity();
+        newE->SetID(id);
         entities.push_back(newE);
         return newE;
     }

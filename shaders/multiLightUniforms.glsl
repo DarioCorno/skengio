@@ -62,27 +62,45 @@ uniform PointLight pointLights[NUM_POINT_LIGHTS];
 //    return (ambient + diffuse + specular);
 //}
 //
-//// calculates the color when using a point light.
-//vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-//{
-//    vec3 lightDir = normalize(light.position - fragPos);
-//    // diffuse shading
-//    float diff = max(dot(normal, lightDir), 0.0);
-//    // specular shading
-//    vec3 reflectDir = reflect(-lightDir, normal);
-//    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-//    // attenuation
-//    float distance = length(light.position - fragPos);
-//    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
-//    // combine results
-//    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-//    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-//    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-//    ambient *= attenuation;
-//    diffuse *= attenuation;
-//    specular *= attenuation;
-//    return (ambient + diffuse + specular);
-//}
+
+// calculates the color when using a point light.
+vec4 CalcPointLight(PointLight light, vec3 norm, vec3 FragPos, vec3 lightDir, vec3 viewDir, vec2 texCoord, Material material)
+{
+    // ambient
+    vec4 ambient = vec4(light.lightAmbient * material.ambient, 1.0);
+  	
+    // diffuse calculation
+    float angle = max(dot(norm, lightDir), 0.0);
+    vec4 diffuse = vec4((angle * material.diffuse) * light.lightDiffuse, 1.0);
+
+    //specular
+    //vec3 viewDir = normalize(camViewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+    if(material.useSpecularTexture == 1) {
+        specular = vec4(light.lightSpecular * (spec * texture(material.specTexture, texCoord).r ), 1.0);  
+    } else {
+        specular = vec4(light.lightSpecular * (spec * material.specular), 1.0);  
+    }
+    
+    //calc attenuation according to light - fragment distance
+    float distance    = length(light.lightPosition - FragPos);
+    float attenuation = 1.0 / (light.constantAtt + light.linearAtt * distance + 
+    		        light.quadraticAtt * (distance * distance));
+
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
+
+    //cube reflections
+    vec3 refVec = reflect(lightDir, norm);
+    vec4 refTex = texture(material.cubeTexture, refVec) * material.reflectivity;
+    vec4 difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+
+    return ((ambient * difTex) + (diffuse * difTex) + (diffuse * refTex) + specular);
+
+}
 //
 //// calculates the color when using a spot light.
 //vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
