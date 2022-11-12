@@ -163,6 +163,7 @@
     <ClCompile Include="skengio\AudioSource.cpp" />
     <ClCompile Include="skengio\camera.cpp" />
     <ClCompile Include="skengio\entities\geometries\box.cpp" />
+    <ClCompile Include="skengio\entities\geometries\cylinder.cpp" />
     <ClCompile Include="skengio\entities\geometries\mesh.cpp" />
     <ClCompile Include="skengio\entities\geometries\plane.cpp" />
     <ClCompile Include="skengio\entities\geometries\sphere.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="skengio\defines.h" />
     <ClInclude Include="skengio\entities\entity.h" />
     <ClInclude Include="skengio\entities\geometries\box.h" />
+    <ClInclude Include="skengio\entities\geometries\cylinder.h" />
     <ClInclude Include="skengio\entities\geometries\mesh.h" />
     <ClInclude Include="skengio\entities\geometries\plane.h" />
     <ClInclude Include="skengio\entities\geometries\sphere.h" />

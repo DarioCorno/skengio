@@ -111,12 +111,9 @@ namespace SKEngio {
 
 					matShader->SetCameraUniforms(rp->camera);
 					matShader->SetModelUniforms(transform.getModelMatrix());
-					//to correctly render the shadows the entity shader needs to know where the light is
-					// see https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
-					//shader->SetLightUniforms(rp->light->GetPosition(), rp->light->GetDiffuse(), rp->light->getLightViewProjMatrix());
 				}
 				else {
-					//a different shader from this entity shader, used for "effects"
+					//a different shader from this entity shader, used for different render passes
 					rp->passShader->SetModelUniforms(transform.getModelMatrix());
 				}
 				
@@ -140,12 +137,16 @@ namespace SKEngio {
 				transform.resetTransforms();
 			}
 
-			void translate(float x, float y, float z) {
-				transform.setLocalPosition( glm::vec3(x, y, z));
+			void setPosition(float x, float y, float z) {
+				transform.setPosition(x, y, z);
 			}
 
-			void rotate(float angle, float x, float y, float z) {
-				transform.setLocalRotation( angle, glm::vec3(x, y, z));
+			void translate(float x, float y, float z) {
+				transform.translate( glm::vec3(x, y, z));
+			}
+
+			void rotate(float x, float y, float z) {
+				transform.rotate( x, y, z );
 			}
 
 			void scale(float x, float y, float z) {
@@ -166,7 +167,7 @@ namespace SKEngio {
 				gizmo = new Entity();
 				gizmo->SetID("gizmo");
 				gizmo->mesh = new Box();
-				((SKEngio::Box*)gizmo->mesh)->Generate(1.0f, 1.0f, 1.0f, 1, 1, 1);
+				((SKEngio::Box*)gizmo->mesh)->Generate(0.5f, 0.5f, 3.0f, 1, 1, 1);
 				gizmo->mesh->createGLBuffers();
 				gShader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f));
 				gizmo->material->SetShader(gShader);

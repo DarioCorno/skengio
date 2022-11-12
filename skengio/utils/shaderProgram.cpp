@@ -260,6 +260,12 @@ namespace SKEngio {
         }
     }
 
+    void ShaderProgram::EnableDiffuseTexture(const int useDiffuse) {
+        if (textureUseDiffuseLocation != -1) {
+            glProgramUniform1i(programID, textureUseDiffuseLocation, useDiffuse);
+        }
+    }
+
     void ShaderProgram::EnableSpecularTexture(const int useSpecular) {
         if (textureUseSpecularLocation != -1) {
             glProgramUniform1i(programID, textureUseSpecularLocation, useSpecular);
@@ -290,6 +296,7 @@ namespace SKEngio {
         textureDepthLocation = glGetUniformLocation(programID, TEXTURE_DEPTH_UNIFORM_NAME);
         textureSpecularLocation = glGetUniformLocation(programID, TEXTURE_SPECULAR_UNIFORM_NAME);
         textureUseSpecularLocation = glGetUniformLocation(programID, TEXTURE_USE_SPECULAR_UNIFORM_NAME);
+        textureUseDiffuseLocation = glGetUniformLocation(programID, TEXTURE_USE_DIFFUSE_UNIFORM_NAME);
     }
 
 

@@ -140,25 +140,28 @@ namespace SKEngio {
             glm::vec3 lDiff = light->GetDiffuse();
             glm::vec3 lAmb = light->GetAmbient();
             glm::vec3 lSpec = light->GetSpecular();
-            glm::mat4 lVPMat = light->getLightViewProjMatrix();
+            glm::mat4 lVPMat = light->getDirLightViewProjMatrix();
             unsigned int lDepthMap = light->GetShadowTexture()->textureUnit;
+            glm::vec3 lightDir = light->transform.getForward();
 
             //set light data for every entity
             for (Entity* ent : entities) {
                 //update lights to ent materials
                 ShaderProgram* entShader = ent->material->GetShader();
                 entShader->SetMat4("lightViewProjMatrix[" + std::to_string(lIdx) + "]", lVPMat);
-                entShader->SetBool("pointLights[" + std::to_string(lIdx) + "].enabled", light->enabled);
-                entShader->SetBool("pointLights[" + std::to_string(lIdx) + "].castShadows", light->castShadows);
-                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightPosition", lPos);
-                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
-                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightAmbient", lAmb);
-                entShader->SetVec3("pointLights[" + std::to_string(lIdx) + "].lightSpecular", lSpec);
-                entShader->SetInt("pointLights[" + std::to_string(lIdx) + "].depthMap", lDepthMap);
-                entShader->SetMat4("pointLights[" + std::to_string(lIdx) + "].lightViewProjMatrix", lVPMat);
-                entShader->SetFloat("pointLights[" + std::to_string(lIdx) + "].constantAtt", light->constantAttenuation);
-                entShader->SetFloat("pointLights[" + std::to_string(lIdx) + "].linearAtt", light->linearAttenuation);
-                entShader->SetFloat("pointLights[" + std::to_string(lIdx) + "].quadraticAtt", light->quadraticAttenuation);
+                entShader->SetInt("lights[" + std::to_string(lIdx) + "].lightType", (int)light->lightType);
+                entShader->SetBool("lights[" + std::to_string(lIdx) + "].enabled", light->enabled);
+                entShader->SetBool("lights[" + std::to_string(lIdx) + "].castShadows", light->castShadows);
+                entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightPosition", lPos);
+                entShader->SetVec3("lights[" + std::to_string(lIdx) + "].direction", lightDir );
+                entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
+                entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightAmbient", lAmb);
+                entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightSpecular", lSpec);
+                entShader->SetInt("lights[" + std::to_string(lIdx) + "].depthMap", lDepthMap);
+                entShader->SetMat4("lights[" + std::to_string(lIdx) + "].lightViewProjMatrix", lVPMat);
+                entShader->SetFloat("lights[" + std::to_string(lIdx) + "].constantAtt", light->constantAttenuation);
+                entShader->SetFloat("lights[" + std::to_string(lIdx) + "].linearAtt", light->linearAttenuation);
+                entShader->SetFloat("lights[" + std::to_string(lIdx) + "].quadraticAtt", light->quadraticAttenuation);
             }
             lIdx++;
         }

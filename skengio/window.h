@@ -14,6 +14,7 @@ namespace SKEngio {
         unsigned int width;
         unsigned int height;
         std::string caption;
+        bool canResize;
         bool fullscreen;
     };
 

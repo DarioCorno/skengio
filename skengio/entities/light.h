@@ -14,6 +14,13 @@
 
 namespace SKEngio  {
 
+    enum class LightType {
+        None = 0,
+        PointLight = 1,
+        DirectionalLight = 2,
+        SpotLight = 3
+    };
+
     class Light final : public Entity {
         public:
 
@@ -21,9 +28,11 @@ namespace SKEngio  {
             glm::vec3 lightDiffuseColor{ 0.8f, 0.8f, 0.8f };
             glm::vec3 lightSpecularColor{ 0.8f, 0.8f, 0.8f };
 
-            float constantAttenuation = 0.5f; //1.0f;
-            float linearAttenuation = 0.04f; //0.09f;
-            float quadraticAttenuation = 0.01f; //0.032f;
+            float constantAttenuation = 0.25f; //1.0f;
+            float linearAttenuation = 0.02f; //0.09f;
+            float quadraticAttenuation = 0.005f; //0.032f;
+
+            LightType lightType = LightType::PointLight;
 
             void OnDetach();
 
@@ -37,9 +46,9 @@ namespace SKEngio  {
             glm::vec3 GetAmbient();
             glm::vec3 GetSpecular();
 
-            glm::mat4 getLightViewProjMatrix();
+            glm::mat4 getDirLightViewProjMatrix();
 
-            void GenerateShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int shadowMapWidth, const unsigned int shadowMapHeight);
+            void GenerateDirShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int shadowMapWidth, const unsigned int shadowMapHeight);
             void BeginShadowMapRender();
             void EndShadowMapRender();
             Texture* GetShadowTexture();

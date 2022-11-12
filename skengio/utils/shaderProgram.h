@@ -57,6 +57,7 @@ namespace SKEngio {
 
             void SetSpecularTexture(const int textureUnit);
             void EnableSpecularTexture(const int useSpecular);
+            void EnableDiffuseTexture(const int useDiffuse);
 
             void bind();
             void unbind();
@@ -125,6 +126,7 @@ namespace SKEngio {
             int uniformMaterialReflectivityLocation = -1;
 
             //textures location
+            int textureUseDiffuseLocation = -1;
             int textureDiffuseLocation = -1;
             int textureUseSpecularLocation = -1;
             int textureSpecularLocation = -1;

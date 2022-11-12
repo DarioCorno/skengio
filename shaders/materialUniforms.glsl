@@ -4,6 +4,7 @@ struct Material {
 	vec3 specular;
 	float shininess;
 	float reflectivity;
+	int useDiffuseTexture;
 	sampler2D difTexture;
 	int useSpecularTexture;
 	sampler2D specTexture;

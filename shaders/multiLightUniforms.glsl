@@ -1,16 +1,10 @@
-//struct DirLight {
-//    vec3 direction;
-//	
-//    vec3 ambient;
-//    vec3 diffuse;
-//    vec3 specular;
-//};
-
-struct PointLight {
+struct LightData {
+    int lightType;
 
     int enabled;
     int castShadows;
 
+    vec3 direction;
     vec3 lightPosition;
     
     float constantAtt;
@@ -40,34 +34,58 @@ struct PointLight {
 //    vec3 specular;       
 //};
 
-//#willdefine NUM_DIR_LIGHTS
-#willdefine NUM_POINT_LIGHTS
-//#willdefine NUM_SPOT_LIGHTS
+#willdefine NUM_LIGHTS
 
-uniform PointLight pointLights[NUM_POINT_LIGHTS];
+#ifdef NUM_LIGHTS
+#if(NUM_LIGHTS > 0)
+uniform LightData lights[NUM_LIGHTS];
+#endif
+#endif
 
-//// calculates the color when using a directional light.
-//vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
-//{
-//    vec3 lightDir = normalize(-light.direction);
-//    // diffuse shading
-//    float diff = max(dot(normal, lightDir), 0.0);
-//    // specular shading
-//    vec3 reflectDir = reflect(-lightDir, normal);
-//    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-//    // combine results
-//    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-//    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-//    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-//    return (ambient + diffuse + specular);
-//}
-//
+// calculates the color when using a directional light.
+vec4 CalcDirLight(LightData light, vec3 normal, vec3 viewDir, vec2 texCoord, Material material)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = normalize( reflect(-lightDir, normal) );
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+    //cube reflections
+    vec3 refVec = reflect(viewDir, normal);
+    refVec.z = -refVec.z;
+    vec4 refTex = texture(material.cubeTexture, -refVec) * material.reflectivity;
+    vec4 difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+
+    // combine results
+    vec4 ambient =  vec4( light.lightAmbient * vec3(refTex + difTex) , 1.0);
+    vec4 diffuse =  vec4( light.lightDiffuse * diff * material.diffuse , 1.0);
+    vec4 specular;
+    if(material.useSpecularTexture == 1) {
+        specular = vec4( light.lightSpecular * spec * vec3(texture(material.specTexture, texCoord)), 1.0);
+    } else {
+        specular = vec4( light.lightSpecular * (spec * material.specular), 1.0);  
+    }
+
+    //DIFFUSE DOESN'T GO HERE; BUT ABOVE
+
+    return ( ambient  + specular + diffuse );
+}
+
 
 // calculates the color when using a point light.
-vec4 CalcPointLight(PointLight light, vec3 norm, vec3 FragPos, vec3 lightDir, vec3 viewDir, vec2 texCoord, Material material)
+vec4 CalcPointLight(LightData light, vec3 norm, vec3 FragPos, vec3 lightDir, vec3 viewDir, vec2 texCoord, Material material)
 {
+
     // ambient
-    vec4 ambient = vec4(light.lightAmbient * material.ambient, 1.0);
+    //cube reflections
+    vec3 refVec = reflect(viewDir, norm);
+    refVec.z = -refVec.z;
+    vec4 refTex = texture(material.cubeTexture, -refVec) * material.reflectivity;
+    vec4 difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+
+    vec4 ambient = vec4(light.lightAmbient * vec3(refTex + difTex), 1.0);
   	
     // diffuse calculation
     float angle = max(dot(norm, lightDir), 0.0);
@@ -93,14 +111,10 @@ vec4 CalcPointLight(PointLight light, vec3 norm, vec3 FragPos, vec3 lightDir, ve
     diffuse *= attenuation;
     specular *= attenuation;
 
-    //cube reflections
-    vec3 refVec = reflect(lightDir, norm);
-    vec4 refTex = texture(material.cubeTexture, refVec) * material.reflectivity;
-    vec4 difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
-
-    return ((ambient * difTex) + (diffuse * difTex) + (diffuse * refTex) + specular);
+    return ( ambient  + specular + diffuse );
 
 }
+
 //
 //// calculates the color when using a spot light.
 //vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)

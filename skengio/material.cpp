@@ -21,7 +21,9 @@ namespace SKEngio {
         if(diffuseTexture != nullptr)
             shader->SetDiffTexture(diffuseTexture->textureUnit);
 
-        if (specularTexture != nullptr) 
+        shader->EnableDiffuseTexture(useDiffuseTexture);
+
+        if (specularTexture != nullptr)
             shader->SetSpecularTexture(specularTexture->textureUnit);
 
         shader->EnableSpecularTexture(useSpecularTexture);

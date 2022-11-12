@@ -9,7 +9,7 @@ namespace SKEngio {
     }
 
     void Light::SetPosition(float x, float y, float z) {
-        transform.setLocalPosition( glm::vec3( x, y, z ) );
+        transform.setPosition( glm::vec3( x, y, z ) );
     }
 
     void Light::SetDiffuse(float r, float g, float b ) {
@@ -40,19 +40,24 @@ namespace SKEngio {
         return lightSpecularColor;
     }
 
-    glm::mat4 Light::getLightViewProjMatrix() {
+    glm::mat4 Light::getDirLightViewProjMatrix() {
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
         //this must be scene bounding box
         float near_plane = 0.1f, far_plane = 100.0f;
         //size of projection should be scene bounding box
         lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, near_plane, far_plane);
-        lightView = glm::lookAt(transform.getGlobalPosition(), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        //correct
+        lightView = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + transform.getForward(), transform.getUp() );
+        //wrong
+        //glm::vec3 testTarget = transform.getBackward();
+        //glm::vec3 testUp = transform.getUp();
+        //lightView = glm::lookAt(transform.getGlobalPosition(), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         lightSpaceMatrix = lightProjection * lightView;
         return lightSpaceMatrix;
     }
 
-    void Light::GenerateShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
+    void Light::GenerateDirShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
 
         shadowMapWidth = sMapWidth;
         shadowMapHeight = sMapHeight;

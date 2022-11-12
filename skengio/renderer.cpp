@@ -263,14 +263,15 @@ namespace SKEngio {
 
         for (Light* light : scene->lights) {
 
-            if (light->castShadows) {
+            if (light->castShadows && light->enabled) {
 
                 //bind the generic depth buffer shader (objects are rendered with a super simple shader)
                 shadowMapShader->bind();
-                //set the light projection in the generic depth shader
-                shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getLightViewProjMatrix());
 
-                //bind buffers and other params
+                //set the light projection in the generic depth shader
+                shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getDirLightViewProjMatrix());
+
+                //bind buffers, set viewport and other params
                 light->BeginShadowMapRender();
 
                 //set the light's shadow shader (needs to render depth only objects)
@@ -296,7 +297,7 @@ namespace SKEngio {
         if (WindowManager::get().width == 0 || WindowManager::get().height == 0)
             return;
         
-        //update current frame render params
+        //update current frame time and render params
         renderParams->NewFrame();
 
         //retrieves the current scene according to timeline (to be implemented)

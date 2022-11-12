@@ -26,6 +26,7 @@ int main()
     winSpecs.height = 768;
     winSpecs.caption = "SKEngio test";
     winSpecs.fullscreen = false;
+    winSpecs.canResize = false;
 
     SKEngio::Application app; // = new SKEngio::Application(&winSpecs, &errorCB);
     app.Initialize(&winSpecs, &errorCB);

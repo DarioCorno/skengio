@@ -68,7 +68,8 @@ namespace SKEngio {
             glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
             glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
             glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+            glfwWindowHint(GLFW_RESIZABLE, windowSpecs->canResize);
+            glfwWindowHint(GLFW_DECORATED, false);
 
             window = glfwCreateWindow(width, height, caption.c_str(), monitor, nullptr);
         }

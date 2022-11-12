@@ -21,6 +21,7 @@
 #define TEXTURE_DEPTH_UNIFORM_NAME		"material.depthTexture"
 #define TEXTURE_SPECULAR_UNIFORM_NAME	"material.specTexture"
 #define TEXTURE_USE_SPECULAR_UNIFORM_NAME "material.useSpecularTexture"
+#define TEXTURE_USE_DIFFUSE_UNIFORM_NAME "material.useDiffuseTexture"
 
 //MATERIAL UNIFORM DEFINES
 #define MATERIAL_AMBIENT_UNIFORM_NAME "material.ambient"
