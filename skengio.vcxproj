@@ -231,7 +231,6 @@
     <ClInclude Include="skengio\utils\skybox.h" />
     <ClInclude Include="skengio\utils\texture.h" />
     <ClInclude Include="skengio\utils\textureManager.h" />
-    <ClInclude Include="skengio\utils\transform.h" />
     <ClInclude Include="skengio\window.h" />
   </ItemGroup>
   <ItemGroup>
