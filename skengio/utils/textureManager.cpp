@@ -144,6 +144,33 @@ namespace SKEngio {
         return texture;
     }
 
+    Texture* TextureManager::CreateCubemapShadowMapTexture(unsigned int width, unsigned int height) {
+        Texture* texture = new Texture();
+        texture->textureUnit = textureCount++;
+
+        texture->width = width;
+        texture->height = height;
+        texture->isCubemap = true;
+        texture->data = nullptr;
+
+        glGenTextures(1, &texture->textureID);
+        glActiveTexture(GL_TEXTURE0 + texture->textureUnit);
+        glBindTexture(GL_TEXTURE_2D, texture->textureID);
+
+        for (unsigned int i = 0; i < 6; ++i)
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+                width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        texture->loaded = true;
+        return texture;
+    }
+
     void TextureManager::FreeData(unsigned char* data) {
         if (data) {
             stbi_image_free(data);

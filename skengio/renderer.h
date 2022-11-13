@@ -83,7 +83,7 @@ namespace SKEngio {
             //unsigned int ShadowMap_RBO{};
             //Texture* ShadowMap_Texture;
             unsigned int ShadowMap_FBO{};
-            ShaderProgram* shadowMapShader;
+            ShaderProgram* zOnlyShader;
 
     };
 }

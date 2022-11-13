@@ -33,7 +33,7 @@ namespace SKEngio {
             Texture* LoadCubemap(const std::vector<std::string>& facesFiles);
             Texture* CreateShadowMapTexture(unsigned int width, unsigned int height);
             Texture* CreateFrameBufferTexture(unsigned int width, unsigned int height);
-
+            Texture* CreateCubemapShadowMapTexture(unsigned int width, unsigned int height);
             void FreeData(unsigned char* data);
 
 	};

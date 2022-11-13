@@ -20,6 +20,10 @@ static void errorCB(int error, const char* description) {
 
 int main()
 {
+    glm::quat yawpitchroll = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians( -45.0f) ));
+    //glm::quat orientationQuat = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+    glm::quat orientationQuat = glm::angleAxis(0.0f, 0.0f, 0.0f, 0.0f);
+    glm::mat4 model = glm::mat4_cast(glm::inverse(orientationQuat * yawpitchroll));
 
     SKEngio::WindowSpecs winSpecs;
     winSpecs.width = 1024;

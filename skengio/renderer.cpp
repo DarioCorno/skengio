@@ -173,10 +173,10 @@ namespace SKEngio {
     void Renderer::LoadShadowMapShader() {
         //shader for rendering depth shadows (uses light matrix instead of camera ones)
         //this debug is done with depthmapDebug
-        shadowMapShader = new ShaderProgram();
-        shadowMapShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
-        shadowMapShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
-        shadowMapShader->CreateProgram();
+        zOnlyShader = new ShaderProgram();
+        zOnlyShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
+        zOnlyShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
+        zOnlyShader->CreateProgram();
     }
 
     void Renderer::GenerateShadowMapsBO() {
@@ -266,25 +266,26 @@ namespace SKEngio {
             if (light->castShadows && light->enabled) {
 
                 //bind the generic depth buffer shader (objects are rendered with a super simple shader)
-                shadowMapShader->bind();
+                zOnlyShader->bind();
 
-                //set the light projection in the generic depth shader
-                shadowMapShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getDirLightViewProjMatrix());
-
-                //bind buffers, set viewport and other params
-                light->BeginShadowMapRender();
-
-                //set the light's shadow shader (needs to render depth only objects)
-                //this is identical for all shadow renderers, so it could be a renderer class member
-                renderParams->passShader = shadowMapShader;
-
-                //render all scenes
-                for (Scene* scene : sceneStack->scenes) {
-                    scene->OnDraw(renderParams.get());
+                if (light->lightType == LightType::DirectionalLight) {
+                    //set the light projection in the generic depth shader
+                    zOnlyShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getDirLightViewProjMatrix());
+                    
+                    //bind buffers, set viewport and other params
+                    light->BeginShadowMapRender();
+                    //set the light's shadow shader (needs to render depth only objects)
+                    //this is identical for all shadow renderers, so it could be a renderer class member
+                    renderParams->passShader = zOnlyShader;
+                    //render all scenes
+                    for (Scene* scene : sceneStack->scenes) {
+                        scene->OnDraw(renderParams.get());
+                    }
+                    light->EndShadowMapRender();
                 }
+                else if (light->lightType == LightType::PointLight) {
 
-                light->EndShadowMapRender();
-
+                }
             }
 
         }

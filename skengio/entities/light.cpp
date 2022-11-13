@@ -25,7 +25,8 @@ namespace SKEngio {
     }
 
     glm::vec3 Light::GetPosition() {
-        return transform.getGlobalPosition();
+        //return transform.getGlobalPosition();
+        return transform.getPosition();
     }
 
     glm::vec3 Light::GetDiffuse() {
@@ -48,7 +49,8 @@ namespace SKEngio {
         //size of projection should be scene bounding box
         lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, near_plane, far_plane);
         //correct
-        lightView = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + transform.getForward(), transform.getUp() );
+        //lightView = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + transform.getForward(), transform.getUp() );
+        lightView = glm::lookAt(transform.getPosition(), transform.getPosition() + transform.getForward(), transform.getUp());
         //wrong
         //glm::vec3 testTarget = transform.getBackward();
         //glm::vec3 testUp = transform.getUp();
@@ -67,6 +69,33 @@ namespace SKEngio {
         ShadowMap_FBOID = shadowMapFBO;
         glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
         
+        //attach this texture to the current (binded) frame buffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+
+        //disable writes to color buffer
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            SK_LOG_ERR("ERROR Creating Shadow Render Buffer Object");
+        }
+
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        hasShadowMapBuffer = true;
+
+    }
+
+    void Light::GeneratePointShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
+
+        shadowMapWidth = sMapWidth;
+        shadowMapHeight = sMapHeight;
+
+        ShadowMap_Texture = TextureManager::get().CreateCubemapShadowMapTexture(shadowMapWidth, shadowMapHeight);
+        //bind the renderer buffer used for shadow depth
+        ShadowMap_FBOID = shadowMapFBO;
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
+
         //attach this texture to the current (binded) frame buffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
 

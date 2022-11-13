@@ -7,8 +7,10 @@
 #include <skengio/material.h>
 #include <skengio/renderParams.h>
 #include "geometries/mesh.h"
-#include "skengio/utils/transform.h"
+//#include "skengio/utils/transform.h"
+#include "skengio/entities/transform3d.h"
 #include "skengio/entities/geometries/box.h"
+#include "skengio/entities/geometries/arrow.h"
 #include "skengio/materialsManager.h"
 
 namespace SKEngio {
@@ -134,7 +136,7 @@ namespace SKEngio {
 			}
 
 			void resetTransforms() {
-				transform.resetTransforms();
+				transform.reset();
 			}
 
 			void setPosition(float x, float y, float z) {
@@ -150,7 +152,7 @@ namespace SKEngio {
 			}
 
 			void scale(float x, float y, float z) {
-				transform.setLocalScale(  glm::vec3(x, y, z) );
+				transform.setScale(  glm::vec3(x, y, z) );
 			}
 
 			void setParent(Entity* _parent) {
@@ -166,8 +168,10 @@ namespace SKEngio {
 			void initGizmo(ShaderProgram* gShader) {
 				gizmo = new Entity();
 				gizmo->SetID("gizmo");
-				gizmo->mesh = new Box();
-				((SKEngio::Box*)gizmo->mesh)->Generate(0.5f, 0.5f, 3.0f, 1, 1, 1);
+				//gizmo->mesh = new Box();
+				//((SKEngio::Box*)gizmo->mesh)->Generate(0.5f, 0.5f, 3.0f, 1, 1, 1);
+				gizmo->mesh = new Arrow();
+				((SKEngio::Arrow*)gizmo->mesh)->GenerateZ();
 				gizmo->mesh->createGLBuffers();
 				gShader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f));
 				gizmo->material->SetShader(gShader);
@@ -178,7 +182,7 @@ namespace SKEngio {
 
 			Mesh* mesh{};
 			//ShaderProgram* shader{};
-			Transform transform;
+			Transform3D transform;
 			Material* material;
 			bool castsShadows;
 			EntityDisplayType displayType = EntityDisplayType::Drawable;

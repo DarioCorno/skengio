@@ -9,6 +9,7 @@
 #include "skengio/scene.h"
 #include "skengio/entities/geometries/torus.h"
 #include "skengio/entities/geometries/plane.h"
+#include "skengio/entities/geometries/arrow.h"
 #include "skengio/utils/skybox.h"
 #include "skengio/logger.h"
 #include "skengio/renderer.h"
@@ -18,7 +19,8 @@ namespace SKEngio {
 	class SceneONE final : public Scene {
 
 		SKEngio::Entity* torus;
-		SKEngio::Entity* plane;
+        SKEngio::Entity* arrow;
+        SKEngio::Entity* plane;
 		SKEngio::SKYBox* sky;
 		SKEngio::Light* light;
         SKEngio::Light* light2;
@@ -48,8 +50,8 @@ namespace SKEngio {
             light->GenerateDirShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 
             light->SetPosition(12.0f, 12.0f, 0.0f);
-            light->rotate(0.0f, 90.0f, 0.0f);
-            light->rotate(-45.0f, 0.0f, 0.0f);
+            light->rotate(0.0f, -90.0f, 0.0f);
+            light->rotate(45.0f, 0.0f, 0.0f);
 
             light2 = NewLight();
             light2->SetDiffuse(0.4f, 0.0f, 0.0f);
@@ -72,7 +74,7 @@ namespace SKEngio {
             plane->material->CreateProgram();
 
             plane->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
-            plane->rotate(-90.0f, 0.0f, 0.0f);
+            plane->rotate(90.0f, 0.0f, 0.0f);
             plane->castsShadows = false;
             plane->updateSelfAndChild();    //plane is still, no need to update transforms in the main loop
 
@@ -80,15 +82,29 @@ namespace SKEngio {
             torus->mesh = new SKEngio::Torus();
             ((SKEngio::Torus*)torus->mesh)->Generate(2.0f, 6.0f, 32, 24, M_PI * 2.0f);  //torus
             torus->mesh->createGLBuffers();
-
+            
             torus->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX, defines);
             torus->material->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
             torus->material->CreateProgram();
-
+            
             torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
             //torus->material->specularTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
             //torus->material->useSpecularTexture = 1;
             torus->material->SetCubemap(sky->cubemapTexture);
+
+
+            torus->setPosition(0.0f, 8.0f, 0.0f);
+            torus->rotate(0.0f, 90.0f, 0.0f);
+
+            //arrow = NewEntity("Torus");
+            //arrow->mesh = new SKEngio::Arrow();
+            //((SKEngio::Arrow*)arrow->mesh)->GenerateZ();  //arrow
+            //arrow->mesh->createGLBuffers();
+            //arrow->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX, defines);
+            //arrow->material->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
+            //arrow->material->CreateProgram();            
+            //arrow->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
+            //arrow->material->SetCubemap(sky->cubemapTexture);
 
         }
 
@@ -124,8 +140,12 @@ namespace SKEngio {
 
             float t = rp->time;
 
-            torus->setPosition(0.0f, 8.0f, (sin(t / 2.0f) * 10.0f));
-            torus->rotate(rp->deltaTime * 5.0f, 0.0f, 0.0f);
+            //arrow->setPosition(0.0f, 8.0f, 0.0f);
+
+
+            //torus->setPosition(0.0f, 8.0f, (sin(t / 2.0f) * 10.0f));
+            torus->rotate(0.0f, rp->deltaTime * 20.0f, 0.0f);
+            torus->rotate(rp->deltaTime * 10.0f, 0.0f, 0.0f);
 
             //glm::vec3 pos = rp->camera->position;
             //pos.x = sin(t / 10.0f) * 50.0f;
