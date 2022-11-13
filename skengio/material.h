@@ -28,11 +28,15 @@ namespace SKEngio  {
 
         int useDiffuseTexture = 1;
         int useSpecularTexture = 0;
+        int useCubemapTexture = 0;
 
         Texture* diffuseTexture = nullptr;
         Texture* specularTexture = nullptr;
         Texture* normalTexture = nullptr;
         Texture* cubemapTexture = nullptr;
+
+        bool castShadows = true;
+        bool receiveShadows = true;
 
         void bind();
         void unbind();

@@ -46,17 +46,26 @@ uniform LightData lights[NUM_LIGHTS];
 vec4 CalcDirLight(LightData light, vec3 normal, vec3 viewDir, vec2 texCoord, Material material)
 {
     vec3 lightDir = normalize(-light.direction);
-    // diffuse shading
+    // diffuse power
     float diff = max(dot(normal, lightDir), 0.0);
-    // specular shading
+    // specular power
     vec3 reflectDir = normalize( reflect(-lightDir, normal) );
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    //cube reflections
+    //cubemap reflections
     vec3 refVec = reflect(viewDir, normal);
-    refVec.z = -refVec.z;
-    vec4 refTex = texture(material.cubeTexture, -refVec) * material.reflectivity;
-    vec4 difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+    refVec.z = -refVec.z;       //cubemaps in ogl have inverted z
+    vec4 refTex = vec4(0.0);
+    if(material.useCubeMapTexture == 1) {
+        refTex = texture(material.cubeTexture, -refVec) * material.reflectivity;
+    }
+
+    vec4 difTex = vec4(0.0);
+    if(material.useDiffuseTexture == 1) {
+        difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+    } else {
+        difTex = vec4(material.ambient, 1);
+    }
 
     // combine results
     vec4 ambient =  vec4( light.lightAmbient * vec3(refTex + difTex) , 1.0);
@@ -67,8 +76,6 @@ vec4 CalcDirLight(LightData light, vec3 normal, vec3 viewDir, vec2 texCoord, Mat
     } else {
         specular = vec4( light.lightSpecular * (spec * material.specular), 1.0);  
     }
-
-    //DIFFUSE DOESN'T GO HERE; BUT ABOVE
 
     return ( ambient  + specular + diffuse );
 }
@@ -81,9 +88,18 @@ vec4 CalcPointLight(LightData light, vec3 norm, vec3 FragPos, vec3 lightDir, vec
     // ambient
     //cube reflections
     vec3 refVec = reflect(viewDir, norm);
-    refVec.z = -refVec.z;
-    vec4 refTex = texture(material.cubeTexture, -refVec) * material.reflectivity;
-    vec4 difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+    refVec.z = -refVec.z;       //cubemaps in ogl have inverted z
+    vec4 refTex = vec4(0.0);
+    if(material.useCubeMapTexture == 1) {
+        refTex = texture(material.cubeTexture, -refVec) * material.reflectivity;
+    }
+
+    vec4 difTex = vec4(0.0);
+    if(material.useDiffuseTexture == 1) {
+        difTex = texture(material.difTexture, texCoord) * (1.0 - material.reflectivity);
+    } else {
+        difTex = vec4(material.ambient, 1);
+    }
 
     vec4 ambient = vec4(light.lightAmbient * vec3(refTex + difTex), 1.0);
   	

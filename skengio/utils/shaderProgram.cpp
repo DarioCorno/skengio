@@ -272,6 +272,12 @@ namespace SKEngio {
         }
     }
 
+    void ShaderProgram::EnableCubemapTexture(const int useCubemap) {
+        if (textureUseCubemapLocation != -1) {
+            glProgramUniform1i(programID, textureUseCubemapLocation, useCubemap);
+        }
+    }
+
     void ShaderProgram::SetCubeTexture(const int textureUnit) {
         if (!isBind)
             bind();
@@ -297,6 +303,7 @@ namespace SKEngio {
         textureSpecularLocation = glGetUniformLocation(programID, TEXTURE_SPECULAR_UNIFORM_NAME);
         textureUseSpecularLocation = glGetUniformLocation(programID, TEXTURE_USE_SPECULAR_UNIFORM_NAME);
         textureUseDiffuseLocation = glGetUniformLocation(programID, TEXTURE_USE_DIFFUSE_UNIFORM_NAME);
+        textureUseCubemapLocation = glGetUniformLocation(programID, TEXTURE_USE_CUBEMAP_UNIFORM_NAME);
     }
 
 

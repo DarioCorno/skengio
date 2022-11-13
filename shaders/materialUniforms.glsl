@@ -8,6 +8,7 @@ struct Material {
 	sampler2D difTexture;
 	int useSpecularTexture;
 	sampler2D specTexture;
+	int useCubeMapTexture;
 	samplerCube cubeTexture;
 };
 

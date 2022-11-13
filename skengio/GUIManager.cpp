@@ -59,19 +59,21 @@ namespace SKEngio {
 
     void GUIManager::DrawMaterialParams(const std::string matName, Material* material) {
         ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(400, 250), 1);
+        ImGui::SetNextWindowSize(ImVec2(400, 350), 1);
         ImGui::SetNextWindowBgAlpha(0.5f);
         ImGui::Begin(matName.c_str() );
         ImGui::Text("Ambient");
         ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(material->materialAmbientColor));
         ImGui::Text("Diffuse");
         ImGui::ColorEdit3("diffuse", (float*)glm::value_ptr(material->materialDiffuseColor));
+        ImGui::Checkbox("Diffuse texture", (bool*) &material->useDiffuseTexture);
         ImGui::Text("Specular:");
         ImGui::ColorEdit3("specular", (float*)glm::value_ptr(material->materialSpecularColor));
         ImGui::Text("Shininess:");
-        ImGui::SliderFloat("shininess", &material->materialShininess, 0.0, 128.0);
+        ImGui::SliderFloat("shininess", &material->materialShininess, 1.0, 128.0);
         ImGui::Text("Reflectivity:");
         ImGui::SliderFloat("reflectivity", &material->materialReflectivity, 0.0f, 1.0f);
+        ImGui::Checkbox("Cubemap Texture", (bool*) &material->useCubemapTexture);
         ImGui::End();
 
     }

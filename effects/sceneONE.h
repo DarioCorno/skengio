@@ -91,6 +91,8 @@ namespace SKEngio {
             //torus->material->specularTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
             //torus->material->useSpecularTexture = 1;
             torus->material->SetCubemap(sky->cubemapTexture);
+            torus->material->useCubemapTexture = false;
+            torus->material->useDiffuseTexture = false;
 
 
             torus->setPosition(0.0f, 8.0f, 0.0f);

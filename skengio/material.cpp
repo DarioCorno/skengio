@@ -30,6 +30,9 @@ namespace SKEngio {
 
         if (cubemapTexture != nullptr)
             shader->SetCubeTexture(cubemapTexture->textureUnit);
+
+        shader->EnableCubemapTexture(useCubemapTexture);
+
     }
 
     void Material::unbind() {

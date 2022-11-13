@@ -22,6 +22,7 @@
 #define TEXTURE_SPECULAR_UNIFORM_NAME	"material.specTexture"
 #define TEXTURE_USE_SPECULAR_UNIFORM_NAME "material.useSpecularTexture"
 #define TEXTURE_USE_DIFFUSE_UNIFORM_NAME "material.useDiffuseTexture"
+#define TEXTURE_USE_CUBEMAP_UNIFORM_NAME "material.useCubeMapTexture"
 
 //MATERIAL UNIFORM DEFINES
 #define MATERIAL_AMBIENT_UNIFORM_NAME "material.ambient"
