@@ -88,8 +88,8 @@ namespace SKEngio {
             torus->material->CreateProgram();
             
             torus->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/metal.jpg", false);
-            //torus->material->specularTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
-            //torus->material->useSpecularTexture = 1;
+            torus->material->specularTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
+            torus->material->useSpecularTexture = 1;
             torus->material->SetCubemap(sky->cubemapTexture);
             torus->material->useCubemapTexture = false;
             torus->material->useDiffuseTexture = false;

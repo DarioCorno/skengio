@@ -3,9 +3,6 @@
 #include <GLFW/glfw3.h>
 
 #include "GUIManager.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
 
@@ -55,6 +52,8 @@ namespace SKEngio {
 
         glfwGetWindowSize( WindowManager::get().window, &winWidth, &winHeight);
 
+        fileDialog.SetTitle("Choose file");
+
     }
 
     void GUIManager::DrawMaterialParams(const std::string matName, Material* material) {
@@ -65,16 +64,50 @@ namespace SKEngio {
         ImGui::Text("Ambient");
         ImGui::ColorEdit3("ambient", (float*)glm::value_ptr(material->materialAmbientColor));
         ImGui::Text("Diffuse");
+        if (material->useDiffuseTexture) {
+            ImGui::BeginDisabled();
+        }
         ImGui::ColorEdit3("diffuse", (float*)glm::value_ptr(material->materialDiffuseColor));
+        if (material->useDiffuseTexture) {
+            ImGui::EndDisabled();
+        }
         ImGui::Checkbox("Diffuse texture", (bool*) &material->useDiffuseTexture);
+        ImGui::SameLine();
+        //if (ImGui::Image((void*)(intptr_t)material->diffuseTexture->textureID, ImVec2(64, 64))) {
+        if (!material->useDiffuseTexture) {
+            ImGui::BeginDisabled();
+        }
+        if(ImGui::ImageButton((void*)(intptr_t)material->diffuseTexture->textureID, ImVec2((float)64, (float)64), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), 1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
+            fileDialog.Open();
+        }
+        if (!material->useDiffuseTexture) {
+            ImGui::EndDisabled();
+        }
         ImGui::Text("Specular:");
         ImGui::ColorEdit3("specular", (float*)glm::value_ptr(material->materialSpecularColor));
+        ImGui::Checkbox("Specular texture", (bool*)&material->useSpecularTexture);
+        ImGui::SameLine();
+        if (ImGui::Button("Choose Diff Texture")) {
+            fileDialog.Open();
+        }
         ImGui::Text("Shininess:");
         ImGui::SliderFloat("shininess", &material->materialShininess, 1.0, 128.0);
         ImGui::Text("Reflectivity:");
         ImGui::SliderFloat("reflectivity", &material->materialReflectivity, 0.0f, 1.0f);
         ImGui::Checkbox("Cubemap Texture", (bool*) &material->useCubemapTexture);
+        ImGui::SameLine();
+        if (ImGui::Button("Choose Cubemap Folder")) {
+            fileDialog.Open();
+        }
         ImGui::End();
+
+        fileDialog.Display();
+
+        if (fileDialog.HasSelected())
+        {
+            std::cout << "Selected filename" << fileDialog.GetSelected().string() << std::endl;
+            fileDialog.ClearSelected();
+        }
 
     }
 

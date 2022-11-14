@@ -8,7 +8,8 @@
 namespace SKEngio {
 
     Texture::~Texture() {
-        TextureManager::get().FreeData(data);
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
+        glDeleteTextures(1, &textureID);
     }
 
     void Texture::bind() {

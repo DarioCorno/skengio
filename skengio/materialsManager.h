@@ -2,17 +2,25 @@
 
 #include "skengio/utils/singleton.h"
 #include "skengio/material.h"
-#include <list>
+#include <vector>
 
 namespace SKEngio {
+
+	struct MaterialSlot {
+		Material* material = nullptr;
+		int id = 0;
+		int useCount = 1;
+	};
+
 	class MaterialsManager final : public Singleton<MaterialsManager> {
 	public:
-		void Destroy();
+		void OnDestroy();
 
 		Material* NewMaterial();
+		void DestroyMaterial(Material* material);
 
 
 	private:
-		std::list<Material*> materials;
+		std::vector<MaterialSlot*> materialSlots;
 	};
 }

@@ -1,5 +1,7 @@
 #include "material.h"
 
+#include "skengio/utils/textureManager.h"
+
 namespace SKEngio {
 
     Material::Material() {
@@ -12,6 +14,24 @@ namespace SKEngio {
     void Material::OnDestroy() {
         shader->OnDestroy();
         delete shader;
+
+        TextureManager tm = TextureManager::get();
+
+        tm.DestroyTexture(diffuseTexture);
+
+        //if (diffuseTexture != nullptr)
+        //    delete diffuseTexture;
+
+        tm.DestroyTexture(specularTexture);
+
+        //if (specularTexture != nullptr)
+        //    delete specularTexture;
+
+        tm.DestroyTexture(cubemapTexture);
+
+        //if (cubemapTexture != nullptr)
+        //    delete cubemapTexture;
+
     }
 
     void Material::bind() {

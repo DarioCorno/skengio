@@ -38,7 +38,7 @@ namespace SKEngio {
 
 			~Entity() {
 				delete mesh;
-				delete material;
+				MaterialsManager::get().DestroyMaterial(material);
 			}
 
 			void SetID(std::string _id) {

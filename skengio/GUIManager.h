@@ -7,6 +7,13 @@
 #include <GLEW/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+//https://github.com/AirGuanZ/imgui-filebrowser
+#include "skengio/gui/imfilebrowser.h"
+
 #include "event.h"
 #include "skengio/utils/singleton.h"
 #include "skengio/layer.h"
@@ -36,6 +43,8 @@ namespace SKEngio {
             bool logVisible = false;
 
             Material* curEditMaterial = nullptr;
+
+            ImGui::FileBrowser fileDialog;
 
     };
 }

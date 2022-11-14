@@ -17,7 +17,6 @@ namespace SKEngio {
             int numChannels;
             unsigned int textureID = 0;
             unsigned int textureUnit;
-            unsigned char* data = nullptr;
             bool loaded = false;
             bool isCubemap = false;
 

@@ -10,6 +10,13 @@
 #include "singleton.h"
 
 namespace SKEngio {
+    class TextureSlot {
+    public:
+        Texture* texture;
+        int id = 0;
+        int useCount = 1;
+        std::string fileName = "";
+    };
 
     class TextureManager final : public Singleton<TextureManager>{
 
@@ -18,6 +25,8 @@ namespace SKEngio {
             //TextureManager() = default;
 
             unsigned int textureCount = 0;
+            std::vector<TextureSlot*> textureSlots;
+            int AlreadyExists(std::string fileName);
 
         public:
 
@@ -29,12 +38,15 @@ namespace SKEngio {
 
             //static TextureManager& getInstance();
 
+            void OnDestroy();
+
             Texture* Load(const std::string& fName, bool freeData);
             Texture* LoadCubemap(const std::vector<std::string>& facesFiles);
             Texture* CreateShadowMapTexture(unsigned int width, unsigned int height);
             Texture* CreateFrameBufferTexture(unsigned int width, unsigned int height);
             Texture* CreateCubemapShadowMapTexture(unsigned int width, unsigned int height);
-            void FreeData(unsigned char* data);
+
+            bool DestroyTexture(Texture* texture);
 
 	};
 }

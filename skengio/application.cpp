@@ -97,8 +97,12 @@ namespace SKEngio {
     void Application::Destroy() {
         //delete renderer;
         //delete winMan;
+
         Renderer::get().OnDestroy();
         WindowManager::get().OnDestroy();
+        TextureManager::get().OnDestroy();
+        MaterialsManager::get().OnDestroy();
+
         std::cout << "Destroying Application" << std::endl;
     }
 
