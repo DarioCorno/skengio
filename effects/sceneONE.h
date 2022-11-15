@@ -62,7 +62,8 @@ namespace SKEngio {
             light2->lightType = LightType::PointLight;
             light2->castShadows = true;
             light2->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
-            light2->GeneratePointShadowMapBuffer(Renderer::get().GetShadowCubeMapFBOID(), 1024, 1024);
+            //light2->GeneratePointShadowMapBuffer(Renderer::get().GetShadowCubeMapFBOID(), 1024, 1024);
+            light2->GeneratePointShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 
             //all shaders contain some #willdefine pseudo directives, it will be filled with the following values
             std::list<ShaderDefine> defines;

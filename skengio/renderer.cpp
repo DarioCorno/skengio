@@ -39,7 +39,7 @@ namespace SKEngio {
 
         glDeleteFramebuffers(1, &Final_FBO);
         glDeleteFramebuffers(1, &ShadowMap_FBO);
-        glDeleteFramebuffers(1, &ShadowCubeMap_FBO);
+        //glDeleteFramebuffers(1, &ShadowCubeMap_FBO);
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -188,7 +188,7 @@ namespace SKEngio {
     void Renderer::GenerateShadowMapsBO() {
     
         glGenFramebuffers(1, &ShadowMap_FBO);
-        glGenFramebuffers(1, &ShadowCubeMap_FBO);
+        //glGenFramebuffers(1, &ShadowCubeMap_FBO);
 
     }
 
@@ -264,9 +264,9 @@ namespace SKEngio {
         return ShadowMap_FBO;
     }
 
-    unsigned int Renderer::GetShadowCubeMapFBOID() {
-        return ShadowCubeMap_FBO;
-    }
+    //unsigned int Renderer::GetShadowCubeMapFBOID() {
+    //    return ShadowCubeMap_FBO;
+    //}
 
     void Renderer::ShadowMapPass() {
 
@@ -301,7 +301,8 @@ namespace SKEngio {
                 }
                 else if (light->lightType == LightType::PointLight) {
 
-                    glBindFramebuffer(GL_FRAMEBUFFER, ShadowCubeMap_FBO);
+                    //glBindFramebuffer(GL_FRAMEBUFFER, ShadowCubeMap_FBO);
+                    glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
 
                     pointLightDepthShader->bind();
                     

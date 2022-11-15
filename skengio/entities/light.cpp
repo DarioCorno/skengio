@@ -111,8 +111,8 @@ namespace SKEngio {
 
         ShadowCubeMap_Texture = TextureManager::get().CreateCubemapShadowMapTexture(shadowMapWidth, shadowMapHeight);
         //bind the renderer buffer used for shadow depth
-        ShadowCubeMap_FBOID = shadowCubeMapFBO;
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowCubeMap_FBOID);
+        ShadowMap_FBOID = shadowCubeMapFBO;
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
 
         //attach this texture to the current (binded) frame buffer
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, ShadowCubeMap_Texture->textureID, 0);

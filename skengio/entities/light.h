@@ -67,7 +67,7 @@ namespace SKEngio  {
             unsigned int ShadowMap_FBOID{};
             Texture* ShadowMap_Texture;
 
-            unsigned int ShadowCubeMap_FBOID{};
+            //unsigned int ShadowCubeMap_FBOID{};
             Texture* ShadowCubeMap_Texture;
 
     };
