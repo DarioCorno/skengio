@@ -59,6 +59,24 @@ namespace SKEngio {
         return lightSpaceMatrix;
     }
 
+    std::vector<glm::mat4> Light::getPointLightViewProjmatrices() {
+        float near_plane = 1.0f;
+        float far_plane = 100.0f;
+        glm::mat4 shadowProj = glm::perspective(90.0f, 1.0f, near_plane, far_plane);
+
+        glm::vec3 lightPos = transform.getPosition();
+
+        std::vector<glm::mat4> shadowTransforms;
+        shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)) );
+        shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)) );
+        shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)) );
+        shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)) );
+        shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)) );
+        shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)) );
+
+        return shadowTransforms;
+    }
+
     void Light::GenerateDirShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
 
         shadowMapWidth = sMapWidth;
@@ -86,18 +104,18 @@ namespace SKEngio {
 
     }
 
-    void Light::GeneratePointShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
+    void Light::GeneratePointShadowMapBuffer(const unsigned int shadowCubeMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight) {
 
         shadowMapWidth = sMapWidth;
         shadowMapHeight = sMapHeight;
 
-        ShadowMap_Texture = TextureManager::get().CreateCubemapShadowMapTexture(shadowMapWidth, shadowMapHeight);
+        ShadowCubeMap_Texture = TextureManager::get().CreateCubemapShadowMapTexture(shadowMapWidth, shadowMapHeight);
         //bind the renderer buffer used for shadow depth
-        ShadowMap_FBOID = shadowMapFBO;
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
+        ShadowCubeMap_FBOID = shadowCubeMapFBO;
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowCubeMap_FBOID);
 
         //attach this texture to the current (binded) frame buffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, ShadowCubeMap_Texture->textureID, 0);
 
         //disable writes to color buffer
         glDrawBuffer(GL_NONE);
@@ -117,10 +135,16 @@ namespace SKEngio {
         //bind the frame buffer
         //glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBOID);
 
-        ShadowMap_Texture->bind();
-
-        //attach this light texture to the shadowmapFBO
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+        if (lightType == LightType::DirectionalLight) {
+            ShadowMap_Texture->bind();
+            //attach this light texture to the shadowmapFBO
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, ShadowMap_Texture->textureID, 0);
+        }
+        else {
+            ShadowCubeMap_Texture->bind();
+            //attach this light texture to the shadowmapFBO
+            glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, ShadowCubeMap_Texture->textureID, 0);
+        }
 
         // render scene from light's point of view using the shadowMap shader
         glViewport(0, 0, shadowMapWidth, shadowMapHeight);
@@ -134,8 +158,17 @@ namespace SKEngio {
         return ShadowMap_Texture;
     }
 
+    Texture* Light::GetCubemapShadowTexture() {
+        return ShadowCubeMap_Texture;
+    }
+
     void Light::EndShadowMapRender() {
-        ShadowMap_Texture->unbind();
+        if (lightType == LightType::DirectionalLight) {
+            ShadowMap_Texture->unbind();
+        }
+        else {
+            ShadowCubeMap_Texture->unbind();
+        }
         //glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 

@@ -19,18 +19,9 @@ namespace SKEngio {
 
         tm.DestroyTexture(diffuseTexture);
 
-        //if (diffuseTexture != nullptr)
-        //    delete diffuseTexture;
-
         tm.DestroyTexture(specularTexture);
 
-        //if (specularTexture != nullptr)
-        //    delete specularTexture;
-
         tm.DestroyTexture(cubemapTexture);
-
-        //if (cubemapTexture != nullptr)
-        //    delete cubemapTexture;
 
     }
 

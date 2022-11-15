@@ -248,6 +248,9 @@
     <None Include="shaders\materialUniforms.glsl" />
     <None Include="shaders\multiLightUniforms.glsl" />
     <None Include="shaders\perlin.glsl" />
+    <None Include="shaders\pointShadowMap.frag" />
+    <None Include="shaders\pointShadowMap.geo" />
+    <None Include="shaders\pointShadowMap.vert" />
     <None Include="shaders\shadowMap.frag" />
     <None Include="shaders\shadowMap.vert" />
     <None Include="shaders\skybox.frag" />

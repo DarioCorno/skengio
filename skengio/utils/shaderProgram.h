@@ -4,6 +4,7 @@
 #include "../logger.h"
 
 #include <string>
+#include <vector>
 
 #define GLEW_STATIC
 #include "GLEW/glew.h"
@@ -46,6 +47,7 @@ namespace SKEngio {
             void SetModelUniforms(const glm::mat4& modelMatrix);
             void SetLightUniforms(const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
             void SetLightUniforms(int lightIdx, const glm::vec3 pos, const glm::vec3 diffuse, const glm::mat4& lightViewProj);
+            void SetCubemapGeomUniforms(const std::vector<glm::mat4>& lightViewProjMatrices);
             void SetLightAttenuationUniforms(const float constantAtt, const float linearAtt, const float quadraticAtt);
             void SetMaterialUniforms(const glm::vec3 diffuse, const glm::vec3 ambient, const glm::vec3 specular, const float shininess, const float reflectivity);
 
@@ -111,7 +113,7 @@ namespace SKEngio {
             //standard light uniforms
             int uniformLightPositionLocation = -1;
             int uniformLightDiffuseLocation = -1;
-            int uniformLightViewProjLocation = -1;  //view projection for shadow maps depth rendering
+            int uniformLightViewProjLocation = -1;  //view projection for directional shadow maps depth rendering
             int uniformLightNearLocation = -1;
             int uniformLightFarLocation = -1;
 

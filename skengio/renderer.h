@@ -35,6 +35,7 @@ namespace SKEngio {
 
             ShaderProgram* GizmoGetShader();
             unsigned int GetShadowMapFBOID();
+            unsigned int GetShadowCubeMapFBOID();
 
             std::unique_ptr<RenderParams> renderParams;
 
@@ -83,7 +84,9 @@ namespace SKEngio {
             //unsigned int ShadowMap_RBO{};
             //Texture* ShadowMap_Texture;
             unsigned int ShadowMap_FBO{};
-            ShaderProgram* zOnlyShader;
+            ShaderProgram* dirLightDepthShader;     //used by directiona light, only renders to depth
+            unsigned int ShadowCubeMap_FBO{};
+            ShaderProgram* pointLightDepthShader;   //used by point light, uses a geometry shader to render to a cubemap in a single pass
 
     };
 }

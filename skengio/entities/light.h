@@ -47,12 +47,14 @@ namespace SKEngio  {
             glm::vec3 GetSpecular();
 
             glm::mat4 getDirLightViewProjMatrix();
+            std::vector<glm::mat4> getPointLightViewProjmatrices();
 
             void GenerateDirShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int shadowMapWidth, const unsigned int shadowMapHeight);
             void GeneratePointShadowMapBuffer(const unsigned int shadowMapFBO, const unsigned int sMapWidth, const unsigned int sMapHeight);
             void BeginShadowMapRender();
             void EndShadowMapRender();
             Texture* GetShadowTexture();
+            Texture* GetCubemapShadowTexture();
 
             bool enabled = true;
             bool castShadows = true;
@@ -63,8 +65,10 @@ namespace SKEngio  {
             unsigned int shadowMapWidth = 1024;
             unsigned int shadowMapHeight = 1024;
             unsigned int ShadowMap_FBOID{};
-            unsigned int ShadowMap_RBO{};
             Texture* ShadowMap_Texture;
+
+            unsigned int ShadowCubeMap_FBOID{};
+            Texture* ShadowCubeMap_Texture;
 
     };
 

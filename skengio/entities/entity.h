@@ -31,7 +31,7 @@ namespace SKEngio {
 
 			Entity()
 		    {
-				castsShadows = true;
+				castShadows = true;
 				displayType = EntityDisplayType::Drawable;
 				material = MaterialsManager::get().NewMaterial();
 			}
@@ -105,7 +105,7 @@ namespace SKEngio {
 				if (displayType == EntityDisplayType::Invisible)
 					return;
 
-				if ( (rp->pass == RenderPass::ShadowDepth) && (!castsShadows) )
+				if ( (rp->pass == RenderPass::ShadowDepth) && (!castShadows) )
 					return;
 
 				if (rp->pass == RenderPass::Final) {
@@ -173,6 +173,7 @@ namespace SKEngio {
 				gizmo->mesh = new Arrow();
 				((SKEngio::Arrow*)gizmo->mesh)->GenerateZ();
 				gizmo->mesh->createGLBuffers();
+				gizmo->castShadows = false;
 				gShader->SetVec3("utilityColor", glm::vec3(1.0f, 1.0f, 1.0f));
 				gizmo->material->SetShader(gShader);
 				hasGizmo = true;
@@ -184,7 +185,7 @@ namespace SKEngio {
 			//ShaderProgram* shader{};
 			Transform3D transform;
 			Material* material;
-			bool castsShadows;
+			bool castShadows;
 			EntityDisplayType displayType = EntityDisplayType::Drawable;
 			EntityUpdateStatus updateStatus = EntityUpdateStatus::Running;
 

@@ -141,7 +141,6 @@ namespace SKEngio {
             glm::vec3 lAmb = light->GetAmbient();
             glm::vec3 lSpec = light->GetSpecular();
             glm::mat4 lVPMat = light->getDirLightViewProjMatrix();
-            unsigned int lDepthMap = light->GetShadowTexture()->textureUnit;
             glm::vec3 lightDir = light->transform.getForward();
 
             //set light data for every entity
@@ -157,7 +156,13 @@ namespace SKEngio {
                 entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightDiffuse", lDiff);
                 entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightAmbient", lAmb);
                 entShader->SetVec3("lights[" + std::to_string(lIdx) + "].lightSpecular", lSpec);
-                entShader->SetInt("lights[" + std::to_string(lIdx) + "].depthMap", lDepthMap);
+
+                if(light->lightType == LightType::DirectionalLight && light->castShadows)
+                    entShader->SetInt("lights[" + std::to_string(lIdx) + "].depthMap", light->GetShadowTexture()->textureUnit);  //dir light (same texture as point)
+
+                if (light->lightType == LightType::PointLight && light->castShadows)
+                    entShader->SetInt("lights[" + std::to_string(lIdx) + "].depthCubeMap", light->GetCubemapShadowTexture()->textureUnit);  //point light (same texture as dir)
+
                 entShader->SetMat4("lights[" + std::to_string(lIdx) + "].lightViewProjMatrix", lVPMat);
                 entShader->SetFloat("lights[" + std::to_string(lIdx) + "].constantAtt", light->constantAttenuation);
                 entShader->SetFloat("lights[" + std::to_string(lIdx) + "].linearAtt", light->linearAttenuation);

@@ -21,7 +21,9 @@ namespace SKEngio {
 		SKEngio::Entity* torus;
         SKEngio::Entity* arrow;
         SKEngio::Entity* plane;
-		SKEngio::SKYBox* sky;
+        SKEngio::Entity* leftw;
+        SKEngio::Entity* backw;
+        SKEngio::SKYBox* sky;
 		SKEngio::Light* light;
         SKEngio::Light* light2;
 
@@ -46,19 +48,21 @@ namespace SKEngio {
             light->SetSpecular(0.8f, 0.8f, 0.8f);
             light->SetAmbient(0.2f, 0.2f, 0.2f);
             light->lightType = LightType::DirectionalLight;
+            light->castShadows = true;
             light->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
             light->GenerateDirShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
 
-            light->SetPosition(12.0f, 12.0f, 0.0f);
+            light->SetPosition(12.0f, 20.0f, 0.0f);
             light->rotate(0.0f, -90.0f, 0.0f);
-            light->rotate(45.0f, 0.0f, 0.0f);
+            light->rotate(30.0f, 0.0f, 0.0f);
 
             light2 = NewLight();
             light2->SetDiffuse(0.4f, 0.0f, 0.0f);
             light2->SetSpecular(0.6f, 0.2f, 0.2f);
-            light2->castShadows = false;
+            light2->lightType = LightType::PointLight;
+            light2->castShadows = true;
             light2->initGizmo(SKEngio::Renderer::get().GizmoGetShader() );
-            light2->GenerateDirShadowMapBuffer(Renderer::get().GetShadowMapFBOID(), 1024, 1024);
+            light2->GeneratePointShadowMapBuffer(Renderer::get().GetShadowCubeMapFBOID(), 1024, 1024);
 
             //all shaders contain some #willdefine pseudo directives, it will be filled with the following values
             std::list<ShaderDefine> defines;
@@ -75,8 +79,37 @@ namespace SKEngio {
 
             plane->material->diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
             plane->rotate(90.0f, 0.0f, 0.0f);
-            plane->castsShadows = false;
+            plane->castShadows = false;
             plane->updateSelfAndChild();    //plane is still, no need to update transforms in the main loop
+
+            leftw = NewEntity("Leftw");
+            leftw->mesh = new SKEngio::Plane();
+            ((SKEngio::Plane*)leftw->mesh)->Generate(40.0f, 40.0f, 4, 4);
+
+            leftw->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX, defines);
+            leftw->material->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
+            leftw->material->CreateProgram();
+
+            leftw->material->useDiffuseTexture = false; // diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
+            leftw->translate(-20.0f, 20.0f, 0.0f);
+            leftw->rotate(0.0f, -90.0f, 0.0f);
+            leftw->castShadows = false;
+            leftw->updateSelfAndChild();    //plane is still, no need to update transforms in the main loop
+
+
+            backw = NewEntity("Backw");
+            backw->mesh = new SKEngio::Plane();
+            ((SKEngio::Plane*)backw->mesh)->Generate(40.0f, 40.0f, 4, 4);
+
+            backw->material->LoadShader("./shaders/", "basicshader.vert", SKEngio::ShaderProgram::VERTEX, defines);
+            backw->material->LoadShader("./shaders/", "basicshader.frag", SKEngio::ShaderProgram::FRAGMENT, defines);
+            backw->material->CreateProgram();
+
+            backw->material->useDiffuseTexture = false; // diffuseTexture = SKEngio::TextureManager::get().Load("./resources/textures/checker.jpg", false);
+            backw->translate(0.0f, 20.0f, -20.0f);
+            backw->castShadows = false;
+            backw->updateSelfAndChild();    //plane is still, no need to update transforms in the main loop
+
 
             torus = NewEntity("Torus");
             torus->mesh = new SKEngio::Torus();

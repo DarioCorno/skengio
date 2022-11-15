@@ -38,8 +38,8 @@ namespace SKEngio {
         depthDebugShader->OnDestroy();
 
         glDeleteFramebuffers(1, &Final_FBO);
-        glDeleteFramebuffers(1, &Final_FBO);
         glDeleteFramebuffers(1, &ShadowMap_FBO);
+        glDeleteFramebuffers(1, &ShadowCubeMap_FBO);
     }
 
     void Renderer::HandleResize(int width, int height) {
@@ -171,18 +171,25 @@ namespace SKEngio {
     }
 
     void Renderer::LoadShadowMapShader() {
-        //shader for rendering depth shadows (uses light matrix instead of camera ones)
-        //this debug is done with depthmapDebug
-        zOnlyShader = new ShaderProgram();
-        zOnlyShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
-        zOnlyShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
-        zOnlyShader->CreateProgram();
+        //shader for rendering depth shadows for directional lights (uses light matrix instead of camera ones)
+        dirLightDepthShader = new ShaderProgram();
+        dirLightDepthShader->LoadShader("./shaders/", "shadowMap.vert", SKEngio::ShaderProgram::VERTEX);
+        dirLightDepthShader->LoadShader("./shaders/", "shadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
+        dirLightDepthShader->CreateProgram();
+
+        //shader for rendering depth shadows for point lights (uses 6 light matrices and generates a whole cubemap with geometry shader)
+        pointLightDepthShader = new ShaderProgram();
+        pointLightDepthShader->LoadShader("./shaders/", "pointShadowMap.vert", SKEngio::ShaderProgram::VERTEX);
+        pointLightDepthShader->LoadShader("./shaders/", "pointShadowMap.frag", SKEngio::ShaderProgram::FRAGMENT);
+        pointLightDepthShader->LoadShader("./shaders/", "pointShadowMap.geo", SKEngio::ShaderProgram::GEOMETRY);
+        pointLightDepthShader->CreateProgram();
     }
 
     void Renderer::GenerateShadowMapsBO() {
     
         glGenFramebuffers(1, &ShadowMap_FBO);
-    
+        glGenFramebuffers(1, &ShadowCubeMap_FBO);
+
     }
 
     void Renderer::GenerateFrameBO(unsigned int width, unsigned int height) {
@@ -257,43 +264,77 @@ namespace SKEngio {
         return ShadowMap_FBO;
     }
 
+    unsigned int Renderer::GetShadowCubeMapFBOID() {
+        return ShadowCubeMap_FBO;
+    }
+
     void Renderer::ShadowMapPass() {
 
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
 
         for (Light* light : scene->lights) {
 
             if (light->castShadows && light->enabled) {
 
-                //bind the generic depth buffer shader (objects are rendered with a super simple shader)
-                zOnlyShader->bind();
 
                 if (light->lightType == LightType::DirectionalLight) {
+
+                    glBindFramebuffer(GL_FRAMEBUFFER, ShadowMap_FBO);
+
+                    //bind the generic depth buffer shader (objects are rendered with a super simple shader)
+                    dirLightDepthShader->bind();
+
                     //set the light projection in the generic depth shader
-                    zOnlyShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getDirLightViewProjMatrix());
+                    dirLightDepthShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getDirLightViewProjMatrix());
                     
                     //bind buffers, set viewport and other params
                     light->BeginShadowMapRender();
                     //set the light's shadow shader (needs to render depth only objects)
                     //this is identical for all shadow renderers, so it could be a renderer class member
-                    renderParams->passShader = zOnlyShader;
+                    renderParams->passShader = dirLightDepthShader;
                     //render all scenes
                     for (Scene* scene : sceneStack->scenes) {
                         scene->OnDraw(renderParams.get());
                     }
                     light->EndShadowMapRender();
+
+                    glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 }
                 else if (light->lightType == LightType::PointLight) {
 
+                    glBindFramebuffer(GL_FRAMEBUFFER, ShadowCubeMap_FBO);
+
+                    pointLightDepthShader->bind();
+                    
+                    //set the light projection in the generic depth shader
+                    pointLightDepthShader->SetLightUniforms(light->GetPosition(), light->GetDiffuse(), light->getDirLightViewProjMatrix());
+                    pointLightDepthShader->SetCubemapGeomUniforms(light->getPointLightViewProjmatrices());
+                    
+                    //bind buffers, set viewport and other params
+                    light->BeginShadowMapRender();
+                    
+                    //set the light's shadow shader (needs to render depth only objects)
+                    //this is identical for all shadow renderers, so it could be a renderer class member
+                    renderParams->passShader = pointLightDepthShader;
+                    //render all scenes
+                    for (Scene* scene : sceneStack->scenes) {
+                        scene->OnDraw(renderParams.get());
+                    }
+                    light->EndShadowMapRender();
+
+                    glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 }
             }
 
         }
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void Renderer::Draw() {
+
+        GLenum errone = glGetError();
+        if (errone != 0) {
+            SK_LOG_ERR("GLError CODE: " << errone);
+        }
 
         if (WindowManager::get().width == 0 || WindowManager::get().height == 0)
             return;
@@ -329,6 +370,10 @@ namespace SKEngio {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        GLenum errrtwo = glGetError();
+        if (errrtwo != 0) {
+            SK_LOG_ERR("GLError CODE: " << errrtwo);
+        }
 
         //--- RENDER active scene
         //set the camera back, maybe we did some different projections
@@ -339,6 +384,11 @@ namespace SKEngio {
 
         //disable the frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        GLenum errtwo = glGetError();
+        if (errtwo != 0) {
+            SK_LOG_ERR("GLError CODE: " << errtwo);
+        }
 
         //begin the gui rendering
         if (renderParams->drawUI) 
@@ -395,9 +445,9 @@ namespace SKEngio {
             //ShadowMap_Texture->unbind();
         }
 
-        GLenum err = glGetError();
-        if (err != 0) {
-            SK_LOG_ERR("GLError CODE: " << err );
+        GLenum errtre = glGetError();
+        if (errtre != 0) {
+            SK_LOG_ERR("GLError CODE: " << errtre );
         }
 
         //end the gui rendering

@@ -192,7 +192,7 @@ namespace SKEngio {
 
         glGenTextures(1, &tSlot->texture->textureID);
         glActiveTexture(GL_TEXTURE0 + tSlot->texture->textureUnit);
-        glBindTexture(GL_TEXTURE_2D, tSlot->texture->textureID);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, tSlot->texture->textureID);
 
         for (unsigned int i = 0; i < 6; ++i)
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,

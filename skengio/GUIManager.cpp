@@ -185,7 +185,7 @@ namespace SKEngio {
                             ImGui::PushID(guiIdx);
                             ImGui::Checkbox("Enabled", &light->enabled);
                             ImGui::Checkbox("Cast Shadows", &light->castShadows);
-                            if(light->castShadows && light->enabled)
+                            if(light->castShadows && light->enabled && light->lightType == LightType::DirectionalLight)
                                 ImGui::Image((void*)(intptr_t)light->GetShadowTexture()->textureID, ImVec2(GUI_TEXTURE_SIZE, GUI_TEXTURE_SIZE));
                             ImGui::PopID();
                             guiIdx++;

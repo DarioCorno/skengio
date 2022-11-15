@@ -2,6 +2,7 @@
 #include <direct.h>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "skengio/defines.h"
@@ -211,6 +212,12 @@ namespace SKEngio {
 
         if (uniformLightViewProjLocation != -1)
             glProgramUniformMatrix4fv(programID, uniformLightViewProjLocation, 1, GL_FALSE, glm::value_ptr( lightViewProj ));
+    }
+
+    void ShaderProgram::SetCubemapGeomUniforms(const std::vector<glm::mat4>& lightViewProjMatrices) {
+        for (int i = 0; i < 6; i++) {
+            SetMat4("shadowLightMatrices[" + std::to_string(i) + "]", lightViewProjMatrices[i]);
+        }
     }
 
     void ShaderProgram::SetLightAttenuationUniforms(const float constantAtt, const float linearAtt, const float quadraticAtt) {
